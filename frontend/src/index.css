@@ -1,0 +1,19 @@
+html, body {
+    height: 100%;
+}
+body {
+    /* back */
+    
+    /* background-repeat: no-repeat;
+    top:0; left:0;
+    z-index:-1; */
+    background: #53F1B4;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to top, #008DFF, #53F1B4);  /*Chrome 10-25, Safari 5.1-6*/
+    background-image: linear-gradient( #008DFF, #53F1B4); /*W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+*/
+    background-attachment: fixed;
+    background-position: 100%;
+    
+}
+div.separate {
+    margin-bottom: 10px;
+}

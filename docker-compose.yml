@@ -1,0 +1,51 @@
+version: "3"
+
+services:
+    mongo:
+        container_name: mongodatabase
+        restart: always
+        image: mongo
+        networks:
+            - red_privada
+        volumes: 
+            - mongo-data:/data/db
+        expose:
+            - ${PORT}
+    server:
+        depends_on:
+            - mongo
+        build:
+            context: ./backend
+            dockerfile: Dockerfile
+        container_name: servidor
+        restart: always
+        expose: 
+            - ${BACKENDPORT}
+        links:
+            - mongo
+        networks:
+            - red-proxy
+            - red_privada
+        environment: 
+            VIRTUAL_HOST: localhost2
+    react-app:
+        depends_on:
+            - server
+        build:
+            context: ./frontend/
+            dockerfile: Dockerfile
+        container_name: react-application
+        stdin_open: true
+        networks: 
+            - red-proxy
+        environment: 
+            VIRTUAL_HOST: localhost
+networks: 
+    red-proxy:
+        external:
+            name: nginx-proxy
+    red_privada:
+        
+volumes: 
+    mongo-data:
+        driver: local
