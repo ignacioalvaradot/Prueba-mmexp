@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { Grid, Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle } from '@material-ui/core/';
-import { makeStyles } from '@material-ui/core/styles';
+// import { makeStyles } from '@material-ui/core/styles';
 
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        '& .MuiTextField-root': {
-            margin: theme.spacing(1),
-            width: '25ch',
-        },
-    }
-}));
+// const useStyles = makeStyles((theme) => ({
+//     root: {
+//         '& .MuiTextField-root': {
+//             margin: theme.spacing(1),
+//             width: '25ch',
+//         },
+//     }
+// }));
 
 export default function EditDialog() {
 
@@ -21,11 +21,11 @@ export default function EditDialog() {
         minutos: ''
     })
     const [open, setOpen] = React.useState(false);
-    const [observacion, setObs] = useState({
-        idExperimento: '',
-        descripcion: '',
-        tiempo: ''
-    });
+    // const [observacion, setObs] = useState({
+    //     idExperimento: '',
+    //     descripcion: '',
+    //     tiempo: ''
+    // });
     const [urlconsulta, setUrlConsulta] = useState('');
     const [hora, setHora] = React.useState('');
     const [minutos, setMinutos] = React.useState('');

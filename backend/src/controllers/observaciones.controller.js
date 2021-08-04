@@ -9,14 +9,14 @@ ObservacionCtrl.getObservaciones = async (req, res) => {
 }
 
 ObservacionCtrl.createObservacion = async (req, res) => {
-    const { idExperimento, descripcion, tiempo } = req.body;
+    const { idFase, descripcion, tiempo } = req.body;
     const newMObservacion = new Observacion({
-        idExperimento: idExperimento,
+        idFase: idFase,
         descripcion: descripcion,
         tiempo: tiempo
     });
     await newMObservacion.save();
-    res.json({mensaje: 'Observacion Guardada'});
+    res.json({mensaje: newMObservacion._id});
 };
 
 ObservacionCtrl.getObservacion = async (req, res) => {
@@ -25,9 +25,9 @@ ObservacionCtrl.getObservacion = async (req, res) => {
 };
 
 ObservacionCtrl.updateObservacion = async (req, res) => {
-    const { idExperimento, descripcion, tiempo } = req.body;
+    const { idFase, descripcion, tiempo } = req.body;
     await Observacion.findOneAndUpdate({_id: req.params.id}, {
-        idExperimento,
+        idFase,
         descripcion,
         tiempo
     });

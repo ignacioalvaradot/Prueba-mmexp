@@ -32,7 +32,9 @@ const fasesSchema = new Schema({
         type: String,
         required: true
     },
-    idMediciones: []
+    idMediciones: [],
+    idObservaciones: [],
+    
 }, {
     timestamps: true
 });

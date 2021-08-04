@@ -3,9 +3,9 @@ const { Schema, model } = require('mongoose');
 
 // Definir esquema de datos
 const observacionSchema = new Schema({
-    idExperimento: {
+    idFase: {
         type: Schema.ObjectId, 
-        ref: "Experimento",
+        ref: "Fase",
         required: true 
     },
     descripcion: {
