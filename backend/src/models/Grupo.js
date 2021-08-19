@@ -3,17 +3,21 @@ const { Schema, model } = require('mongoose');
 
 // Definir esquema de datos
 const grupoSchema = new Schema({
-    idFase: {
-        type: Schema.ObjectId, 
-        ref: "Fase",
-        required: true 
-    },
-    numeroSerie: {
-        type: Schema.ObjectId, 
-        ref: "Dispositivo",
-    },
+    // idFase: {
+    //     type: Schema.ObjectId, 
+    //     ref: "Fase",
+    //     required: true 
+    // },
+    // numeroSerie: {
+    //     type: Schema.ObjectId, 
+    //     ref: "Dispositivo",
+    // },
     participantes: [],
     descripcion: {
+        type: String,
+        required: true
+    },
+    numeroSerie: {
         type: String,
         required: true
     },

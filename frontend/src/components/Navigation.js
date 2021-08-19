@@ -24,10 +24,16 @@ export default class Navigation extends Component {
                                 <Link className="nav-link" to="/user">Create User</Link>
                             </li> */}
                             <li className="nav-item">
-                                <Link className="nav-link" to="/ejecucion">Ejecucion Exp</Link>
+                                <Link className="nav-link" to="/ejecucion/60dfb8ba56b0354b1c20c77f">Ejecucion Exp</Link>
                             </li>
                             <li className="nav-item">
                                 <Link className="nav-link" to="/testSocket">Test WebSocket</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link className="nav-link" to="/preparacion/60dfb8ba56b0354b1c20c77f">Preparacion Exp</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link className="nav-link" to="/planificacion/60dfb8ba56b0354b1c20c77f">Planificacion Exp</Link>
                             </li>
                             {/* <li className="nav-item">
                                 <Link className="nav-link" to="/">Notes</Link>

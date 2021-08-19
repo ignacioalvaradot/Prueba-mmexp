@@ -5,19 +5,12 @@ import { Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
 import { Tab, Tabs, AppBar, Box, Typography } from '@material-ui/core/';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-// import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-// import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import { useLocation, useParams } from "react-router-dom";
 
 import { Stepper, Step, StepButton, LinearProgress } from '@material-ui/core/'
 import CancelIcon from '@material-ui/icons/Cancel';
 import VisibilityIcon from '@material-ui/icons/Visibility';
-import EditDialog from './Vista Ejecucion/EditDialog';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -78,7 +71,6 @@ const Postura = [
     createData('Speech Count', '01', '04', 'Cam.', '05:52', 'Coord'),
 ];
 
-const hoy = new Date();
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -112,7 +104,7 @@ TabPanel.propTypes = {
 //         'aria-controls': `simple-tabpanel-${index}`,
 //     };
 // }
-export default function FormDialog() {
+export default function PreparacionExp() {
 
     const location = useLocation();
     const idUrl = useParams();
@@ -128,51 +120,17 @@ export default function FormDialog() {
     const [fases, setFases] = React.useState([]);
     const [idmediciones, setIdmediciones] = React.useState('');
     const [nombreMediciones, setNombresMediciones] = React.useState([]);
-    // const [nombreMed, setNombreMed] = React.useState([]);
-    // const [medicionesIntensidad, setMedicionesIntensidad] = React.useState(Intensidad);
-    // const [medicionesPostura, setMedicionesPostura] = React.useState(Postura);
-    // const [medicionesRegistrar, setMedicionesRegistrar] = React.useState([]);
-    const [horaActual, setHora] = React.useState(hoy.getHours());
-    const [minutosActual, setMinutos] = React.useState(hoy.getMinutes());
 
     const [idObserv, setIdObserv] = React.useState([]);
     const [faseActiva, setFaseActiva] = React.useState(0);
     const [nombreExp, setNombreExp] = React.useState('');
     const [idExp, setIdExp] = React.useState('');
     const [fasesExp, setFasesExp] = React.useState([]);
-    const [progress, setProgress] = React.useState(0);
-    const [observaciones, setObservaciones] = React.useState([]);
-    const [tiempoInicio, setTiempoInicio] = React.useState('');
-    const [tiempoFin, setTiempoFin] = React.useState('');
-    // const [duracion, setDuracion] = React.useState(0);
-    const [tiempoDuracionSec, setTiempoDurSec] = React.useState(0);
-    const [progreso, setProgreso] = React.useState(0);
-    const [progresoTiempo, setProgresoTiempo] = React.useState(0);
-    const [horas, setHoras] = React.useState(0);
-    const [minutos, setMinuto] = React.useState(0);
-    const [segundos, setSegundos] = React.useState(0);
-    const [tiempoString, setTiempoString] = React.useState('');
-    const [observacionesTabla, setObservacionesTabla] = React.useState([]);
     const [actualizarTabla, setActualizarTabla] = React.useState(false);
-
-    let barraProgreso = 0;
-    let tablaObservaciones = 0;
 
     useEffect(() => {
         dataFase();
-        setActualizarTabla(!actualizarTabla);
-        // getObservaciones();
-        let progresoraro = progress;
-
-        barraProgreso = setInterval(() => {
-            progresoraro = progresoraro + 1;
-            setProgress(progresoraro);
-            // normalizar(progresoraro);
-        }, 1000);
-
-        // tablaObservaciones = setInterval(() => {
-        //     getObservaciones();
-        // }, 5000);
+        // setActualizarTabla(!actualizarTabla);
 
         const url = () => {
             const urlconsulta = location.pathname.split('/ejecucion/');
@@ -210,8 +168,6 @@ export default function FormDialog() {
         }
         url();
         traerFases();
-        return () => clearInterval(barraProgreso);
-
     }, []);
 
 
@@ -221,10 +177,7 @@ export default function FormDialog() {
         setNombreExp(res.data.experimento.nombreExp);
         setIdExp(res.data.experimento._id);
     };
-    // const componentWillUnmount = () => {
-    //     clearInterval(barraProgreso);
-    //     clearInterval(tablaObservaciones)
-    // }
+
 
     const obtenerFases = async (fases) => {
         let arrfases = fases;
@@ -234,113 +187,8 @@ export default function FormDialog() {
             arregloNFase.push(resF.data.fase);
         }
         setFasesExp(arregloNFase);
-        setTiempoInicio(arregloNFase.[0].tiempoInicio);
-        setTiempoFin(arregloNFase.[0].tiempoFin);
-        calcularTiempoFases(arregloNFase.[0].tiempoInicio, arregloNFase.[0].tiempoFin);
+
     }
-
-    const calcularTiempoFases = (tInicio, tFin) => {
-        let Inicio = tInicio.toString();
-        let Fin = tFin.toString();
-
-        let primeroI = Inicio.slice(0, -2);
-        let HoraI = parseInt(primeroI * 3600);
-        let segundoI = '';
-        let MinutosI = 0;
-        if (Inicio.length < 4) {
-            segundoI = Inicio.slice(1);
-            MinutosI = parseInt(segundoI * 60);
-        } else {
-            segundoI = Inicio.slice(2);
-            MinutosI = parseInt(segundoI * 60);
-        }
-
-        let primeroF = Fin.slice(0, -2);
-        let HoraF = parseInt(primeroF * 3600);
-        let MinutosF = 0;
-        let segundoF = ''
-        if (Fin.length < 4) {
-            segundoF = Fin.slice(1);
-            MinutosF = parseInt(segundoF * 60);
-        } else {
-            segundoF = Fin.slice(2);
-            MinutosF = parseInt(segundoF * 60);
-        }
-        let tiempoT = (HoraF + MinutosF) - (HoraI + MinutosI);
-        setTiempoInicio(primeroI + ':' + segundoI);
-        setTiempoFin(primeroF + ':' + segundoF);
-        setTiempoDurSec(tiempoT);
-    };
-
-    useEffect(() => {
-        // const normalizar = (progresoraro) => {
-        let progreTiempo = progresoTiempo;
-        let tiempoDurSec = tiempoDuracionSec;
-        // if(tiempoDuracionSec!=0){
-        //     // console.log(tiempoDurSec);
-        // };
-
-        let varSegundos = segundos;
-
-        let valor = (progreTiempo * 100) / tiempoDurSec;
-        let progTiempo = progreTiempo + 1;
-        let Nsegundos = varSegundos + 1;
-        let Nminutos = minutos;
-        let Nhoras = horas;
-        let segundosString = '';
-        let minutosString = '';
-        let horasString = '';
-
-        if (progTiempo === tiempoDurSec) {
-            clearInterval(barraProgreso);
-            console.log('Fase Finalizada por tiempo');
-        } else {
-            if (Nsegundos === 60) {
-                Nsegundos = 0;
-                Nminutos = Nminutos + 1;
-                if (Nminutos === 60) {
-                    Nminutos = 0;
-                    Nhoras = Nhoras + 1;
-                    if (Nhoras === 24) {
-                        Nhoras = 0;
-                        setHoras(Nhoras);
-                        setMinuto(Nminutos);
-                        setSegundos(Nsegundos);
-                    } else {
-                        setHoras(Nhoras);
-                        setMinuto(Nminutos);
-                        setSegundos(Nsegundos);
-                    }
-                } else {
-                    setMinuto(Nminutos);
-                    setSegundos(Nsegundos);
-                }
-            } else {
-                setSegundos(Nsegundos);
-            }
-
-            if ((Nsegundos.toString()).length < 2) {
-                segundosString = '0' + Nsegundos.toString();
-            } else {
-                segundosString = Nsegundos.toString();
-            }
-            if ((Nminutos.toString()).length < 2) {
-                minutosString = '0' + Nminutos.toString();
-            } else {
-                minutosString = Nminutos.toString();
-            }
-            if ((Nhoras.toString()).length < 2) {
-                horasString = '0' + Nhoras.toString();
-            } else {
-                horasString = Nhoras.toString();
-            }
-            setProgreso(valor);
-            setProgresoTiempo(progTiempo);
-            setTiempoString(horasString + ':' + minutosString + ':' + segundosString);
-            // console.log(tiempoDuracionSec);
-            //que hacer cuando se llegue a 0 para el contador
-        }
-    }, [progress]);
 
     useEffect(() => {
         console.log('Fase: ' + faseActiva);
@@ -350,8 +198,6 @@ export default function FormDialog() {
             let faseAct = fases.[faseActiva];
             const medicionesFase = faseAct.['idMediciones'];
             let arrNombreMediciones = new Array();
-            let arrObsv = fases.[faseActiva].idObservaciones;
-            setIdObserv(arrObsv);
             setIdmediciones(medicionesFase);
 
             const traerMedicionesFase = async (medicionesFase) => {
@@ -371,112 +217,19 @@ export default function FormDialog() {
                     }
                 }
             };
-            if (fasesExp != '') {
-                clearInterval(barraProgreso);
-                setProgresoTiempo(0);
-                setHoras(0);
-                setMinutos(0);
-                setSegundos(0);
-                setTiempoString('');
-
-                let arregloNFase = fasesExp;
-                setTiempoInicio(arregloNFase.[faseActiva].tiempoInicio);
-                setTiempoFin(arregloNFase.[faseActiva].tiempoFin);
-                calcularTiempoFases(arregloNFase.[faseActiva].tiempoInicio, arregloNFase.[faseActiva].tiempoFin);
-            }
             traerMedicionesFase(medicionesFase);
-
         }
-
         return () => {
         }
     }, [faseActiva, fases]);
 
-    // const arrObs = new Array();
-    useEffect(() => {
-        const getObservaciones = async (obs, arrObs, i, termino) => {
-            const res = await axios.get('http://localhost:81/api/observaciones/' + obs);
-            
-            if (res.data.observacion != null) {
-                arrObs.push(res.data.observacion);
-                // console.log(i);
-
-                if (i === termino) { 
-                    // console.log(arrObs)
-                    // setObservaciones(arrObs);
-                    setObservacionesTabla(arrObs);
-                }
-            }else{
-                if (i === termino) { 
-                    // console.log(arrObs)
-                    // setObservaciones(arrObs);
-                    setObservacionesTabla(arrObs);
-                }
-            }
-
-        }
-        if (idObserv != '') {
-            
-            let arrObs = new Array();
-            const obs = idObserv;
-            let termino = (obs.length)-1;
-            
-            for (let i = 0; i < obs.length; i++) {
-                // const obs = obs.[i];
-                
-                getObservaciones(obs.[i], arrObs, i, termino);
-            }
-        }
-    }, [idObserv, actualizarTabla]);
-
-    // useEffect(() => {
-    //     console.log('se ejecuto')
-    //     if (observaciones != '') {
-    //         // let bandera = actualizarTabla;
-    //         // if(bandera===true){
-    //         console.log(observaciones);
-    //         setObservacionesTabla(observaciones);
-    //         // setActualizarTabla(false);
-    //         // }
-    //         // for(let i=0; i<observaciones.length ; i++){
-    //         //     console.log(observaciones.[i]);
-    //         // }
-    //     }
-    // }, [observaciones]);
-
     const onDeleteObs = async (id) => {
-        await axios.delete('http://localhost:81/api/observaciones/' + id);
-        let arrdelete = idObserv;
-        // console.log(arrdelete.length);
-        for (let i = 0; i < arrdelete.length; i++) {
-            if(id == arrdelete[i]){
-                arrdelete.splice(i, 1);
-                setIdObserv(arrdelete);
-                let datoIdObsFase = {
-                    idObservaciones: arrdelete
-                };
-                const resq = await axios.put('http://localhost:81/api/fases/agregarObservaciones/' + fases.[faseActiva]._id, datoIdObsFase);
-                setActualizarTabla(!actualizarTabla);
-                
-                console.log(resq);
-            }
-        }
-            // if (idObserv != '') {
-            //     let arrObservaciones = idObserv;
-            //     arrObservaciones.push(res.data.mensaje);
-            //     // setIdObserv(arrObservaciones);
-            //     setActualizarTabla(!actualizarTabla);
-            //     let datoIdObs = {
-            //         idObservaciones: arrObservaciones
-            //     }
-            //     const resq = await axios.put('http://localhost:81/api/fases/agregarObservaciones/' + fases.[faseActiva]._id, datoIdObs);
-            // }
-        // }
-        // getObservaciones();
+        // await axios.delete('http://localhost:81/api/observaciones/' + id);
+        console.log('borrar')
     };
 
     const onEditObs = (id) => {
-        return (<EditDialog />)
+        console.log('editar')
     };
 
     // const handleClick = () => {
@@ -504,33 +257,18 @@ export default function FormDialog() {
 
     const enviarDatos = async () => {
         // e.preventDefault();
+        //dejarlo en pos de grupos y participantes
+        //debo verificar que lleguen datos - enviar - responder
         let data = {
             idFase: fases.[faseActiva]._id,
-            descripcion: datos.obs,
-            tiempo: datos.horas + ':' + datos.minutos
+            descripcion: 'a',
+            tiempo: 'hola'
         };
         guardarObservacion(data);
     }
 
     const guardarObservacion = async (data) => {
-        if (!data) {
-            return (console.log('help'))
-        } else {
-            const res = await axios.post('http://localhost:81/api/observaciones', data);
-            console.log(res.data.mensaje);
-
-            if (idObserv != '') {
-                let arrObservaciones = idObserv;
-                arrObservaciones.push(res.data.mensaje);
-                // setIdObserv(arrObservaciones);
-                setActualizarTabla(!actualizarTabla);
-                let datoIdObs = {
-                    idObservaciones: arrObservaciones
-                }
-                const resq = await axios.put('http://localhost:81/api/fases/agregarObservaciones/' + fases.[faseActiva]._id, datoIdObs);
-            }
-            handleClose();
-        }
+        console.log('guardar datos')
     }
 
     // const { faseActiva } = this.state;
@@ -555,74 +293,7 @@ export default function FormDialog() {
                         </Stepper>
                     </div>
                     <div className="container-fluid">
-                        <LinearProgress variant="determinate"
-                            value={progreso}
-                        />
                         <div>
-                            <div align="left" style={{ float: 'left' }}>{tiempoInicio}</div>
-                            <div align="right" style={{ float: 'right' }}>{tiempoFin}</div>
-                            <div align="center" style={{ float: 'center' }}>{tiempoString}</div>
-                        </div>
-                        <br />
-                        <div>
-                            <Button variant="outlined" color="primary" onClick={handleClickOpen} style={{ margin: 'auto', display: "flex" }}>
-                                Agregar Observacion
-                            </Button>
-                            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-                                <DialogTitle id="form-dialog-title">Observacion</DialogTitle>
-                                <DialogContent >
-                                    <form onSubmit={enviarDatos}>
-                                        <TextField
-                                            multiline
-                                            autoFocus
-                                            margin="dense"
-                                            id="standard-multiline-static"
-                                            label="Agregar Observacion"
-                                            fullWidth
-                                            onChange={handleSave}
-                                            name="obs"
-                                        />
-                                        <Grid container spacing={2}>
-                                            <Grid item xs={3}>
-                                                <TextField
-                                                    size="small"
-                                                    id="standard-number"
-                                                    label="Hora"
-                                                    type="number"
-                                                    InputLabelProps={{
-                                                        shrink: true,
-                                                    }}
-                                                    onChange={handleSave}
-                                                    name="horas"
-                                                    value={horaActual}
-                                                />
-                                            </Grid>
-                                            <Grid item xs={3}>
-                                                <TextField
-                                                    id="standard-number"
-                                                    label="Minuto"
-                                                    type="number"
-                                                    InputLabelProps={{
-                                                        shrink: true,
-                                                    }}
-                                                    onChange={handleSave}
-                                                    name="minutos"
-                                                    value={minutosActual}
-                                                />
-                                            </Grid>
-                                        </Grid>
-                                    </form>
-                                </DialogContent>
-                                <DialogActions>
-                                    <Button onClick={handleClose} color="primary">
-                                        Cancelar
-                                    </Button>
-                                    <Button type="submit" onClick={enviarDatos} color="primary">
-                                        Guardar
-                                    </Button>
-                                </DialogActions>
-                            </Dialog>
-                            {/* </div> */}
                             <div className="card-body">
                                 <div className="card-header">
                                     <h4>Mediciones Registradas</h4>
@@ -635,9 +306,6 @@ export default function FormDialog() {
                                                         <Tab label={nombre[0]} />
                                                     ))
                                                 }
-                                                {/* <Tab label="Tabla General" {...a11yProps(0)} />
-                                <Tab label="Item Two" {...a11yProps(1)} />
-                                <Tab label="Item Three" {...a11yProps(2)} /> */}
                                             </Tabs>
                                         </AppBar>
                                         <TabPanel value={tab} index={0}>
@@ -722,32 +390,6 @@ export default function FormDialog() {
                         <div className="card-header">
                             <Grid container spacing={12}>
                                 <Grid item xs={12}>
-                                    {
-                                        <div>
-                                            <h5>Observaciones</h5>
-                                            <TableContainer component={Paper} style={{ maxHeight: 300, minHeight: 200 }}>
-                                                <Table size="small" stickyHeader aria-label="sticky table" height="300" >
-                                                    <TableHead>
-                                                        <TableRow>
-                                                            <TableCell>Tiempo</TableCell>
-                                                            <TableCell align="center">Valor</TableCell>
-                                                            <TableCell align="right">Accion</TableCell>
-                                                        </TableRow>
-                                                    </TableHead>
-                                                    <TableBody>
-                                                        {observacionesTabla.map((row) => (
-                                                            <TableRow key={row._id}>
-                                                                <TableCell component="th" scope="row">{row.tiempo}</TableCell>
-                                                                <TableCell align="center">{row.descripcion}</TableCell>
-                                                                <TableCell align="right" ><VisibilityIcon onClick={() => onEditObs(row._id)}></VisibilityIcon><CancelIcon onClick={() => onDeleteObs(row._id)} /></TableCell>
-                                                            </TableRow>
-                                                        ))}
-                                                    </TableBody>
-                                                </Table>
-                                            </TableContainer>
-                                        </div>
-                                        // </Grid>
-                                    }
                                 </Grid>
                             </Grid>
                         </div>

@@ -9,14 +9,14 @@ GrupoCtrl.getGrupos = async (req, res) => {
 }
 
 GrupoCtrl.createGrupo = async (req, res) => {
-    const { idFase, participantes, descripcion } = req.body;
+    const { participantes, descripcion, numeroSerie } = req.body;
     const newGrupo = new Grupo({
-        idFase: idFase,
         participantes: participantes,
-        descripcion: descripcion
+        descripcion: descripcion,
+        numeroSerie: numeroSerie
     });
     await newGrupo.save();
-    res.json({mensaje: 'Grupo Guardada'});
+    res.json({mensaje: 'Grupo Guardado'});
 };
 
 GrupoCtrl.getGrupo = async (req, res) => {
@@ -25,11 +25,11 @@ GrupoCtrl.getGrupo = async (req, res) => {
 };
 
 GrupoCtrl.updateGrupo = async (req, res) => {
-    const { idFase, participantes, descripcion } = req.body;
+    const { participantes, descripcion, numeroSerie } = req.body;
     await Grupo.findOneAndUpdate({_id: req.params.id}, {
-        idFase,
         participantes,
-        descripcion
+        descripcion,
+        numeroSerie
     });
     res.json({mensaje: 'Grupo Actualizada'});
 };

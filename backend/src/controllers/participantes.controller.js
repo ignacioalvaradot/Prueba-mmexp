@@ -9,15 +9,14 @@ ParticipanteCtrl.getParticipantes = async (req, res) => {
 }
 
 ParticipanteCtrl.createParticipante = async (req, res) => {
-    const { idParticipanteMM, idGrupo, numeroSerie, descripcion } = req.body;
+    const {numeroSerie, descripcion } = req.body;
     const newParticipante = new Participante({
-        idParticipanteMM: idParticipanteMM,
-        idGrupo: idGrupo,
+        // idParticipanteMM: idParticipanteMM,
         numeroSerie: numeroSerie,
         descripcion: descripcion
     });
     await newParticipante.save();
-    res.json({mensaje: 'Participante Guardada'});
+    res.json({mensaje: 'Participante Guardado'});
 };
 
 ParticipanteCtrl.getParticipante = async (req, res) => {
@@ -26,19 +25,17 @@ ParticipanteCtrl.getParticipante = async (req, res) => {
 };
 
 ParticipanteCtrl.updateParticipante = async (req, res) => {
-    const { idParticipanteMM, idGrupo, numeroSerie, descripcion } = req.body;
+    const { numeroSerie, descripcion } = req.body;
     await Participante.findOneAndUpdate({_id: req.params.id}, {
-        idParticipanteMM,
-        idGrupo,
         numeroSerie,
         descripcion
     });
-    res.json({mensaje: 'Participante Actualizada'});
+    res.json({mensaje: 'Participante Actualizado'});
 };
 
 ParticipanteCtrl.deleteParticipante = async (req, res) => {
     await Participante.findByIdAndDelete(req.params.id)
-    res.json({mensaje: 'Participante Eliminada'})
+    res.json({mensaje: 'Participante Eliminado'})
 };
 
 module.exports = ParticipanteCtrl;

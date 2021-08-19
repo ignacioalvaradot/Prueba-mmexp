@@ -10,6 +10,9 @@ import CreateUser from './components/CreateUser';
 // import EjecucionExp from './components/EjecucionExp';
 import FormDialog from './components/FormDialog';
 import TestSocket from './components/TestWebsocket';
+import PreparacionExp from './components/PreparacionExp';
+import PlanificacionExp from './components/PlanificacionExp';
+
 
 
 function App() {
@@ -25,6 +28,10 @@ function App() {
         <Route path="/user" component={CreateUser} />
         <Route path="/ejecucion/:id" component={FormDialog} />
         <Route path="/testSocket/" component={TestSocket} />
+        <Route path="/preparacion/:id" component={PreparacionExp} />
+        <Route path="/planificacion/:id" component={PlanificacionExp} />
+
+
         
       </div>
 

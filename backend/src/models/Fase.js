@@ -34,6 +34,7 @@ const fasesSchema = new Schema({
     },
     idMediciones: [],
     idObservaciones: [],
+    idGrupos: [],
     
 }, {
     timestamps: true

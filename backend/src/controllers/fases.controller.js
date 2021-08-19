@@ -53,6 +53,15 @@ fasesCtrl.updateFaseObservaciones = async (req, res) => {
     res.json({mensaje: 'Observaciones agregadas a la Fase'});
 }
 
+fasesCtrl.updateFaseGrupos = async (req, res) => {
+    const { idGrupos } = req.body;
+    await Fase.findOneAndUpdate({_id: req.params.id}, {
+        idGrupos
+    });
+    res.json({mensaje: 'Grupos agregados a la Fase'});
+}
+
+
 fasesCtrl.deleteFase = async (req, res) => {
     await Fase.findByIdAndDelete(req.params.id)
     res.json({mensaje: 'Fase Eliminada'})
