@@ -19,10 +19,7 @@ const participanteSchema = new Schema({
     //     ref: "Dispositivo",
     //     required: true 
     // },
-    numeroSerie: {
-        type: String,
-        required: true
-    },
+    dispositivos: [],
     
     descripcion: {
         type: String,

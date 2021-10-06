@@ -9,14 +9,15 @@ GrupoCtrl.getGrupos = async (req, res) => {
 }
 
 GrupoCtrl.createGrupo = async (req, res) => {
-    const { participantes, descripcion, numeroSerie } = req.body;
+    const { participantes, descripcion } = req.body;
     const newGrupo = new Grupo({
         participantes: participantes,
         descripcion: descripcion,
-        numeroSerie: numeroSerie
+        dispositivos: [],
+        // numeroSerie: numeroSerie
     });
     await newGrupo.save();
-    res.json({mensaje: 'Grupo Guardado'});
+    res.json({mensaje: newGrupo._id});
 };
 
 GrupoCtrl.getGrupo = async (req, res) => {
@@ -25,14 +26,30 @@ GrupoCtrl.getGrupo = async (req, res) => {
 };
 
 GrupoCtrl.updateGrupo = async (req, res) => {
-    const { participantes, descripcion, numeroSerie } = req.body;
+    const { participantes, descripcion } = req.body;
     await Grupo.findOneAndUpdate({_id: req.params.id}, {
         participantes,
         descripcion,
-        numeroSerie
+        // numeroSerie
     });
     res.json({mensaje: 'Grupo Actualizada'});
 };
+
+GrupoCtrl.updateArrParticipantes = async (req, res) => {
+    const { participantes } = req.body;
+    await Grupo.findOneAndUpdate({_id: req.params.id}, {
+        participantes
+    });
+    res.json({mensaje: 'Participantes agregados a la Fase'});
+}
+
+GrupoCtrl.updateDispositivos = async (req, res) => {
+    const { dispositivos } = req.body;
+    await Grupo.findOneAndUpdate({_id: req.params.id}, {
+        dispositivos
+    });
+    res.json({mensaje: 'Dispositivos del Grupo Actualizados'});
+}
 
 GrupoCtrl.deleteGrupo = async (req, res) => {
     await Grupo.findByIdAndDelete(req.params.id)

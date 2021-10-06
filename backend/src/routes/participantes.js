@@ -2,7 +2,7 @@
 const { Router } = require('express');
 const router = Router();
 
-const { getParticipantes, createParticipante, getParticipante, updateParticipante, deleteParticipante } = require('../controllers/participantes.controller');
+const { getParticipantes, createParticipante, getParticipante, updateParticipante, deleteParticipante, updateDispositivos } = require('../controllers/participantes.controller');
 
 // Tomar de la ruta inicial, consultas HTTP
 router.route('/')
@@ -14,5 +14,8 @@ router.route('/:id')
     .get(getParticipante)
     .put(updateParticipante)
     .delete(deleteParticipante);
+
+router.route('/agregarDispositivos/:id')
+    .put(updateDispositivos);
 
 module.exports = router;

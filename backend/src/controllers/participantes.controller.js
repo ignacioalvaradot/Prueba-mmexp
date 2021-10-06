@@ -9,14 +9,14 @@ ParticipanteCtrl.getParticipantes = async (req, res) => {
 }
 
 ParticipanteCtrl.createParticipante = async (req, res) => {
-    const {numeroSerie, descripcion } = req.body;
+    const {dispositivos, descripcion } = req.body;
     const newParticipante = new Participante({
         // idParticipanteMM: idParticipanteMM,
-        numeroSerie: numeroSerie,
+        dispositivos: dispositivos,
         descripcion: descripcion
     });
     await newParticipante.save();
-    res.json({mensaje: 'Participante Guardado'});
+    res.json({mensaje: newParticipante._id});
 };
 
 ParticipanteCtrl.getParticipante = async (req, res) => {
@@ -25,12 +25,20 @@ ParticipanteCtrl.getParticipante = async (req, res) => {
 };
 
 ParticipanteCtrl.updateParticipante = async (req, res) => {
-    const { numeroSerie, descripcion } = req.body;
+    const { dispositivos, descripcion } = req.body;
     await Participante.findOneAndUpdate({_id: req.params.id}, {
-        numeroSerie,
+        dispositivos,
         descripcion
     });
     res.json({mensaje: 'Participante Actualizado'});
+};
+
+ParticipanteCtrl.updateDispositivos = async (req, res) => {
+    const { dispositivos } = req.body;
+    await Participante.findOneAndUpdate({_id: req.params.id}, {
+        dispositivos
+    });
+    res.json({mensaje: 'Asignaciones Dispositivos Actualizados'});
 };
 
 ParticipanteCtrl.deleteParticipante = async (req, res) => {

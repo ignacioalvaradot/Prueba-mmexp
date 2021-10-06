@@ -2,7 +2,7 @@
 const { Router } = require('express');
 const router = Router();
 
-const { getExp, createExp, getExps, updateExp, updateExpFase, deleteExp } = require('../controllers/experimentos.controller');
+const { getExp, createExp, getExps, getExperimentos, updateExp, updateExpFase, updateFaseActiva, deleteExp } = require('../controllers/experimentos.controller');
 
 // Tomar de la ruta inicial, consultas HTTP
 router.route('/')
@@ -10,6 +10,8 @@ router.route('/')
     .post(createExp);
 
 // Si ingreso con una id, interactuar con estas peticiones
+router.route('/traerExp/:tipoExp')
+    .get(getExperimentos);
 router.route('/:id')
     .get(getExps)
     .put(updateExp)
@@ -17,5 +19,8 @@ router.route('/:id')
 
 router.route('/agregarFases/:id')
     .put(updateExpFase);
+
+router.route('/faseActiva/:id')
+    .put(updateFaseActiva);
 
 module.exports = router;

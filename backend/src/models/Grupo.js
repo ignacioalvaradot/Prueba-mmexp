@@ -17,10 +17,10 @@ const grupoSchema = new Schema({
         type: String,
         required: true
     },
-    numeroSerie: {
-        type: String,
-        required: true
-    },
+    // numeroSerie: {
+    //     type: String,
+    // },
+    dispositivos: [],
 }, {
     timestamps: true
 });

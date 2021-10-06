@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { loadCSS } from 'fg-loadcss';
 import axios from 'axios';
 import PropTypes from 'prop-types';
-import { Grid, Modal, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Icon, Checkbox, IconButton } from '@material-ui/core/';
+import { Grid, Modal, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Icon, Checkbox, IconButton, CircularProgress } from '@material-ui/core/';
 import { Tab, Tabs, AppBar, Box, Typography } from '@material-ui/core/';
 import { Dialog, DialogTitle, DialogContent, DialogActions } from '@material-ui/core/';
 import Button from '@material-ui/core/Button';
@@ -160,7 +160,6 @@ export default function PreparacionExp() {
     const [fases, setFases] = React.useState([]);
     const [idmediciones, setIdmediciones] = React.useState('');
     const [nombreMediciones, setNombresMediciones] = React.useState([]);
-
     const [idObserv, setIdObserv] = React.useState([]);
     const [faseActiva, setFaseActiva] = React.useState(0);
     const [nombreExp, setNombreExp] = React.useState('');
@@ -173,15 +172,31 @@ export default function PreparacionExp() {
     const [banderaParticipantes, setBanderaParticipantes] = React.useState(false);
     const [conteoSelectedG, setConteoSelectedG] = React.useState(0);
     const [conteoSelectedPart, setConteoSelectedPart] = React.useState(0);
-    const [openModalGrupo, setOpenModalGrupo] = React.useState(false);
-    const [openModalParticipante, setOpenModalParticipante] = React.useState(false);
-    const [openModalNuevoGrupo, setOpenModalNuevoGrupo] = React.useState(false);
-    const [openModalNuevoParticipante, setOpenModalNuevoParticipante] = React.useState(false);
     const [dataGrupos, setDataGrupos] = React.useState([]);
     const [dataParticipantes, setDataParticipantes] = React.useState([]);
     const [participanteActivo, setParticipanteActivo] = React.useState('');
     const [grupoEditar, setGrupoEditar] = React.useState('');
     const [arrarrParticipantes, setArrArrParticipantes] = React.useState([]);
+    const [arrFasesxGrupo, setArrFasesxGrupo] = React.useState([]);
+    const [arrFasesxParticipantesxGrupo, setArrFasesxParticipantesxGrupo] = React.useState([]);
+    const [nombreGrupoHeader, setNombreGrupoHeader] = React.useState('');
+    const [hiddenParticipantes, setHiddenParticipantes] = React.useState(true);
+    const [grupoComparacion, setGrupoComparacion] = React.useState([]);
+    const [particiComparacion, setParticiComparacion] = React.useState([]);
+    const [arregloFasesGrupos, setArregloFasesGrupos] = React.useState([]);
+    const [banderaComparacion, setBanderaComparacion] = React.useState(0);
+    const [direccionFaseActiva, setDireccionFaseActiva] = React.useState(0);
+
+    const [openModalGrupo, setOpenModalGrupo] = React.useState(false);
+    const [openModalParticipante, setOpenModalParticipante] = React.useState(false);
+    const [openModalNuevoGrupo, setOpenModalNuevoGrupo] = React.useState(false);
+    const [openModalNuevoParticipante, setOpenModalNuevoParticipante] = React.useState(false);
+    const [openModalGuardarDatos, setOpenModalGuardarDatos] = React.useState(false);
+    const [banderaTabla, setBanderaTabla] = React.useState(true);
+    const [medicionesSelected, setMedicionesSelected] = React.useState([]);
+    const [medicionesFases, setMedicionesFases] = useState([]);
+    const [cambiarBoton, setCambiarBoton] = useState(true);
+    const [idExperimento, setIdExperimento] = React.useState('');
 
     const [filas, setFilas] = React.useState([
         {
@@ -230,24 +245,7 @@ export default function PreparacionExp() {
             "seleccionado": false
         },
     ]);
-    const [filasPart, setFilasPart] = React.useState([
-        {
-            "id": "1",
-            "nombre": 'Participante 1',
-            "seleccionado": false
-        },
-        {
-            "id": "2",
-            "nombre": 'Participante 2',
-            "seleccionado": false
-        },
-        {
-            "id": "3",
-            "nombre": 'Participante 3',
-            "seleccionado": false
-        }
-    ]);
-    // const isItemSelected = isSelected(row.descripcion);
+
     const [arregloGruposSelect, setArregloGruposSelect] = React.useState([
         {
             "Grupo 1": false,
@@ -266,98 +264,133 @@ export default function PreparacionExp() {
         );
 
         // setActualizarTabla(!actualizarTabla);
-
         const url = () => {
             const urlconsulta = location.pathname.split('/ejecucion/');
 
             setUrlConsulta(urlconsulta);
         };
-        const traerFases = async () => {
-            //solo deberia traer la primera fase
-            const fasesExp = await axios.get('http://localhost:81/api/fases');
-
-            setFases(fasesExp.data);
-            traerMediciones(fasesExp.data);
-            traerGrupos(fasesExp.data);
-        }
-        const traerMediciones = async (fasesExp) => {
-            let mediciones = fasesExp;
-            // de primera debe entrar la primera fase del experimento actual
-            const medicionesFase = mediciones[0].idMediciones;
-            let arrNombreMediciones = new Array();
-            setIdmediciones(medicionesFase);
-            for (let i = 0; i < medicionesFase.length; i++) {
-                const res = await axios.get('http://localhost:81/api/mediciones/' + medicionesFase[i]);
-                if (res.data.medicion.nombre === 'Intensidad') {
-                    arrNombreMediciones.push([res.data.medicion.nombre, i, Intensidad]);
-                    setNombresMediciones(arrNombreMediciones);
-                }
-                if (res.data.medicion.nombre === 'Tiempo Habla') {
-                    arrNombreMediciones.push([res.data.medicion.nombre, i, Intensidad]);
-                    setNombresMediciones(arrNombreMediciones);
-                }
-                if (res.data.medicion.nombre === 'Postura') {
-                    arrNombreMediciones.push([res.data.medicion.nombre, i, Postura]);
-                    setNombresMediciones(arrNombreMediciones);
-                }
-            }
-        }
-        const traerGrupos = async (fasesExp) => {
-            let fases = fasesExp;
-            let arrGrupos = new Array();
-            let arrTotal = new Array();
-            for (let i = 0; i < fases.length; i++) {
-                arrGrupos.push(fasesExp[i].idGrupos);
-            }
-            for (let i = 0; i < arrGrupos.length; i++) {
-                for (let j = 0; j < arrGrupos[i].length; j++) {
-                    if (arrGrupos[i][j] != '') {
-                        const res = await axios.get('http://localhost:81/api/grupos/' + arrGrupos[i][j]);
-                        arrTotal.push(res.data.grupo);
-                    }
-                }
-            }
-            setDataGrupos(arrTotal);
-            traerParticipantes(arrTotal);
-        }
-
-        const traerParticipantes = async (arrGrupos) => {
-            let aregloGrupos = arrGrupos;
-            let arrParticipantes = new Array();
-            // let arrGrupos = new Array();
-            let arrTotal = new Array();
-            for (let i = 0; i < aregloGrupos.length; i++) {
-                arrParticipantes.push(aregloGrupos[i].participantes);
-            }
-            for (let i = 0; i < arrParticipantes.length; i++) {
-                for (let j = 0; j < arrParticipantes[i].length; j++) {
-                    if (arrParticipantes[i][j] != '') {
-                        const res = await axios.get('http://localhost:81/api/participantes/' + arrParticipantes[i][j]);
-                        arrTotal.push(res.data.participante);
-                        // console.log(res.data);
-                    }
-                }
-            }
-            // console.log(arrTotal);
-            setDataParticipantes(arrTotal);
-            // console.log(arrGrupos);
-        }
-
         url();
-        traerFases();
         return () => {
             node.parentNode.removeChild(node);
         };
     }, []);
 
+    const traerGrupos = async (fasesExp) => {
+        let fases = fasesExp;
+        let arrGrupos = new Array();
+        let arrTotal = new Array();
+        let arrFasesGrupos = new Array();
+        for (let i = 0; i < fases.length; i++) {
+            arrGrupos.push(fasesExp[i].idGrupos);
+        }
+        for (let i = 0; i < arrGrupos.length; i++) {
+            for (let j = 0; j < arrGrupos[i].length; j++) {
+                if (arrGrupos[i][j] != '') {
+                    const res = await axios.get('http://localhost:81/api/grupos/' + arrGrupos[i][j]);
+                    arrTotal.push(res.data.grupo);
+                }
+            }
+            arrFasesGrupos.push(arrTotal);
+            arrTotal = [];
+        }
+        setArrFasesxGrupo(arrFasesGrupos);
+        setDataGrupos(arrFasesGrupos[0]);
+
+        traerParticipantes(arrFasesGrupos[0], 'inicio');
+
+    }
+
+    const traerGruposIniciales = async (fasesExpe) => {
+        let fases = fasesExpe;
+        let arreGrupos = new Array();
+        let arreTotal = new Array();
+        let arreFasesGrupos = new Array();
+        for (let i = 0; i < fases.length; i++) {
+            arreGrupos.push(fases[i].idGrupos);
+        }
+        for (let i = 0; i < arreGrupos.length; i++) {
+            for (let j = 0; j < arreGrupos[i].length; j++) {
+                if (arreGrupos[i][j] != '') {
+                    const res = await axios.get('http://localhost:81/api/grupos/' + arreGrupos[i][j]);
+                    arreTotal.push(res.data.grupo);
+                }
+            }
+            arreFasesGrupos.push(arreTotal);
+            arreTotal = [];
+        }
+        setArregloFasesGrupos(arreFasesGrupos);
+        setGrupoComparacion(arreFasesGrupos[0]);
+        traerParticipantesIniciales(arreFasesGrupos[0]);
+    }
+
+    const traerParticipantesIniciales = async (arGrupos) => {
+        let arregloGrupos = arGrupos;
+        let arreParticipantes = new Array();
+        let arrarrGruposComp = new Array();
+        let banderaComp = banderaComparacion + 1;
+        let arrTotal = new Array();
+
+        for (let i = 0; i < arregloGrupos.length; i++) {
+            arreParticipantes.push(arregloGrupos[i].participantes);
+        }
+        for (let i = 0; i < arreParticipantes.length; i++) {
+            for (let j = 0; j < arreParticipantes[i].length; j++) {
+                if (arreParticipantes[i][j] != '') {
+                    const res = await axios.get('http://localhost:81/api/participantes/' + arreParticipantes[i][j]);
+                    arrTotal.push(res.data.participante);
+                }
+            }
+            arrarrGruposComp.push(arrTotal);
+            arrTotal = new Array();
+        }
+        setBanderaComparacion(banderaComp);
+        setParticiComparacion(arrarrGruposComp);
+
+    }
+
+
+    const traerParticipantes = async (arrGrupos, cuando) => {
+        let aregloGrupos = arrGrupos;
+        let arrParticipantes = new Array();
+        let arrarrGrupos = new Array();
+        let banderaComp = banderaComparacion + 1;
+        let arrComp = new Array();
+        let arrInicioComp = new Array();
+
+        let arrTotal = new Array();
+        for (let i = 0; i < aregloGrupos.length; i++) {
+            arrParticipantes.push(aregloGrupos[i].participantes);
+        }
+        for (let i = 0; i < arrParticipantes.length; i++) {
+            for (let j = 0; j < arrParticipantes[i].length; j++) {
+                if (arrParticipantes[i][j] != '') {
+                    const res = await axios.get('http://localhost:81/api/participantes/' + arrParticipantes[i][j]);
+                    arrTotal.push(res.data.participante);
+                }
+            }
+
+            arrarrGrupos.push(arrTotal);
+            arrTotal = new Array();
+        }
+
+        setArrArrParticipantes(arrarrGrupos);
+        if (cuando === 'durante') {
+            setDataParticipantes(arrTotal);
+        }
+
+    }
+
+
 
     const dataFase = async () => {
-        const res = await axios.get('http://localhost:81/api/experimentos/' + idUrl.id);
+        const res = await axios.get('http://localhost:81/api/experimentos/' + idUrl['id']);
+
+        setIdExperimento(idUrl['id']);
         obtenerFases(res.data.experimento.fasesId);
         setNombreExp(res.data.experimento.nombreExp);
         setIdExp(res.data.experimento._id);
-    };
 
+    };
 
     const obtenerFases = async (fases) => {
         let arrfases = fases;
@@ -367,41 +400,41 @@ export default function PreparacionExp() {
             arregloNFase.push(resF.data.fase);
         }
         setFasesExp(arregloNFase);
+        traerGrupos(arregloNFase);
+        traerGruposIniciales(arregloNFase);
+        traerMedicionesRegistrar(arregloNFase);
+    }
 
+    const traerMedicionesRegistrar = async (arregloNFase) => {
+        let fases = arregloNFase;
+        let arrTotalMediciones = new Array();
+        for (let i = 0; i < fases.length; i++) {
+            let medicionesFase = fases[i].idMediciones;
+            let arrMediciones = new Array();
+            for (let j = 0; j < medicionesFase.length; j++) {
+                const resMediciones = await axios.get('http://localhost:81/api/mediciones/' + medicionesFase[j]);
+                resMediciones.data.medicion.estado = false;
+                arrMediciones.push(resMediciones.data.medicion);
+            }
+            arrTotalMediciones.push(arrMediciones);
+        }
+        setMedicionesFases(arrTotalMediciones);
+        setMedicionesSelected(arrTotalMediciones[faseActiva]);
     }
 
     useEffect(() => {
-        console.log('Fase: ' + faseActiva);
-        let numerofaseActual = faseActiva + 1;
-
-        if (fases != '') {
-            let faseAct = fases.[faseActiva];
-            const medicionesFase = faseAct.['idMediciones'];
-            let arrNombreMediciones = new Array();
-            setIdmediciones(medicionesFase);
-
-            const traerMedicionesFase = async (medicionesFase) => {
-                for (let i = 0; i < medicionesFase.length; i++) {
-                    const res = await axios.get('http://localhost:81/api/mediciones/' + medicionesFase[i]);
-                    if (res.data.medicion.nombre === 'Intensidad') {
-                        arrNombreMediciones.push([res.data.medicion.nombre, i, Intensidad]);
-                        setNombresMediciones(arrNombreMediciones);
-                    }
-                    if (res.data.medicion.nombre === 'Tiempo Habla') {
-                        arrNombreMediciones.push([res.data.medicion.nombre, i, Intensidad]);
-                        setNombresMediciones(arrNombreMediciones);
-                    }
-                    if (res.data.medicion.nombre === 'Postura') {
-                        arrNombreMediciones.push([res.data.medicion.nombre, i, Postura]);
-                        setNombresMediciones(arrNombreMediciones);
-                    }
-                }
-            };
-            traerMedicionesFase(medicionesFase);
+        if (fasesExp.length > 0) {
+            if (medicionesFases.length > 0) {
+                let medicionesActuales = medicionesFases[faseActiva];
+                setMedicionesSelected(medicionesActuales);
+            }
+        }
+        if (faseActiva === (fasesExp.length - 1)) {
+            setCambiarBoton(false);
         }
         return () => {
         }
-    }, [faseActiva, fases]);
+    }, [faseActiva, fasesExp]);
 
     const handleOpenModalGrupo = (nombreGrupo) => {
         setOpenModalGrupo(true);
@@ -415,25 +448,12 @@ export default function PreparacionExp() {
 
     const handleOpenModalParticipante = (nombreParticipante) => {
         setOpenModalParticipante(true);
-        // console.log(nombreParticipante)
         setParticipanteActivo(nombreParticipante);
     };
 
     const handleCloseModalParticipante = () => {
         let estado = !openModalParticipante;
         setOpenModalParticipante(estado);
-    };
-    const onDeleteObs = async (id) => {
-        // await axios.delete('http://localhost:81/api/observaciones/' + id);
-        console.log('borrar')
-    };
-
-    const onEditObs = (id) => {
-        console.log('editar')
-    };
-
-    const handleChange = (event, newTab) => {
-        setTab(newTab);
     };
 
     const handleOpenModalNuevoGrupo = () => {
@@ -445,9 +465,26 @@ export default function PreparacionExp() {
     };
 
     const guardarNuevoGrupo = () => {
+        //debo preguntar si tengo participantes eliminados
         let grupos = dataGrupos;
         let contador = 0;
         let arrTotal = new Array();
+
+        if (grupos.length === 0) {
+            contador = 1;
+            let descrip = 'Grupo ' + contador;
+            let arregloVacio = new Array();
+            let arrNuevo = {
+                descripcion: descrip,
+                numeroSerie: "",
+                participantes: arregloVacio,
+            }
+            arrTotal.push(arrNuevo);
+            let arrParticipantesTotal = arrarrParticipantes;
+            arrParticipantesTotal.push(arrNuevo['participantes'])
+            setDataGrupos(arrTotal);
+            setArrArrParticipantes(arrParticipantesTotal);
+        }
 
         if (grupos.length > 0) {
             contador = 1;
@@ -461,11 +498,14 @@ export default function PreparacionExp() {
                 let arregloVacio = new Array();
                 let arrNuevo = {
                     descripcion: descrip,
+                    numeroSerie: "",
                     participantes: arregloVacio,
                 }
                 arrTotal.push(arrNuevo);
                 setDataGrupos(arrTotal);
-                console.log(arrTotal);
+                let arrParticipantesTotal = arrarrParticipantes;
+                arrParticipantesTotal.push(arrNuevo['participantes']);
+                setArrArrParticipantes(arrParticipantesTotal);
             }
 
         }
@@ -483,12 +523,31 @@ export default function PreparacionExp() {
     const guardarNuevoParticipante = () => {
         let participantes = dataParticipantes;
         let grupoSelected = grupoSeleccionado;
+        let separador = " ";
+        let grupoString = grupoSelected.split(separador);
+        let indiceGrupo = parseInt(grupoString[1]) - 1;
         let contador = 0;
+        let arrarrGrupo = arrarrParticipantes;
         let arrTotal = new Array();
-        // console.log(participantes);
+
+        if (participantes.length === 0) {
+            contador = 1;
+            let descrip = 'Participante ' + contador;
+            let arregloVacio = "";
+            let arrNuevo = {
+                descripcion: descrip,
+                numeroSerie: arregloVacio,
+                grupoAsociado: grupoSelected,
+            }
+            arrTotal.push(arrNuevo);
+            arrarrGrupo[indiceGrupo] = arrTotal;
+            setDataParticipantes(arrTotal);
+            setArrArrParticipantes(arrarrGrupo);
+        }
         if (participantes.length > 0) {
             contador = 1;
         };
+
         for (let i = 0; i < participantes.length; i++) {
             contador = contador + 1;
             arrTotal.push(participantes[i]);
@@ -503,9 +562,9 @@ export default function PreparacionExp() {
                 }
                 arrTotal.push(arrNuevo);
                 setDataParticipantes(arrTotal);
-                console.log(arrTotal);
+                arrarrGrupo[indiceGrupo] = arrTotal;
+                setArrArrParticipantes(arrarrGrupo);
             }
-
         }
         closeModalNuevoParticipante();
     }
@@ -527,10 +586,8 @@ export default function PreparacionExp() {
 
     const enviarDatos = async () => {
         // e.preventDefault();
-        //dejarlo en pos de grupos y participantes
-        //debo verificar que lleguen datos - enviar - responder
         let data = {
-            idFase: fases.[faseActiva]._id,
+            idFase: fases[faseActiva]._id,
             descripcion: 'a',
             tiempo: 'hola'
         };
@@ -543,25 +600,17 @@ export default function PreparacionExp() {
         let arregloGrupos = dataGrupos;
         let dispositivoGrupo = '';
         let dispositivoNuevo = datosGrupos.numeroSerie;
-        // console.log(arregloGrupos);
 
         if (dispositivoNuevo != '') {
             for (let i = 0; i < arregloGrupos.length; i++) {
                 if (arregloGrupos[i].descripcion === grupo) {
                     dispositivoGrupo = dispositivoNuevo;
                     arregloGrupos[i].numeroSerie = dispositivoGrupo;
-                    console.log(arregloGrupos);
                     setDataGrupos(arregloGrupos);
                 }
             }
         }
         handleCloseModalGrupo();
-        // let data = {
-        //     idFase: fases.[faseActiva]._id,
-        //     grupo: datosGrupos.grupo,
-        //     dispositivo: datosGrupos.idDispositivo
-        // };
-        // guardarDispositivoGrupo(data);
     }
 
     const guardarDatosParticipante = async () => {
@@ -575,22 +624,15 @@ export default function PreparacionExp() {
                 if (arregloParticipantes[i].descripcion === participante) {
                     dispositivoPart = dispositivoNuevo;
                     arregloParticipantes[i].numeroSerie = dispositivoPart;
-                    console.log(arregloParticipantes);
                     setDataParticipantes(arregloParticipantes);
                 }
             }
         }
-
-        // let data = {
-        //     idFase: fases.[faseActiva]._id,
-        //     participante: participante,
-        //     numeroSerie: dispositivoPart
-        // };
-
         handleCloseModalParticipante();
     }
 
     const eliminarFila = (descripcion) => {
+
         let separador = " ";
         let tipo = descripcion.split(separador);
         let arregloInicial;
@@ -601,10 +643,10 @@ export default function PreparacionExp() {
 
         for (let i = 0; i < arregloInicial.length; i++) {
             if (arregloInicial[i]['descripcion'] === descripcion) {
-                arregloInicial.splice(i, 1)
+                arregloInicial.splice(i, 1);
                 if (i < arregloInicial.length) {
                     let actual = i;
-                    for (let j = 0; j < arregloFinal.length; j++) {
+                    for (let j = i; j < arregloFinal.length; j++) {
                         let ajuste = arregloFinal[actual]['descripcion'].split(separador);
                         if (tipo[0] === 'Grupo') {
                             arregloFinal[actual]['descripcion'] = ('Grupo ' + (parseInt(ajuste[1]) - 1));
@@ -612,9 +654,22 @@ export default function PreparacionExp() {
                         if (tipo[0] === 'Participante') {
                             arregloFinal[actual]['descripcion'] = ('Participante ' + (parseInt(ajuste[1]) - 1));
                         }
-                        console.log(arregloFinal);
+                        if (actual < arregloFinal.length - 1) {
+                            actual = actual + 1
+                        }
                     }
                     if (tipo[0] === 'Grupo') {
+                        let arrarrParticipantesB = arrarrParticipantes;
+                        arrarrParticipantesB.splice(i, 1);
+                        for (let h = i; h < arrarrParticipantesB.length; h++) {
+                            for (let g = 0; g < arrarrParticipantesB[h].length; g++) {
+                                if (arrarrParticipantesB[h][g].hasOwnProperty('grupoAsociado')) {
+                                    let ajusteArrArr = arrarrParticipantesB[h][g]['grupoAsociado'].split(separador);
+                                    arrarrParticipantesB[h][g]['grupoAsociado'] = ('Grupo ' + (parseInt(ajusteArrArr[1]) - 1));
+                                }
+                            }
+                        }
+
                         setDataGrupos(arregloFinal);
                         setDataParticipantes([]);
                         setBanderaGrupo(!banderaGrupo);
@@ -625,27 +680,29 @@ export default function PreparacionExp() {
                         setDataParticipantes(arregloFinal);
                         setBanderaParticipantes(!banderaParticipantes);
                     }
-                }
-                if (tipo[0] === 'Grupo') {
-                    setDataGrupos(arregloFinal);
-                    setDataParticipantes([]);
-                    setBanderaGrupo(!banderaGrupo);
-                    setBanderaParticipantes(!banderaParticipantes);
-                }
-                if (tipo[0] === 'Participante') {
-                    setDataParticipantes(arregloFinal);
-                    setBanderaParticipantes(!banderaParticipantes);
+                } else {
+                    if (tipo[0] === 'Grupo') {
+                        let arrarrParticipantesB = arrarrParticipantes;
+                        arrarrParticipantesB.splice(i, 1);
+
+                        setDataGrupos(arregloFinal);
+                        setDataParticipantes([]);
+                        setBanderaGrupo(!banderaGrupo);
+                        setBanderaParticipantes(!banderaParticipantes);
+                    }
+                    if (tipo[0] === 'Participante') {
+                        setDataParticipantes(arregloFinal);
+                        setBanderaParticipantes(!banderaParticipantes);
+                    }
                 }
             }
         }
     }
 
     const guardarObservacion = async (data) => {
-        console.log('guardar datos: ', data)
     }
 
     const guardarDispositivoGrupo = async (data) => {
-        console.log('guardar datos: ', data);
         handleCloseModalGrupo();
         handleCloseModalParticipante();
     }
@@ -653,27 +710,36 @@ export default function PreparacionExp() {
     const clickGrupos = (name) => {
         let seleccionado = selected;
         let arregloGrupo = dataGrupos;
+        // let participantes = dataParticipantes;
         let idGrupo = name;
         let conteoSelec = conteoSelectedG;
+
         for (let i = 0; i < arregloGrupo.length; i++) {
             if (conteoSelec < 1 || (conteoSelec === 1)) {
                 if (arregloGrupo[i]['descripcion'] === idGrupo) {
                     setSelected(!seleccionado);
-                    // arregloGrupo[i].seleccionado = !seleccionado;
                     let arregloGruposSeleccionados = arregloGruposSelect;
                     if (conteoSelec === 0) {
                         if (arregloGruposSeleccionados[0][idGrupo] === false) {
                             let conteo = conteoSelec + 1;
                             setConteoSelectedG(conteo);
+                            setGrupoSeleccionado(idGrupo);
                             arregloGruposSeleccionados[0][idGrupo] = !(arregloGruposSeleccionados[0][idGrupo]);
+
                             traerParticipantesGrupo(arregloGrupo[i]);
+                            setNombreGrupoHeader(name);
+                            setHiddenParticipantes(false);
                         }
                     }
                     if (conteoSelec === 1) {
                         if (arregloGruposSeleccionados[0][idGrupo] === true) {
                             let conteo = conteoSelec - 1;
                             setConteoSelectedG(conteo);
+                            setGrupoSeleccionado(idGrupo);
                             arregloGruposSeleccionados[0][idGrupo] = !(arregloGruposSeleccionados[0][idGrupo]);
+                            setDataParticipantes([]);
+                            setNombreGrupoHeader('');
+                            setHiddenParticipantes(true);
                         }
                     }
                     setFilas(arregloGrupo);
@@ -683,77 +749,23 @@ export default function PreparacionExp() {
         };
     }
 
-    const traerParticipantesGrupo = async (grupo) => {
-        // let arregloGrupos = dataGrupos;
-        let nuevoArreglo = new Array();
+    const traerParticipantesGrupo = (grupo) => {
         let infoGrupo = grupo;
+        let separador = " ";
+        let indiceArrPart = infoGrupo['descripcion'].split(separador);
         if (infoGrupo.hasOwnProperty('_id')) {
-            // console.log(infoGrupo);
-            for (let i = 0; i < infoGrupo['participantes'].length; i++) {
-                console.log(infoGrupo['participantes'][i]);
-                //debo consultar los participantes y actualizar dataParticipantes, ademas de agregarlos todos al arreglo de participantes para asi
-                //cambiar del arreglo de participantes a dataParticipantes
-            }
-
-        }else{
-            console.log('Este Grupo no tiene Id, es Local');
+            setDataParticipantes(arrarrParticipantes[(parseInt(indiceArrPart[1]) - 1)]);
+        } else {
+            //reevaluar porque sea quien sea, debe tener el parametro de participantes y debe estar vacio o no entonces debo guardarlo o no
+            setDataParticipantes(arrarrParticipantes[(parseInt(indiceArrPart[1]) - 1)]);
         }
-        // let participantes = dataParticipantes;
-       
-        // nuevoArreglo.push(participantes);
-
-        // let aregloGrupos = arrGrupos;
-        // let arrParticipantes = new Array();
-        // // let arrGrupos = new Array();
-        // let arrTotal = new Array();
-        // for (let i = 0; i < aregloGrupos.length; i++) {
-        //     arrParticipantes.push(aregloGrupos[i].participantes);
-        // }
-        // for (let i = 0; i < arrParticipantes.length; i++) {
-        //     for (let j = 0; j < arrParticipantes[i].length; j++) {
-        //         if (arrParticipantes[i][j] != '') {
-        //             const res = await axios.get('http://localhost:81/api/participantes/' + arrParticipantes[i][j]);
-        //             arrTotal.push(res.data.participante);
-        //             // console.log(res.data);
-        //         }
-        //     }
-        // }
-        // // console.log(arrTotal);
-        // setDataParticipantes(arrTotal);
-        //poner los Arreglos dentro de un arreglo de Arreglos
     }
-
-    // const isSelected = (name) => selected.indexOf(name) !== -1;
-
-    // const clickParticipantes = (seleccionado, name) => {
-    //     let arregloParticipantes = filasPart;
-    //     let idParticipantes = name;
-    //     let conteoSelec = conteoSelectedPart;
-    //     for (let i = 0; i < arregloParticipantes.length; i++) {
-    //         if (conteoSelec < 1 || (conteoSelec === 1 && seleccionado === true)) {
-    //             if (arregloParticipantes[i].id === idParticipantes) {
-    //                 arregloParticipantes[i].seleccionado = !seleccionado;
-    //                 if (arregloParticipantes[i].seleccionado === true) {
-    //                     conteoSelec = conteoSelec + 1;
-    //                     setConteoSelectedPart(conteoSelec);
-    //                 } else {
-    //                     conteoSelec = conteoSelec - 1;
-    //                     setConteoSelectedPart(conteoSelec);
-
-    //                 }
-    //                 setFilasPart(arregloParticipantes);
-    //                 setBanderaParticipantes(!banderaParticipantes);
-    //             }
-    //         }
-    //     };
-    // }
 
     const guardarTodo = () => {
         let arregloGrupo = dataGrupos;
         let arregloParticipantes = dataParticipantes;
         let id;
         for (let i = 0; i < arregloGrupo.length; i++) {
-            console.log(arregloGrupo[i]);
         }
         for (let i = 0; i < arregloParticipantes.length; i++) {
             if (arregloParticipantes[i].hasOwnProperty('_id')) {
@@ -763,14 +775,280 @@ export default function PreparacionExp() {
                 // si no existe alguno, entonces debo eliminar ese participante de su tabla y del arreglo de tabla Grupos
             }
             //else - si no tiene id necesito agregarlo por POST y traer su id para colocarla en el arreglo de tabla Grupos
-            // console.log(arregloParticipantes[i]);
         }
+    }
+
+    const cambiarFaseActiva = (fase) => {
+
+        if (fase < fasesExp.length) {
+
+            setGrupoComparacion(arregloFasesGrupos[fase]);
+            traerParticipantesIniciales(arrFasesxGrupo[fase])
+            setFaseActiva(fase);
+
+            setDataGrupos(arrFasesxGrupo[fase]);
+            traerParticipantes(arrFasesxGrupo[fase], 'inicio');
+
+            setDataParticipantes([]);
+            setNombreGrupoHeader('');
+            setHiddenParticipantes(true);
+            setConteoSelectedG(0);
+            let arregloGruposSeleccionados = arregloGruposSelect[0];
+            let tamañoObjetos = Object.keys(arregloGruposSeleccionados)
+            for (let i = 0; i < tamañoObjetos.length; i++) {
+                let grupo = tamañoObjetos[i]
+                if (arregloGruposSeleccionados[grupo] === true) {
+                    arregloGruposSeleccionados[grupo] = false;
+                }
+            }
+        } else {
+            //usar replace para evitar retrocesos de pagina
+            // window.location.replace("http://");
+            window.location.href = "http://localhost/ejecucion/" + idUrl['id'];
+        }
+
+
+    }
+
+    const handleOpenModalGuardarDatos = (estado) => {
+        let dirFaseActiva = direccionFaseActiva
+        setOpenModalGuardarDatos(true);
+        dirFaseActiva = estado;
+        setDireccionFaseActiva(dirFaseActiva);
+    }
+
+    const closeModalGuardarDatos = async (estado) => {
+        if (estado === 'Salir') {
+            setOpenModalGuardarDatos(false);
+            console.log('salir')
+            setTimeout(
+                function () {
+                    window.location.href = "http://localhost/inicio";
+                },
+                2000
+            );
+        }
+        if (direccionFaseActiva > (fasesExp.length - 1)) {
+            console.log(faseActiva);
+            setOpenModalGuardarDatos(false);
+            let Etapa = {
+                nombreExp: nombreExp,
+                estado: 'Ejecucion'
+            }
+            const resEtapa = await axios.put('http://localhost:81/api/experimentos/' + idExperimento, Etapa);
+            setTimeout(
+                function () {
+                    window.location.href = "http://localhost/ejecucion/" + idExperimento;
+                },
+                2000
+            );
+        }
+        else if (direccionFaseActiva === (fasesExp.length - 1)) {
+            cambiarFaseActiva(estado)
+            setCambiarBoton(false);
+            setOpenModalGuardarDatos(false);
+        }
+        else {
+            setCambiarBoton(true);
+            cambiarFaseActiva(estado)
+            setOpenModalGuardarDatos(false);
+        }
+    }
+
+    const guardarDatosFase = async (estado) => {
+        // una vez que este en la ultima fase, debo de guardar los datos y reedireccionar a ejecucion, ademas de cambiar el estado de la fase o experimento
+        let arrIdParticipantes = new Array();
+        let arrIdGrupos = new Array();
+
+        let idFase = fasesExp[faseActiva]['_id'];
+        let arregloGrupos = dataGrupos;
+        let arregloParticipantesxGrupo = arrarrParticipantes;
+        let comparacionGrupo = grupoComparacion;
+        let comparacionParticipantes = particiComparacion;
+        let grupoEliminado = false;
+        let nuevaData = false;
+
+        // comparacion de arreglos y eliminacion de datos por DELETE +Solo para saber si se requiere eliminar de BD+
+        // lo importante es determinar cual grupo o participante ya no esta, para asi eliminarlos y actualizar sus arreglos
+        if (comparacionGrupo.length > 0) {
+            let comparacionG = comparacionGrupo.length;
+            for (let i = 0; i < comparacionG; i++) {
+                let idComGr = comparacionGrupo[i]['_id'];
+                let encontradoG = '';
+
+                for (let m = 0; m < arregloGrupos.length; m++) {
+                    if (arregloGrupos[m].hasOwnProperty('_id')) {
+                        if (arregloGrupos[m]['_id'] === idComGr) {
+                            encontradoG = idComGr;
+                        }
+                    }
+                }
+                if (encontradoG === '') {
+                    //cambiar el arreglo de la fase y actualizar la fase sin la id del grupo actual
+                    let fase = faseActiva;
+                    let idFaseActiva = idFase;
+                    let idFaseGrupos = fasesExp[fase]['idGrupos'];
+                    let numeroGrupos = idFaseGrupos.length;
+                    let arregIdGrupos = new Array();
+                    for (let n = 0; n < numeroGrupos; n++) {
+                        if (idFaseGrupos[n] != idComGr) {
+                            arregIdGrupos.push(idFaseGrupos[n]);
+                        }
+                    }
+                    //la fase debe recibir el arreglo de grupos especificamente
+                    let arrGruposID = {
+                        idGrupos: arregIdGrupos
+                    }
+                    console.log('Actualizando Fase - Grupo Eliminado... ');
+                    const resFases = await axios.put('http://localhost:81/api/fases/agregarGrupos/' + idFaseActiva, arrGruposID);
+                    let arrDelGrupo = comparacionGrupo[i]['_id'];
+                    console.log('Eliminando Grupo... ');
+                    const resGrupos = await axios.delete('http://localhost:81/api/grupos/' + arrDelGrupo);
+
+                    let arrDelPart = comparacionParticipantes[i];
+                    for (let p = 0; p < arrDelPart.length; p++) {
+                        console.log('Eliminando varios Participantes...  ');
+                        const resParticipantes = await axios.delete('http://localhost:81/api/participantes/' + arrDelPart[p]['_id']);
+                    }
+                    comparacionGrupo.splice(i, 1)
+                    comparacionParticipantes.splice(i, 1);
+                    comparacionG = comparacionG - 1;
+                }
+
+                if (comparacionParticipantes.length > 0) {
+                    let comparacionP = comparacionParticipantes[i].length;
+                    for (let j = 0; j < comparacionP; j++) {
+                        let idComPart = comparacionParticipantes[i][j]['_id'];
+                        let encontradoP = '';
+                        for (let k = 0; k < arregloParticipantesxGrupo.length; k++) {
+                            for (let l = 0; l < arregloParticipantesxGrupo[k].length; l++) {
+                                if (arregloParticipantesxGrupo[k][l].hasOwnProperty('_id')) {
+                                    if (arregloParticipantesxGrupo[k][l]['_id'] === idComPart) {
+                                        encontradoP = idComPart;
+                                    }
+                                }
+                            }
+                        }
+                        if (encontradoP === '') {
+                            let idGrupoArreglo = idComGr;
+                            let idParticipante = idComPart;
+                            let idParticipantes = comparacionGrupo[i]['participantes'];
+                            let nuevoArrIdParticipantes = comparacionGrupo[i]['participantes'];
+                            for (let o = 0; o < idParticipantes.length; o++) {
+                                if (idParticipantes[o] === idParticipante) {
+                                    nuevoArrIdParticipantes.splice(o, 1);
+                                    let arrParticipantesID = {
+                                        participantes: nuevoArrIdParticipantes,
+                                    }
+
+                                    console.log('Actualizando Grupos con nuevosParticipantes... ');
+                                    const res = await axios.put('http://localhost:81/api/grupos/agregarParticipantes/' + idGrupoArreglo, arrParticipantesID);
+                                }
+                            }
+                            comparacionGrupo[i]['participantes'] = nuevoArrIdParticipantes;
+
+                            console.log('Eliminando Participante... ');
+                            const resParticipante = await axios.delete('http://localhost:81/api/participantes/' + idParticipante);
+                            comparacionParticipantes[i].splice(j, 1);
+                            comparacionP = comparacionP - 1;
+
+                            //comprobar que se esta elminando bien del arreglo y revisar lo siguiente, se debe eliminar del arreglo de grupos y actualizar y eliminar el participante
+                        }
+                    }
+                }
+            }
+        }
+
+        if (arregloGrupos.length > 0) {
+            let arrIdGrupos = new Array();
+            for (let i = 0; i < arregloGrupos.length; i++) {
+                let arrIdParticipantes = new Array();
+                if (arregloParticipantesxGrupo.length > 0) {
+                    if (arregloParticipantesxGrupo[i].length > 0) {
+                        for (let j = 0; j < arregloParticipantesxGrupo[i].length; j++) {
+                            if (arregloParticipantesxGrupo[i][j].hasOwnProperty('_id')) {
+                                let datosParticipante = {
+                                    numeroSerie: arregloParticipantesxGrupo[i][j]['numeroSerie'],
+                                    descripcion: arregloParticipantesxGrupo[i][j]['descripcion']
+                                };
+
+                                console.log('Actualizando Participante..');
+                                const resParticipante = await axios.put('http://localhost:81/api/participantes/' + arregloParticipantesxGrupo[i][j]['_id'], datosParticipante);
+                                arrIdParticipantes.push(arregloParticipantesxGrupo[i][j]['_id']);
+
+                            }
+                            if (arregloParticipantesxGrupo[i][j].hasOwnProperty('_id') === false) {
+                                let datosParticipante = {
+                                    numeroSerie: arregloParticipantesxGrupo[i][j]['numeroSerie'],
+                                    descripcion: arregloParticipantesxGrupo[i][j]['descripcion']
+                                };
+                                const resParticipante = await axios.post('http://localhost:81/api/participantes', datosParticipante);
+                                arrIdParticipantes.push(resParticipante.data.mensaje);
+                                console.log('Nuevo Participante creado... ');
+                                //ademas debo recibir su id y guardarla en arrIDParticipantes para subirlo a grupos
+                            }
+                        }
+                    }
+                }
+
+                //actualizar la info de arregloGrupos con el nuevo arrIdParticipantes
+                if (arregloGrupos[i].hasOwnProperty('_id')) {
+                    let datosGrupo = {
+                        participantes: arrIdParticipantes,
+                        descripcion: arregloGrupos[i]['descripcion'],
+                        numeroSerie: arregloGrupos[i]['numeroSerie'],
+                    }
+                    console.log('Actualizando Grupo...');
+                    const resGrupos = await axios.put('http://localhost:81/api/grupos/' + arregloGrupos[i]['_id'], datosGrupo);
+                    arrIdGrupos.push(arregloGrupos[i]['_id']);
+                    nuevaData = true;
+                    arrIdParticipantes = new Array();
+                    // actualizar por por PUT toda su info nueva
+                }
+                if (arregloGrupos[i].hasOwnProperty('_id') === false) {
+                    //subir por POST toda su info
+                    let datosGrupo = {
+                        participantes: arrIdParticipantes,
+                        descripcion: arregloGrupos[i]['descripcion'],
+                        numeroSerie: arregloGrupos[i]['numeroSerie'],
+                    }
+                    console.log('Creando Grupo Nuevo... ');
+                    const resGrupos = await axios.post('http://localhost:81/api/grupos', datosGrupo);
+                    arrIdGrupos.push(resGrupos.data.mensaje);
+
+                    nuevaData = true;
+                    arrIdParticipantes = new Array();
+                    // debo actualizar el arreglo de fases al crear nuevo grupo
+                }
+            }
+
+            if (nuevaData === true) {
+                let arregloIdGrupos = {
+                    idGrupos: arrIdGrupos
+                };
+                console.log('actualizando fase arregloGrupos... ')
+                const resFases = await axios.put('http://localhost:81/api/fases/agregarGrupos/' + idFase, arregloIdGrupos);
+                arregloIdGrupos = new Array();
+            }
+        }
+        closeModalGuardarDatos(estado);
+        // cambiarFaseActiva(faseActiva + 1);
+    }
+
+    const botonCancelar = () => {
+        // ========= este deberia eliminar todo lo creado hasta ahora
+        setTimeout(
+            function () {
+                window.location.href = "http://localhost/inicio";
+            },
+            2000
+        );
     }
 
     return (
         <div>
             <div className="card-title" >
-                <h3 style={{ color: 'white' }}>Ejecucion Experimento</h3>
+                <h3 style={{ color: 'white' }}>Preparacion Experimento</h3>
                 <div className="card">
                     <div className="card-header">
                         <h4>{nombreExp}</h4>
@@ -780,7 +1058,8 @@ export default function PreparacionExp() {
                             {
                                 fasesExp.map(fase => (
                                     <Step key={fase._id}>
-                                        <StepButton onClick={() => setFaseActiva(fase.numeroFase - 1)}>Fase {fase.numeroFase}</StepButton>
+                                        {/* esta funcion debe ser igual que la anterior y debe de llamar un modal igualmente */}
+                                        <StepButton onClick={() => handleOpenModalGuardarDatos(fase.numeroFase - 1)}>Fase {fase.numeroFase}</StepButton>
                                     </Step>
                                 ))
                             }
@@ -825,6 +1104,7 @@ export default function PreparacionExp() {
                                                                             </div>
                                                                             <div className="card-footer">
                                                                                 <div style={{ float: "right" }}>
+                                                                                    {/* ========================================= PARA ADONDE VOY ADELANTE O UNO ESPECIFICO ============================================ */}
                                                                                     <Button variant="contained" onClick={closeModalNuevoGrupo} size="small" color="secondary" style={{ margin: 3, textAlign: 'center' }}>
                                                                                         no
                                                                                     </Button>
@@ -915,10 +1195,10 @@ export default function PreparacionExp() {
 
                                                 <Grid container spacing={12}>
                                                     <Grid item xs={7}>
-                                                        <h4>Participantes Grupo 1</h4>
+                                                        <h4>Participantes {nombreGrupoHeader}</h4>
                                                     </Grid>
                                                     <Grid item xs={2} >
-                                                        <div style={{ float: "right" }} className={classes.fawesome} >
+                                                        <div hidden={hiddenParticipantes} style={{ float: "right" }} className={classes.fawesome} >
                                                             <IconButton size="small" variant="contained" color="primary" onClick={handleOpenModalNuevoParticipante} style={{ margin: 0, textAlign: 'left' }}>
                                                                 <Icon className="fa fa-plus-square" color="primary" />
                                                             </IconButton >
@@ -1029,66 +1309,105 @@ export default function PreparacionExp() {
                                             </Grid>
                                         </Grid>
                                         <Grid item xs={7} style={{ float: 'none', margin: 'auto', }}>
-                                            <h4>Estado de Mediciones</h4>
-                                            <div className={classes.tabsStyles}>
-                                                <TabPanel value={tab} index={0}>
-                                                    <Grid container spacing={12}>
-                                                        <Grid item xs={12}>
-                                                            <Grid item xs={12}>
-                                                                <TableContainer component={Paper} style={{ maxHeight: 300, minHeight: 200 }}>
-                                                                    <Table size="small" stickyHeader aria-label="sticky table" height="300" >
-                                                                        <TableHead>
-                                                                            <TableRow>
-                                                                                <TableCell>Estado</TableCell>
-                                                                                <TableCell>Nombre</TableCell>
-                                                                                <TableCell>Participante</TableCell>
-                                                                                <TableCell>Dispositivo</TableCell>
-                                                                            </TableRow>
-                                                                        </TableHead>
+                                            <h4>Mediciones a Registrar</h4>
+                                            <Grid container spacing={12}>
+                                                <Grid item xs={12}>
+                                                    <Grid item xs={12}>
+                                                        <TableContainer component={Paper} style={{ maxHeight: 300, minHeight: 200 }}>
+                                                            <Table size="small" stickyHeader aria-label="sticky table" height="300" >
+                                                                <TableHead >
+                                                                    <TableRow style={{ height: 50, }}>
+                                                                        <TableCell>Nombre</TableCell>
+                                                                        <TableCell>Descripcion</TableCell>
+                                                                        <TableCell>Tipo de Medicion</TableCell>
+                                                                        <TableCell>Dispositivo</TableCell>
+                                                                        <TableCell>Estado</TableCell>
+                                                                    </TableRow>
+                                                                </TableHead>
+                                                                {
+                                                                    banderaTabla ?
                                                                         <TableBody>
-                                                                            {rows.map((row) => (
-                                                                                <TableRow key={row.name}>
-                                                                                    <TableCell padding="checkbox">
-                                                                                        <Checkbox
-                                                                                            checked={true}
-                                                                                            style={{ color: 'blue' }}
-                                                                                        // inputProps={{ 'aria-labelledby': labelId }}
-                                                                                        />
-                                                                                    </TableCell>
-                                                                                    <TableCell component="th" scope="row">{row.nombre}</TableCell>
-                                                                                    <TableCell component="th" scope="row">{row.participante}</TableCell>
-                                                                                    <TableCell component="th" scope="row">{row.dispositivo}</TableCell>
-                                                                                </TableRow>
-                                                                            ))}
+                                                                            {medicionesSelected.map((row) => {
+                                                                                return (
+                                                                                    <TableRow key={row._id}>
+                                                                                        <TableCell component="th" scope="row">{row.nombre}</TableCell>
+                                                                                        <TableCell component="th" scope="row">{row.nombre}</TableCell>
+                                                                                        <TableCell component="th" style={{ textAlign: "center" }} scope="row">{row.idTipoMedicion}</TableCell>
+                                                                                        <TableCell component="th" scope="row">Tipo Dispositivo</TableCell>
+                                                                                        {
+                                                                                            // al usar socket.io, se debe alterar esta variable
+                                                                                            row.estado ?
+                                                                                                <TableCell onClick={() => console.log(row)} component="th" scope="row"><Icon style={{ color: 'green' }} className="fa fa-circle"></Icon> </TableCell>
+                                                                                                :
+                                                                                                <TableCell onClick={() => console.log(row)} component="th" scope="row"><Icon style={{ color: 'red' }} className="fa fa-circle"></Icon></TableCell>
+                                                                                        }
+                                                                                    </TableRow>
+                                                                                )
+                                                                            })}
                                                                         </TableBody>
-                                                                    </Table>
-                                                                </TableContainer>
-                                                            </Grid>
-                                                        </Grid>
+                                                                        : <TableRow>
+                                                                            <TableCell align="center" colSpan={5}>
+                                                                                <Box sx={{ width: "auto", padding: 10 }}>
+                                                                                    <CircularProgress color="inherit" />
+                                                                                </Box>
+                                                                            </TableCell>
+                                                                        </TableRow>
+                                                                }
+                                                            </Table>
+                                                        </TableContainer>
                                                     </Grid>
-                                                </TabPanel>
-                                            </div>
+                                                </Grid>
+                                            </Grid>
                                         </Grid>
                                     </Grid>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div className="card-body">
-                        <div className="card-header">
-                            <Grid container spacing={12}>
-                                <Grid item xs={12}>
-                                </Grid>
-                            </Grid>
-                        </div>
-                    </div>
                     <div className="card-footer">
+                        <Modal
+                            backdropColor="transparent"
+                            open={openModalGuardarDatos}
+                            onClose={() => closeModalGuardarDatos(direccionFaseActiva)}
+                            closeAfterTransition
+                            BackdropComponent={Backdrop}
+                            BackdropProps={{
+                                timeout: 500,
+                            }}
+                        >
+                            <Fade in={openModalGuardarDatos} >
+                                <div className="container-fluid" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                                    <Grid item xs={4} >
+                                        <div className="card" >
+                                            <div className="card-header">
+                                                <h4>Cambiar Fase</h4>
+                                            </div>
+                                            <div className="card-body">
+                                                <h5>¿Desea guardar los cambios realizados en esta fase?</h5>
+                                            </div>
+                                            <div className="card-footer">
+                                                <div style={{ float: "right" }}>
+                                                    {/*  ========================================= PARA DONDE VOY ADELANTE O UNO ESPECIFICO ================================ */}
+                                                    <Button variant="contained" onClick={() => closeModalGuardarDatos(direccionFaseActiva)} size="small" color="secondary" style={{ margin: 3, textAlign: 'center' }}>
+                                                        No
+                                                    </Button>
+                                                    <Button variant="contained" type="submit" onClick={() => guardarDatosFase(direccionFaseActiva)} size="small" color="primary" style={{ margin: 3, textAlign: 'center' }}>
+                                                        Si
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </Grid>
+                                </div>
+                            </Fade>
+                        </Modal>
                         <div style={{ float: "right" }}>
                             <Button
                                 variant="contained"
                                 color="secondary"
                                 size="small"
                                 style={{ margin: 3, textAlign: 'center' }}
+                                onClick={() => botonCancelar()}
                             >
                                 Cancelar
                             </Button>
@@ -1097,19 +1416,32 @@ export default function PreparacionExp() {
                                 color="primary"
                                 size="small"
                                 style={{ margin: 3, textAlign: 'center' }}
-                                onClick={guardarTodo}
+                                onClick={() => guardarDatosFase('Salir')}
                             >
                                 Guardar y Salir
                             </Button>
-                            <Button
-                                variant="contained"
-                                color="default"
-                                onClick={() => setFaseActiva(faseActiva + 1)}
-                                size="small"
-                                style={{ margin: 3 }}
-                            >
-                                Continuar Fase
-                            </Button>
+                            {
+                                cambiarBoton ?
+                                    <Button
+                                        variant="contained"
+                                        color="default"
+                                        onClick={() => handleOpenModalGuardarDatos(faseActiva + 1)}
+                                        size="small"
+                                        style={{ margin: 3 }}
+                                    >
+                                        Continuar Fase
+                                    </Button>
+                                    :
+                                    <Button
+                                        variant="contained"
+                                        color="green"
+                                        onClick={() => handleOpenModalGuardarDatos(faseActiva + 1)}
+                                        size="small"
+                                        style={{ margin: 3 }}
+                                    >
+                                        Continuar Ejecución
+                                    </Button>
+                            }
                         </div>
                     </div>
                 </div>

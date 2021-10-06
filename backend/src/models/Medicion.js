@@ -24,6 +24,7 @@ const medicionSchema = new Schema({
     tiempo: {
         type: Number
     },
+    dispositivosAsociados: []
 }, {
     timestamps: true
 });

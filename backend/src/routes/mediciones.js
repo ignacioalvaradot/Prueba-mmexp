@@ -2,7 +2,7 @@
 const { Router } = require('express');
 const router = Router();
 
-const { getMediciones, createMedicion, getMedicion, updateMedicion, deleteMedicion } = require('../controllers/mediciones.controller');
+const { getMediciones, createMedicion, getMedicion, updateMedicion, deleteMedicion, updateMedicionDispositivos } = require('../controllers/mediciones.controller');
 
 // Tomar de la ruta inicial, consultas HTTP
 router.route('/')
@@ -14,5 +14,8 @@ router.route('/:id')
     .get(getMedicion)
     .put(updateMedicion)
     .delete(deleteMedicion);
+
+router.route('/actualizarDispositivos/:id')
+    .put(updateMedicionDispositivos);
 
 module.exports = router;

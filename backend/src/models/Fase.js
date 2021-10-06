@@ -15,10 +15,13 @@ const fasesSchema = new Schema({
     },
     descripcion: String,
 
-    fechaFase: {
-        type: Date,
-        default: Date.now
-    },
+    // fechaFase: {
+    //     type: Date,
+    //     default: Date.now
+    // },
+    
+    fechaFase: String,
+
     tiempoInicio: {
         type: Number,
         required: true
@@ -28,10 +31,9 @@ const fasesSchema = new Schema({
         required: true
     },
     enlaceDocumentos: String,
-    estadoFase: {
-        type: String,
-        required: true
-    },
+    // estadoFase: {
+    //     type: String,
+    // },
     idMediciones: [],
     idObservaciones: [],
     idGrupos: [],

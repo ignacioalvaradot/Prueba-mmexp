@@ -9,13 +9,16 @@ ExpCtrl.getExp = async (req, res) => {
 }
 
 ExpCtrl.createExp = async (req, res) => {
-    const { nombreExp, descripcion } = req.body;
+    const { estado, nombreExp, fasesId } = req.body;
     const newExperimento = new Experimento({
+        estado: estado,
         nombreExp: nombreExp,
-        descripcion: descripcion,
+        // descripcion: descripcion,
+        fasesId: fasesId,
+        faseActiva: 0,
     });
     await newExperimento.save();
-    res.json({mensaje: 'Experimento Guardado'});
+    res.json({mensaje: newExperimento._id});
 };
 
 
@@ -24,11 +27,19 @@ ExpCtrl.getExps = async (req, res) => {
     res.json({ experimento });
 };
 
+ExpCtrl.getExperimentos = async (req, res) => {
+    const estado  = req.params.tipoExp
+    // console.log(estado)
+    const experimento = await Experimento.find({estado: estado})
+    res.json({ experimento });
+};
+
+
 ExpCtrl.updateExp = async (req, res) => {
-    const { nombreExp, descripcion } = req.body;
+    const { nombreExp, estado } = req.body;
     await Experimento.findOneAndUpdate({_id: req.params.id}, {
         nombreExp,
-        descripcion
+        estado
     });
     res.json({mensaje: 'Experimento Actualizado'});
 };
@@ -39,6 +50,14 @@ ExpCtrl.updateExpFase = async (req, res) => {
         fasesId
     });
     res.json({mensaje: 'Fase Agregada'});
+};
+
+ExpCtrl.updateFaseActiva = async (req, res) => {
+    const { faseActiva } = req.body;
+    await Experimento.findOneAndUpdate({_id: req.params.id}, {
+        faseActiva
+    });
+    res.json({mensaje: 'Fase Activa Agregada'});
 };
 
 ExpCtrl.deleteExp = async (req, res) => {

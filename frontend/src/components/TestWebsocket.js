@@ -6,70 +6,51 @@ export default function TestWebsocket() {
     // const uri = "http://localhost:5000/";
     //     const ws = useRef(null);
 
-    //     useEffect(() => {
-    //         ws.current = new WebSocket("wss://echo.websocket.org");
-    //         ws.current.onopen = () => console.log("ws opened");
-    //         ws.current.onclose = () => console.log("ws closed");
-
-    //         return () => {
-    //             ws.current.close();
-    //         };
-    ////eslint-disable-next-line
-    //     }, []);
-
     var socket;
-    const connect = () => {
-        console.log('aa')
-        socket = io.connect("http://localhost:5000/");
-        socket.on('after connect', function(msg) {
-            console.log('After connect', msg);
-            // $('#log').append('<br>' + $('<div/>').text('Received: ' + msg.data).html());
+    let desconectar = {
+        disabled: true
+    }
+    let conectar = {
+        disabled: false
+    }
+    let varDireccion= 'vad_doa';
+        // var jobValue = document.getElementsByName('txtJob')[0].value
+
+    const connect1 = () => {
+        // conectando al servidor
+        // socket = io.connect("http://localhost:5000/");
+        // //Para emitir eventos al servidor socket
+        // // socket.emit('request', /* */); 
+        
+        // // escuchando los eventos
+        // socket.on('after connect', function(msg) {
+        //     console.log('After connect', msg);
+        //     // $('#log').append('<br>' + $('<div/>').text('Received: ' + msg.data).html());
+        // });
+
+        socket = io.connect('http://192.168.0.4:200/intensidad');
+        socket.on('SendMetrics', function(msg) {
+            console.log('SendMetrics', msg);
+            // $('#log').html('<br>' + $('<div/>').text('Received: ' + JSON.stringify(msg)).html());
         });
         
     }
-    const disconnect = () => {
+    const disconnect1 = () => {
+        // desconectar el socket del servidor
+        conectar['disabled'] = false;
+        desconectar['disabled'] = true;
         socket.disconnect();
     }
-
-    // useEffect(() => {
-    //     const socket = io.connect(uri, { forceNew: true });
-    //     console.log(socket)
-
-    //     // // socket.on("connect", () => {
-    //     // //     // either with send()
-    //     // //     // socket.send("Hello!");
-
-    //     // //     // or with emit() and custom event names
-    //     // //     // socket.emit("salutations", "Hello!", { "mr": "john" }, Uint8Array.from([1, 2, 3, 4]));
-    //     // // });
-
-    //     // socket.on("messages", function (data) {
-    //     //     console.log(data);
-    //     // });
-    // }, []);
-
-    //     useEffect(() => {
-    //         if (!ws.current) return;
-
-    //         ws.current.onmessage = e => {
-    //             if (isPaused) return;
-    //             const message = JSON.parse(e.data);
-    //             console.log("e", message);
-    //         };
-    //     }, [isPaused]);
 
     return (
         <div>
             <div id="messages">En desarrollo</div>
-            <button onClick={connect}>
+            <button onClick={connect1}>
                 conectar
             </button>
-            <button onClick={disconnect}>
+            <button onClick={disconnect1}>
                 desconectar
             </button>
-            {/* <button onClick={() => setPause(!isPaused)}>
-                {isPaused ? "Resume" : "Pause"}
-            </button> */}
         </div>
     );
 }
