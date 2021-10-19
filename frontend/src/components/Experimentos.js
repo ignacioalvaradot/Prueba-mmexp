@@ -142,6 +142,9 @@ export default function AnalisisExp() {
                 console.log(tipo);
                 setTipoEdicion(tipo);
                 axios.get('http://localhost:81/api/experimentos/traerExp/' + tipo).then((value) => { setGetExperimentos(value.data.experimento) });
+                if(tipo==='Preparacion'){
+                    setTipoEdicion('preparacionConfig');
+                }
             }
         }
 

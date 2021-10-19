@@ -250,7 +250,7 @@ export default function AnalisisExp() {
                                                             <Grid item xs={10}>
                                                                 <div style={{ textAlign: 'center' }} className="card">
                                                                     <div className="card-body">
-                                                                        <h4 >Planificados</h4>
+                                                                        <h4 >En Planificación</h4>
                                                                     </div>
                                                                     <div style={{ textAlign: "center" }} className="card-footer">
                                                                         <Button
@@ -270,7 +270,7 @@ export default function AnalisisExp() {
                                                             <Grid item xs={10}>
                                                                 <div style={{ textAlign: "center" }} className="card">
                                                                     <div className="card-body">
-                                                                        <h4>Preparados</h4>
+                                                                        <h4>En Preparación</h4>
                                                                     </div>
                                                                     <div className="card-footer">
                                                                         <Button
@@ -291,7 +291,7 @@ export default function AnalisisExp() {
                                                                 <Grid item xs={10}>
                                                                     <div className="card" style={{ textAlign: 'center' }} >
                                                                         <div className="card-body">
-                                                                            <h4>Ejecutados</h4>
+                                                                            <h4>En Ejecución</h4>
                                                                         </div>
                                                                         <div className="card-footer">
                                                                             <Button

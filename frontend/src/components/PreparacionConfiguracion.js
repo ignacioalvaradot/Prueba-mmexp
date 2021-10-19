@@ -142,6 +142,7 @@ TabPanel.propTypes = {
 //         'aria-controls': `simple-tabpanel-${index}`,
 //     };
 // }
+let FaseActivaGlobal = 0;
 export default function PreparacionExp() {
 
     const location = useLocation();
@@ -270,7 +271,6 @@ export default function PreparacionExp() {
         };
     }, []);
 
-
     const traerGrupos = async (fasesExp) => {
         let fases = fasesExp;
         let arrGrupos = new Array();
@@ -290,26 +290,19 @@ export default function PreparacionExp() {
             arrTotal = [];
         }
         let gruposFase = arrFasesGrupos[0];
-        // let gruposDisabled = new Array();
-        // let nuevoGrupoDisabled = {
-        //     disabled: false
-        // }
-        // for (let i = 0; i < gruposFase.length; i++) {
-        //     gruposDisabled.push(nuevoGrupoDisabled);
-        // }
-        // console.log(gruposDisabled);
-        // setArrGruposDisabled(gruposDisabled);
+        console.log('arrFasesGrupos', arrFasesGrupos);
+        setArrFasesxGrupo([...arrFasesGrupos]);
+        console.log('arrFasesGrupos[FaseActivaGlobal]', arrFasesGrupos[FaseActivaGlobal]);
+        setDataGrupos([...arrFasesGrupos[FaseActivaGlobal]]);
+        // setDataGrupos(arrFasesxGrupo[fase]);
 
-        setArrFasesxGrupo(arrFasesGrupos);
-        setDataGrupos(arrFasesGrupos[0]);
-        // traerGruposDisabled(arrFasesGrupos[0]);
-        // console.log('arrFasesGrupos');
-        // console.log(arrFasesGrupos);
-        // console.log('arrFasesGrupos[0]');
-        // console.log(arrFasesGrupos[0]);
-        traerParticipantes(arrFasesGrupos[0], 'inicio');
+        traerParticipantes(arrFasesGrupos[FaseActivaGlobal], 'inicio');
+        // setBanderaParticipantesGrupo(false);
+        // setBanderaDispositivosTotal(false);
+        // setBanderaParticipantesGrupoTotal(false);
+        // setBanderaParticipantesGrupo(false);
+        // setBanderaDispositivos(false);
     }
-
 
     const traerGruposIniciales = async (fasesExpe) => {
         let fases = fasesExpe;
@@ -356,9 +349,7 @@ export default function PreparacionExp() {
         }
         setBanderaComparacion(banderaComp);
         setParticiComparacion(arrarrGruposComp);
-
     }
-
 
     const traerParticipantes = async (arrGrupos, cuando) => {
         let aregloGrupos = arrGrupos;
@@ -379,16 +370,13 @@ export default function PreparacionExp() {
                     arrTotal.push(res.data.participante);
                 }
             }
-
             arrarrGrupos.push(arrTotal);
             arrTotal = new Array();
         }
-
         setArrArrParticipantes(arrarrGrupos);
         if (cuando === 'durante') {
             setDataParticipantes(arrTotal);
         }
-
     }
 
     const dataFase = async () => {
@@ -416,7 +404,7 @@ export default function PreparacionExp() {
     useEffect(() => {
         if (fasesExp.length > 0) {
         }
-        if (faseActiva === (fasesExp.length - 1)) {
+        if (FaseActivaGlobal === (fasesExp.length - 1)) {
             setCambiarBoton(false);
         } else {
             setCambiarBoton(true);
@@ -458,8 +446,8 @@ export default function PreparacionExp() {
         }
         const resNuevoGrupo = await axios.post('http://localhost:81/api/grupos', nuevoGrupo);
 
-        let idFaseActiva = fasesExp[faseActiva]['_id'];
-        let idFaseGrupos = fasesExp[faseActiva]['idGrupos'];
+        let idFaseActiva = fasesExp[FaseActivaGlobal]['_id'];
+        let idFaseGrupos = fasesExp[FaseActivaGlobal]['idGrupos'];
         idFaseGrupos.push(resNuevoGrupo.data.mensaje);
         let arrGruposID = {
             idGrupos: idFaseGrupos
@@ -469,7 +457,7 @@ export default function PreparacionExp() {
 
         // ----------------- le estoy pasando mal el arreglo de fasesExp para que traiga de nuevo los grupos
         const resFasesActiva = await axios.get('http://localhost:81/api/fases/' + idFaseActiva);
-        arrFasesExp[faseActiva] = resFasesActiva.data.fase;
+        arrFasesExp[FaseActivaGlobal] = resFasesActiva.data.fase;
         setFasesExp(arrFasesExp);
         // setArrGruposDisabled(gruposDisabled);
         traerGrupos(arrFasesExp);
@@ -527,12 +515,14 @@ export default function PreparacionExp() {
         let limpiar = new Array();
         if (fase < 0) {
             setFaseActiva(fase + 1);
+            FaseActivaGlobal = fase + 1;
         }
         if (fase < fasesExp.length) {
             console.log(arrFasesxGrupo);
             // setGrupoComparacion(arregloFasesGrupos[fase]);
             setFaseActiva(fase);
-            if (arrFasesxGrupo[fase].length > 0) {
+            FaseActivaGlobal = fase;
+            if (arrFasesxGrupo[fase]!=null && arrFasesxGrupo[fase].length > 0) {
                 setDataGrupos(arrFasesxGrupo[fase]);
                 traerParticipantes(arrFasesxGrupo[fase], 'inicio');
 
@@ -542,6 +532,9 @@ export default function PreparacionExp() {
                 setNombreAsignacionesGrupo('');
                 setBanderaDispositivos(false);
                 setBanderaDispositivosTotal(false);
+                setBanderaParticipantesGrupoTotal(false);
+                setBanderaParticipantesGrupo(false);
+
                 setParticipanteActual('');
                 setDatosCanales(limpiar);
                 setBanderaAsignaciones(false);
@@ -558,6 +551,8 @@ export default function PreparacionExp() {
                     setNombreAsignacionesGrupo('');
                     setBanderaDispositivos(false);
                     setBanderaDispositivosTotal(false);
+                    setBanderaParticipantesGrupoTotal(false);
+                    setBanderaParticipantesGrupo(false);
                     setParticipanteActual('');
                     setDatosCanales(limpiar);
                     setBanderaAsignaciones(false);
@@ -566,24 +561,52 @@ export default function PreparacionExp() {
                 } else {
                     //aqui deberia replicar lo de esta fase en la base de datos de las otras fases
                     let arrFase = fasesExp;
-                    console.log(fasesExp);
+                    console.log('arrFase', arrFase);
                     let idFaseActiva = arrFase[fase]['_id'];
-                    let copiarGrupoAnterior = {
-                        idGrupos: arrFase[fase - 1]['idGrupos']
-                    }
-                    const resFasesGrupos = await axios.put('http://localhost:81/api/fases/agregarGrupos/' + idFaseActiva, copiarGrupoAnterior);
-                    arrFase[fase]['idGrupos'] = arrFase[fase - 1]['idGrupos']
-                    setFasesExp(arrFase);
-                    traerGrupos(arrFase);
 
-                    setDataParticipantes([]);
+                    let gruposNuevoArr = new Array();
+                    for (let i = 0; i < arrFase[fase - 1]['idGrupos'].length; i++){
+                        const resGrupo = await axios.get('http://localhost:81/api/grupos/' + arrFase[fase - 1]['idGrupos'][i]);
+                        let datoGrupo = resGrupo.data.grupo;
+                        console.log('datoGrupo', datoGrupo)
+                        let participantesArr = new Array();
+                        for(let j = 0; j < datoGrupo['participantes'].length; j++){
+                            const resParticipante = await axios.get('http://localhost:81/api/participantes/' + datoGrupo['participantes'][j]);
+                            let datoParticipante = resParticipante.data.participante;
+                            let crearParticipante = {
+                                dispositivos: datoParticipante['dispositivos'],
+                                descripcion: datoParticipante['descripcion']
+                            };
+                            const resParticipanteNuevo = await axios.post('http://localhost:81/api/participantes/', crearParticipante);
+                            participantesArr.push(resParticipanteNuevo.data.mensaje);
+                        }
+                        let crearGrupo = {
+                            participantes: participantesArr,
+                            descripcion: datoGrupo['descripcion'],
+                            dispositivos: datoGrupo['dispositivos'],
+                        };
+                        console.log('crearGrupo', crearGrupo);
+                        const resGrupoNuevo = await axios.post('http://localhost:81/api/grupos/', crearGrupo);
+                        gruposNuevoArr.push(resGrupoNuevo.data.mensaje);
+                    }
+                    let copiarGrupoAnterior = {
+                        idGrupos: gruposNuevoArr
+                    };
+                    const resFasesGrupos = await axios.put('http://localhost:81/api/fases/agregarGrupos/' + idFaseActiva, copiarGrupoAnterior);
+                    arrFase[fase]['idGrupos'] = gruposNuevoArr;
+                    setFasesExp([...arrFase]);
+                    traerGrupos(arrFase, fase);
+
+                    setDataParticipantes([...limpiar]);
                     setNombreGrupoHeader('');
                     setHiddenParticipantes(true);
                     setNombreAsignacionesGrupo('');
                     setBanderaDispositivos(false);
                     setBanderaDispositivosTotal(false);
+                    setBanderaParticipantesGrupoTotal(false);
+                    setBanderaParticipantesGrupo(false);
                     setParticipanteActual('');
-                    setDatosCanales(limpiar);
+                    setDatosCanales([...limpiar]);
                     setBanderaAsignaciones(false);
                     setBanderaAsignacionesTotales(false);
                     setBanderaParticipantesAsignaciones(false);
@@ -624,7 +647,7 @@ export default function PreparacionExp() {
 
     const eliminarGrupos = async (idGrupo, participantes) => {
         let arrFase = fasesExp;
-        let idFaseActiva = arrFase[faseActiva]['_id']
+        let idFaseActiva = arrFase[FaseActivaGlobal]['_id']
 
         for (let i = 0; i < participantes.length; i++) {
             let idParticipante = participantes[i];
@@ -632,17 +655,21 @@ export default function PreparacionExp() {
             const resDelParticipantes = await axios.delete('http://localhost:81/api/participantes/' + idParticipante);
         }
         const resDelGrupos = await axios.delete('http://localhost:81/api/grupos/' + idGrupo);
-        for (let i = 0; i < arrFase[faseActiva]['idGrupos'].length; i++) {
-            if (arrFase[faseActiva]['idGrupos'][i] === idGrupo) {
-                arrFase[faseActiva]['idGrupos'].splice(i, 1);
+        for (let i = 0; i < arrFase[FaseActivaGlobal]['idGrupos'].length; i++) {
+            if (arrFase[FaseActivaGlobal]['idGrupos'][i] === idGrupo) {
+                arrFase[FaseActivaGlobal]['idGrupos'].splice(i, 1);
             }
         }
         let arregloIdGrupos = {
-            idGrupos: arrFase[faseActiva]['idGrupos']
+            idGrupos: arrFase[FaseActivaGlobal]['idGrupos']
         };
 
         const resFasesGrupos = await axios.put('http://localhost:81/api/fases/agregarGrupos/' + idFaseActiva, arregloIdGrupos);
         setFasesExp(arrFase);
+        setBanderaDispositivosTotal(false);
+        setBanderaParticipantesGrupoTotal(false);
+        setBanderaParticipantesGrupo(false);
+        setBanderaDispositivos(false);
         traerGrupos(arrFase);
     }
 
@@ -904,10 +931,11 @@ export default function PreparacionExp() {
         setParticipanteActualAsignacion(participante);
         // console.log('grupoActual');
         // console.log(grupoActual);
+        let datosC = limpiar;
         let dispositivoParticipante = participante['dispositivos'];
 
         if (dispositivoParticipante.length > 0) {
-            let datosC = datosCanales;
+            // datosC = datosCanales;
             for (let i = 0; i < dispositivoParticipante.length; i++) {
                 let nuevosCanales = new Array();
 
@@ -1070,7 +1098,7 @@ export default function PreparacionExp() {
 
                     </div>
                     <div>
-                        <Stepper activeStep={faseActiva} alternativeLabel>
+                        <Stepper activeStep={FaseActivaGlobal} alternativeLabel>
                             {
                                 fasesExp.map(fase => (
                                     <Step key={fase._id}>
@@ -1610,7 +1638,7 @@ export default function PreparacionExp() {
                                         variant="contained"
                                         color="default"
                                         // onClick={() => handleOpenModalGuardarDatos(faseActiva + 1)}
-                                        onClick={() => cambiarFaseActiva(faseActiva + 1)}
+                                        onClick={() => cambiarFaseActiva(FaseActivaGlobal + 1)}
                                         size="small"
                                         style={{ margin: 3 }}
                                     >
@@ -1620,7 +1648,7 @@ export default function PreparacionExp() {
                                     <Button
                                         variant="contained"
                                         color="green"
-                                        onClick={() => cambiarFaseActiva(faseActiva + 1)}
+                                        onClick={() => cambiarFaseActiva(FaseActivaGlobal + 1)}
                                         size="small"
                                         style={{ margin: 3 }}
                                     >

@@ -380,7 +380,7 @@ export default function PreparacionExp() {
             console.log(tablaEstadoMediciones[i]);
 
             window[socket + (i).toString()] = io.connect('http://192.168.0.4:200/' + medicionFinal);
-            window[socket + (i).toString()].emit("my_event", { query: "foo=bar" })
+            // window[socket + (i).toString()].emit("my_event", { query: "foo=bar" })
             // console.log(window[socket + (i).toString()]);
             setTimeout(
                 function () {
@@ -389,7 +389,7 @@ export default function PreparacionExp() {
                 1000
             );
             window[socket + (i).toString()].on('SendMetrics', function (msg) {
-                //el mayor problema es este, este cambia de dispositivos, por lo que en otra repasada no va a encontrar dentro del arreglo
+                //debe quedar en pos de los canales que recibe, primero, si encuentra el disp, luego si encuentra el canal, y eso
                 let contadorGrupos = 0;
                 for (let k = 0; k < tablaEstadoMediciones[i]['grupos'].length; k++) {
                     let contadorParticipantes = 0;

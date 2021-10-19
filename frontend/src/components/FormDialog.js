@@ -14,7 +14,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { makeStyles } from '@material-ui/core/styles';
 import { useLocation, useParams } from "react-router-dom";
 
-import { Stepper, Step, StepButton, LinearProgress } from '@material-ui/core/'
+import { Stepper, Step, StepButton, LinearProgress, CircularProgress } from '@material-ui/core/'
 import CancelIcon from '@material-ui/icons/Cancel';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import EditDialog from './Vista Ejecucion/EditDialog';
@@ -24,6 +24,7 @@ import { MuiPickersUtilsProvider, KeyboardTimePicker, KeyboardDatePicker } from 
 import DateFnsUtils from '@date-io/date-fns';
 import { DatePicker, TimePicker, DateTimePicker } from '@material-ui/pickers';
 import { es } from "date-fns/locale";
+import io from 'socket.io-client';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -120,6 +121,11 @@ TabPanel.propTypes = {
 // }
 
 let barraProgreso;
+let intervaloActualizacion;
+let intervaloBandera;
+let tiempoActual = new Date();
+var socket;
+var nombreMedicionVariable = 'Tabla General';
 
 export default function FormDialog() {
 
@@ -165,7 +171,7 @@ export default function FormDialog() {
     const [actualizarTabla, setActualizarTabla] = React.useState(false);
 
     const [horaInicio, setHoraInicio] = React.useState(new Date());
-    const [tiempoActual, setTiempoActual] = useState(new Date());
+    // const [tiempoActual, setTiempoActual] = useState(new Date());
     const [tiempoInicioActual, setTiempoInicioActual] = useState('');
     const [tiempoFinActual, setTiempoFinActual] = useState('');
     const [horasObs, setHorasObs] = useState('');
@@ -181,6 +187,13 @@ export default function FormDialog() {
     const [intervalo, setIntervalo] = useState(1000);
     const [estadoIntervaloActivo, setEstadoIntervaloActivo] = useState(true);
     const [estadoDetenido, setEstadoDetenido] = useState(true);
+    const [estadoMediciones, setEstadoMediciones] = useState([]);
+    const [medicionesGeneral, setMedicionesGeneral] = useState([]);
+    const [medicionesTabs, setMedicionesTabs] = useState([]);
+    const [nombresMedicionesSocket, setNombresMedicionesSocket] = useState([]);
+    const [conexionSockets, setConexionSockets] = useState([]);
+    const [nombreMedicionActual, setNombreMedicionActual] = useState('Tabla General');
+    const [banderaTabla, setBanderaTabla] = useState(true);
 
     let progresoraro = progress;
 
@@ -238,6 +251,7 @@ export default function FormDialog() {
             arregloNFase.push(resF.data.fase);
         }
         setFasesExp(arregloNFase);
+        // traerMedicionesRegistrar(arregloNFase[faseActiva]);
         // console.log(faseActiva);
         // console.log(faseActivaLocal);
         // traerMediciones(arregloNFase[faseActivaLocal]['idMediciones']);
@@ -247,8 +261,27 @@ export default function FormDialog() {
         // calcularTiempoFases(arregloNFase[faseActiva].tiempoInicio, arregloNFase[faseActiva].tiempoFin);
     }
 
+    const traerMedicionesRegistrar = async (arregloNFase) => {
+        let fase = arregloNFase;
+        let arrTotalMediciones = new Array();
+        let medicionesFase = fase['idMediciones'];
+        let arrMediciones = new Array();
 
-    const traerMediciones = async (fasesExpe) => {
+        for (let j = 0; j < medicionesFase.length; j++) {
+            const resMediciones = await axios.get('http://localhost:81/api/mediciones/' + medicionesFase[j]);
+            resMediciones.data.medicion.estado = false;
+            arrMediciones.push(resMediciones.data.medicion);
+            //por cada medicion, yo debo traer los dispositivos que tengan el mismo tipo de dispositivo que los asociados dentro de cada grupo
+        }
+        arrTotalMediciones.push(arrMediciones);
+
+        // setMedicionesFases(arrTotalMediciones);
+        // setMedicionesSelected(arrTotalMediciones[0]);
+        // traerGrupos(arregloNFase, arrTotalMediciones[0]);
+        traerGruposParticipantes(arregloNFase, arrTotalMediciones[0]);
+    }
+
+    const traerMediciones = async (faseActual, fasesExpe) => {
         // de primera debe entrar la primera fase del experimento actual
         let medicionesFase = fasesExpe;
         let arrNombreMediciones = new Array();
@@ -276,6 +309,21 @@ export default function FormDialog() {
         setArrMedicionesRecibidas(arrMediciones);
         setNombresMediciones(arrNombreMediciones);
 
+        let separador = '';
+        let medicionFinal = '';
+        let arrNombresSocket = new Array();
+        for (let i = 0; i < arrNombreMediciones; i++) {
+            let medicion = arrNombreMediciones[i][0].toLowerCase();
+            let medicionFiltro = medicion.split(separador);
+            if (medicionFiltro.length > 1) {
+                medicionFinal = medicionFiltro[0] + medicionFiltro[1];
+            } else {
+                medicionFinal = medicionFiltro[0];
+            }
+            arrNombresSocket.push(medicionFinal);
+        }
+        setNombresMedicionesSocket([...arrNombresSocket]);
+        traerMedicionesRegistrar(faseActual);
     }
 
     const calcularTiempoFases = (tInicio, tFin) => {
@@ -372,17 +420,16 @@ export default function FormDialog() {
                 setTiempoFinActual(tiempoTotalFinal);
             }
         }
-        console.log('timeActual');
-        console.log(timeActual);
-        console.log('horasAdd');
-        console.log(horasAdd);
-        console.log('minutosAdd');
-        console.log(minutosAdd);
-        console.log('tiempoAddTotal');
-        console.log(tiempoAddTotal);
-        console.log('tiempoTotalFinal');
-        console.log(tiempoTotalFinal);
-
+        // console.log('timeActual');
+        // console.log(timeActual);
+        // console.log('horasAdd');
+        // console.log(horasAdd);
+        // console.log('minutosAdd');
+        // console.log(minutosAdd);
+        // console.log('tiempoAddTotal');
+        // console.log(tiempoAddTotal);
+        // console.log('tiempoTotalFinal');
+        // console.log(tiempoTotalFinal);
     }
 
     const guardarFaseActiva = async (faseGuardar) => {
@@ -490,12 +537,17 @@ export default function FormDialog() {
                 // setIdObserv([...idObserv]);
                 setIdmediciones(medicionesFase);
                 if (fasesExp != '') {
+                    clearInterval(intervaloActualizacion);
                     clearInterval(barraProgreso);
                     setBanderaOvertime(true);
                     setBanderaDetenido(true);
                     setProgresoTiempo(0);
                     setHoras(0);
                     setMinutos(0);
+                    setMinuto(0);
+                    tiempoActual = new Date();
+                    // setTiempoActual(date);
+
                     setSegundos(0);
                     setTiempoString('00:00:00');
                     intervaloProgreso();
@@ -507,8 +559,10 @@ export default function FormDialog() {
                 // traerMedicionesFase(medicionesFase);
                 setArrMedicionesRecibidas([]);
                 setNombresMediciones([]);
-                traerMediciones(medicionesFase);
+                traerMediciones(faseAct, medicionesFase);
                 guardarFaseActiva(faseActiva);
+                // traerMedicionesRegistrar(faseAct);
+                // conectarSocket();
                 if (faseActiva === (fasesExp.length - 1)) {
                     setCambiarBoton(false);
                 }
@@ -628,6 +682,19 @@ export default function FormDialog() {
 
     const handleChange = (event, newTab) => {
         setTab(newTab);
+        let medicion = nombreMedicionActual;
+        if (newTab === 0) {
+            medicion = 'Tabla General';
+            // console.log(medicion);
+            setNombreMedicionActual(medicion);
+            nombreMedicionVariable = medicion;
+        } else {
+            medicion = nombreMediciones[newTab - 1][0];
+            // console.log(medicion);
+            setNombreMedicionActual(medicion);
+            nombreMedicionVariable = medicion;
+
+        }
     };
 
     const handleClickOpen = () => {
@@ -708,6 +775,7 @@ export default function FormDialog() {
             setDireccionFaseActiva(faseActiva);
         };
         if (estadoContinuar === 'Continuar') {
+            desconectarSocket();
             setFaseActiva(direccionFaseActiva);
             setOpenModalContinuar(false);
 
@@ -729,7 +797,6 @@ export default function FormDialog() {
     }
 
     const detenerFase = () => {
-        console.log('debo detener el contador, el ciclo y todo lo relacionado con el progreso y tiempo');
         let fechaFinalizacion = new Date();
         let separador = " ";
         let tiempoFinalizacion = (fechaFinalizacion.toString()).split(separador);
@@ -739,7 +806,207 @@ export default function FormDialog() {
         setBanderaDetenido(false);
         setEstadoDetenido(false);
         clearInterval(barraProgreso);
+        desconectarSocket();
     }
+
+    const traerGruposParticipantes = async (fasesExp, medicionesFase) => {
+        // 3 arreglos y 3 push, cada uno anidado
+
+        let fase = fasesExp;
+        let arrGrupos = new Array();
+        let arrTotal = new Array();
+        let arrFasesGrupos = new Array();
+        let participantes = new Array();
+
+        for (let i = 0; i < fase['idGrupos'].length; i++) {
+            if (fase['idGrupos'][i] != '') {
+                const res = await axios.get('http://localhost:81/api/grupos/' + fase['idGrupos'][i]);
+                arrTotal.push(res.data.grupo);
+            }
+        }
+        for (let i = 0; i < arrTotal.length; i++) {
+            let arregloParticipantes = new Array();
+            for (let j = 0; j < arrTotal[i]['participantes'].length; j++) {
+                const resP = await axios.get('http://localhost:81/api/participantes/' + arrTotal[i]['participantes'][j]);
+                arregloParticipantes.push(resP.data.participante);
+            }
+            participantes.push(arregloParticipantes);
+        }
+
+        let gruposActuales = arrTotal;
+        let medicionesActuales = medicionesFase;
+        let arregloMedicionesGruposParticipantes = new Array();
+        let indiceIDFila = 0;
+
+        for (let i = 0; i < medicionesActuales.length; i++) {
+            let gruposArr = new Array();
+            for (let j = 0; j < gruposActuales.length; j++) {
+                let participantesArr = new Array();
+                for (let k = 0; k < participantes[j].length; k++) {
+
+                    for (let h = 0; h < participantes[j][k]['dispositivos'].length; h++) {
+
+                        if (participantes[j][k]['dispositivos'][h]['tipoDispositivo'] === medicionesActuales[i]['dispositivosAsociados'][0]) {
+                            let participante = {
+                                nombre: participantes[j][k]['descripcion'],
+                                dispositivo: participantes[j][k]['dispositivos'][h]['dispositivo'],
+                                canal: participantes[j][k]['dispositivos'][h]['canal'],
+                                estadoOpen: false,
+                                estadoMedicion: false,
+                                respuestaMedicion: ''
+                            }
+                            participantesArr.push(participante);
+                        }
+                    }
+                }
+                let grupos = {
+                    nombre: gruposActuales[j]['descripcion'],
+                    participantes: participantesArr,
+                    estadoOpen: false,
+                    estadoMedicion: false
+                }
+                gruposArr.push(grupos);
+            }
+            let arregloMedicion = {
+                id: medicionesActuales[i]['_id'],
+                nombre: medicionesActuales[i]['nombre'],
+                estadoOpen: false,
+                estadoMedicion: false,
+                grupos: gruposArr
+            }
+            arregloMedicionesGruposParticipantes.push(arregloMedicion);
+        }
+        // console.log('arregloMedicionesGruposParticipantes');
+        // console.log(arregloMedicionesGruposParticipantes);
+        setEstadoMediciones([...arregloMedicionesGruposParticipantes]);
+        conectarSocket(arregloMedicionesGruposParticipantes);
+    }
+
+    const conectarSocket = (arregloMedicionesGruposParticipantes) => {
+        // Medicion, grupo, participante, dispositivo, canal, valor.
+        let dispositivosParticipantes = new Array();
+        let dispositivosGrupo = new Array();
+        let medicionesRegistrarEstado = new Array();
+        let vacio = new Array();
+        setMedicionesGeneral([...vacio]);
+
+
+        let medicionesFaseActual = arregloMedicionesGruposParticipantes;
+        let nombresMediciones = nombresMedicionesSocket;
+        let arrConexiones = new Array();
+        let arregloMensajesGenerales = new Array();
+
+        let medicion = '';
+        let separador = ' ';
+        let medicionFinal = '';
+        // console.log('medicionesFaseActual');
+        // console.log(medicionesFaseActual);
+        // console.log('nombresMediciones');
+        // console.log(nombresMediciones);
+
+        let arregloMedicionesTablas = new Array();
+        let nuevoObject = new Object();
+
+        let fechaInicio = new Date();
+        let tiempoInicioSocket = (fechaInicio.toString()).split(separador);
+        tiempoInicioSocket = tiempoInicioSocket[4];
+
+        for (let i = 0; i < medicionesFaseActual.length; i++) {
+            arregloMedicionesTablas.push(nuevoObject);
+        }
+        for (let i = 0; i < medicionesFaseActual.length; i++) {
+            let arregloMedicionMensajes = new Array();
+            medicion = medicionesFaseActual[i]['nombre'].toLowerCase();
+            let medicionFiltro = medicion.split(separador);
+            if (medicionFiltro.length > 1) {
+                medicionFinal = medicionFiltro[0] + medicionFiltro[1];
+            } else {
+                medicionFinal = medicionFiltro[0];
+            }
+            let mensajeInicio = {
+                idExp: idExperimento,
+                idFase: fasesExp[faseActiva]['_id'],
+                tiempoInicio: tiempoInicioSocket
+            }
+            console.log(medicionFinal);
+
+            window[socket + medicionFinal] = io.connect('http://192.168.0.4:200/' + medicionFinal);
+            arrConexiones.push(window[socket + medicionFinal])
+
+            window[socket + medicionFinal].emit("iniciar", mensajeInicio);
+
+
+            window[socket + medicionFinal].on('SendMetrics', function (msg) {
+
+                if (nombreMedicionVariable === 'Tabla General' || nombreMedicionVariable === medicionesFaseActual[i]['nombre']) {
+                    console.log(nombreMedicionVariable);
+                    for (let k = 0; k < medicionesFaseActual[i]['grupos'].length; k++) {
+                        if (medicionesFaseActual[i]['grupos'][k]['participantes'].length > 0) {
+                            for (let l = 0; l < medicionesFaseActual[i]['grupos'][k]['participantes'].length; l++) {
+                                for (let j = 0; j < msg.data.devices.length; j++) {
+                                    let dispositivoRecibido = msg.data.devices[j];
+                                    if (dispositivoRecibido['name'] === medicionesFaseActual[i]['grupos'][k]['participantes'][l]['dispositivo']) {
+
+                                        let datoMedicionGeneral = {
+                                            Medicion: medicionesFaseActual[i]['nombre'],
+                                            Grupo: medicionesFaseActual[i]['grupos'][k]['nombre'],
+                                            Participante: medicionesFaseActual[i]['grupos'][k]['participantes'][l]['nombre'],
+                                            Dispositivo: medicionesFaseActual[i]['grupos'][k]['participantes'][l]['dispositivo'],
+                                            Canal: dispositivoRecibido['channel'][medicionesFaseActual[i]['grupos'][k]['participantes'][l]['canal']]['channelId'],
+                                            Valor: dispositivoRecibido['channel'][medicionesFaseActual[i]['grupos'][k]['participantes'][l]['canal']]['valor']
+                                        }
+                                        if (arregloMensajesGenerales.length > 20) {
+
+                                            arregloMensajesGenerales.splice(0, 1);
+                                            arregloMensajesGenerales.push(datoMedicionGeneral);
+                                        } else {
+                                            arregloMensajesGenerales.push(datoMedicionGeneral);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+            });
+
+
+
+            window[intervaloActualizacion + (i).toString()] = setInterval(() => {
+                // if (arregloMensajesGenerales.length > 0) {
+                setMedicionesGeneral(arregloMensajesGenerales);
+
+            }, 1000);
+        }
+        // intervaloBandera = setInterval(() => {
+        //     setBanderaTabla(false);
+
+        // }, 2000);
+
+        setConexionSockets([...arrConexiones])
+
+    }
+
+    const desconectarSocket = () => {
+        let conexionesSocketsCerrar = conexionSockets;
+        // console.log(nombreMedicionActual);
+        // clearInterval(intervaloBandera);
+        
+        let fechaFinalizacion = new Date();
+        let separador = " ";
+        let tiempoFinalizacion = (fechaFinalizacion.toString()).split(separador);
+        tiempoFinalizacion = tiempoFinalizacion[4];
+
+        let datosDetener = {tiempo: tiempoFinalizacion}
+        for (let i = 0; i < conexionesSocketsCerrar.length; i++) {
+            conexionesSocketsCerrar[i].emit("detener", datosDetener);
+
+            clearInterval(window[intervaloActualizacion + (i).toString()]);
+            conexionesSocketsCerrar[i].disconnect();
+        }
+    }
+
 
     return (
         <div>
@@ -845,12 +1112,10 @@ export default function FormDialog() {
                                                         <Tab label={nombre[0]} />
                                                     ))
                                                 }
-                                                {/* <Tab label="Tabla General" {...a11yProps(0)} />
-                                <Tab label="Item Two" {...a11yProps(1)} />
-                                <Tab label="Item Three" {...a11yProps(2)} /> */}
                                             </Tabs>
                                         </AppBar>
-                                        <TabPanel value={tab} index={0}>
+
+                                        <TabPanel value={0} index={0}>
                                             <Grid container spacing={12}>
                                                 <Grid item xs={12}>
                                                     <Grid item xs={12}>
@@ -858,25 +1123,35 @@ export default function FormDialog() {
                                                             <Table size="small" stickyHeader aria-label="sticky table" height="300" >
                                                                 <TableHead>
                                                                     <TableRow style={{ height: '50px' }}>
-                                                                        <TableCell>Nombre</TableCell>
+                                                                        <TableCell>Medicion</TableCell>
                                                                         <TableCell>Grupo</TableCell>
                                                                         <TableCell>Participante</TableCell>
                                                                         <TableCell>Dispositivo</TableCell>
-                                                                        <TableCell>Tiempo</TableCell>
+                                                                        <TableCell>Canal</TableCell>
                                                                         <TableCell>Valor</TableCell>
                                                                     </TableRow>
                                                                 </TableHead>
                                                                 <TableBody>
-                                                                    {rows.map((row) => (
-                                                                        <TableRow key={row.name}>
-                                                                            <TableCell component="th" scope="row">{row.nombre}</TableCell>
-                                                                            <TableCell component="th" scope="row">{row.grupo}</TableCell>
-                                                                            <TableCell component="th" scope="row">{row.participante}</TableCell>
-                                                                            <TableCell component="th" scope="row">{row.dispositivo}</TableCell>
-                                                                            <TableCell component="th" scope="row">{row.tiempoMedicion}</TableCell>
-                                                                            <TableCell align="right">{row.valor}</TableCell>
-                                                                        </TableRow>
-                                                                    ))}
+                                                                    {/* {rows.map((row) => ( */}
+                                                                    {/* {banderaTabla ? */}
+                                                                        {medicionesGeneral.map((row) => (
+                                                                            <TableRow key={row.name}>
+                                                                                <TableCell component="th" scope="row">{row.Medicion}</TableCell>
+                                                                                <TableCell component="th" scope="row">{row.Grupo}</TableCell>
+                                                                                <TableCell component="th" scope="row">{row.Participante}</TableCell>
+                                                                                <TableCell component="th" scope="row">{row.Dispositivo}</TableCell>
+                                                                                <TableCell component="th" scope="row">{row.Canal}</TableCell>
+                                                                                <TableCell >{row.Valor}</TableCell>
+                                                                            </TableRow>
+                                                                        ))
+                                                                    //     :
+                                                                    //     <TableCell align="center" colSpan={5}>
+                                                                    //         <Box sx={{ width: "auto", padding: 10 }}>
+                                                                    //             <CircularProgress color="inherit" />
+                                                                    //         </Box>
+                                                                    //     </TableCell>
+
+                                                                    }
                                                                 </TableBody>
                                                             </Table>
                                                         </TableContainer>
@@ -884,10 +1159,9 @@ export default function FormDialog() {
                                                 </Grid>
                                             </Grid>
                                         </TabPanel>
-                                        {
+                                        {/* {
                                             nombreMediciones.map(nombre => (
                                                 <TabPanel value={tab} index={nombre[1] + 1}>
-                                                    {/* Item a {nombre[0]} */}
                                                     <Grid container spacing={12}>
                                                         <Grid item xs={12}>
                                                             <Grid item xs={12}>
@@ -895,6 +1169,7 @@ export default function FormDialog() {
                                                                     <Table size="small" stickyHeader aria-label="sticky table" height="300" >
                                                                         <TableHead>
                                                                             <TableRow style={{ height: '50px' }}>
+                                                                                <TableCell>Nombre</TableCell>
                                                                                 <TableCell>Grupo</TableCell>
                                                                                 <TableCell>Participante</TableCell>
                                                                                 <TableCell>Dispositivo</TableCell>
@@ -903,17 +1178,18 @@ export default function FormDialog() {
                                                                             </TableRow>
                                                                         </TableHead>
                                                                         <TableBody>
-                                                                            {
-                                                                                nombre[2].map(row => (
-                                                                                    <TableRow key={row.name}>
-                                                                                        <TableCell component="th" scope="row">{row.grupo}</TableCell>
-                                                                                        <TableCell component="th" scope="row">{row.participante}</TableCell>
-                                                                                        <TableCell component="th" scope="row">{row.dispositivo}</TableCell>
-                                                                                        <TableCell component="th" scope="row">{row.tiempoMedicion}</TableCell>
-                                                                                        <TableCell component="th" scope="row">{row.valor}</TableCell>
-                                                                                    </TableRow>
-                                                                                ))
-                                                                            }
+                                                                            {/* {rows.map((row) => ( 
+
+                                                                            {medicionesGeneral.map((row) => (
+                                                                                <TableRow key={row.name}>
+                                                                                    <TableCell component="th" scope="row">{row.Medicion}</TableCell>
+                                                                                    <TableCell component="th" scope="row">{row.Grupo}</TableCell>
+                                                                                    <TableCell component="th" scope="row">{row.Participante}</TableCell>
+                                                                                    <TableCell component="th" scope="row">{row.Dispositivo}</TableCell>
+                                                                                    <TableCell component="th" scope="row">{row.Canal}</TableCell>
+                                                                                    <TableCell align="right">{row.Valor}</TableCell>
+                                                                                </TableRow>
+                                                                            ))}
                                                                         </TableBody>
                                                                     </Table>
                                                                 </TableContainer>
@@ -922,7 +1198,7 @@ export default function FormDialog() {
                                                     </Grid>
                                                 </TabPanel>
                                             ))
-                                        }
+                                        } */}
                                     </div>
                                 </div>
                             </div>

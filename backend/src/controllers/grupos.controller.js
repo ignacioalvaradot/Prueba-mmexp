@@ -9,11 +9,11 @@ GrupoCtrl.getGrupos = async (req, res) => {
 }
 
 GrupoCtrl.createGrupo = async (req, res) => {
-    const { participantes, descripcion } = req.body;
+    const { participantes, descripcion, dispositivos } = req.body;
     const newGrupo = new Grupo({
         participantes: participantes,
         descripcion: descripcion,
-        dispositivos: [],
+        dispositivos: dispositivos,
         // numeroSerie: numeroSerie
     });
     await newGrupo.save();

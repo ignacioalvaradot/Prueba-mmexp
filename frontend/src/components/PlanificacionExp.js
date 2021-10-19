@@ -135,7 +135,7 @@ TabPanel.propTypes = {
     index: PropTypes.any.isRequired,
     value: PropTypes.any.isRequired,
 };
-
+let FaseActivaGlobal = 0;
 export default function PlanificacionExp() {
 
     const [idExperimento, setIdExperimento] = React.useState('');
@@ -383,17 +383,17 @@ export default function PlanificacionExp() {
             setBanderaFase(false);
         }
         if (evitarRecarga === false) {
-            let faseSelected = faseActiva + 1;
-            if (faseActiva != '') {
+            let faseSelected = FaseActivaGlobal + 1;
+            if (FaseActivaGlobal != '') {
                 if (fasesExp != '') {
-                    rellenarCampos(faseActiva);
+                    rellenarCampos(FaseActivaGlobal);
                     setNumeroFasesSelected(faseSelected);
                 }
             }
 
-            if (faseActiva === 0) {
+            if (FaseActivaGlobal === 0) {
                 if (fasesExp != '') {
-                    rellenarCampos(faseActiva);
+                    rellenarCampos(FaseActivaGlobal);
                     setNumeroFasesSelected(faseSelected);
                 }
                 if (fasesExp === '') {
@@ -402,7 +402,7 @@ export default function PlanificacionExp() {
                 }
             }
         }
-        if (faseActiva === fasesExp.length - 1) {
+        if (FaseActivaGlobal === fasesExp.length - 1) {
             // console.log(fasesExp.length);
             setCambiarBoton(false);
         }
@@ -497,22 +497,23 @@ export default function PlanificacionExp() {
             setIdFasesEliminadas(arrEliminar);
         }
 
-        if (posEliminar != faseActiva) {
+        if (posEliminar != FaseActivaGlobal) {
             fasesExp.splice(posEliminar, 1);
             if (fasesExp[posEliminar]) {
                 for (let i = posEliminar; i < fasesExp.length; i++) {
                     fasesExp[i]['numeroFase'] = fasesExp[i]['numeroFase'] - 1;
                 }
             }
-            if (faseActiva > posEliminar) {
-                setFaseActiva(faseActiva - 1);
+            if (FaseActivaGlobal > posEliminar) {
+                setFaseActiva(FaseActivaGlobal - 1);
+                FaseActivaGlobal=FaseActivaGlobal - 1;
             }
             setEvitarRecarga(true);
             setFasesExp([...fasesExp]);
         } else {
             if (fasesExp.length > 1) {
                 setEvitarRecarga(false);
-                if (fasesExp.length > faseActiva + 1) {
+                if (fasesExp.length > FaseActivaGlobal + 1) {
                     fasesExp.splice(posEliminar, 1);
                     if (fasesExp[posEliminar]) {
                         for (let i = posEliminar; i < fasesExp.length; i++) {
@@ -523,7 +524,8 @@ export default function PlanificacionExp() {
                 } else {
                     fasesExp.splice(posEliminar, 1);
                     setFasesExp([...fasesExp]);
-                    setFaseActiva(faseActiva - 1)
+                    setFaseActiva(FaseActivaGlobal - 1)
+                    FaseActivaGlobal = FaseActivaGlobal - 1;
                 }
 
             } else {
@@ -544,10 +546,12 @@ export default function PlanificacionExp() {
             if (fase === fasesExp.length - 1) {
                 rellenarCampos(fase);
                 setFaseActiva(fase);
+                FaseActivaGlobal = fase;
                 setCambiarBoton(false);
             } else {
                 rellenarCampos(fase);
                 setFaseActiva(fase);
+                FaseActivaGlobal = fase;
                 setCambiarBoton(true);
             }
         } else {
@@ -630,7 +634,7 @@ export default function PlanificacionExp() {
             guardarDatosFase(boton);
             setTimeout(
                 function () {
-                    closeModalGuardarExperimento();
+                    closeModalGuardarExperimento('save');
                 },
                 3000
             );
@@ -640,7 +644,7 @@ export default function PlanificacionExp() {
             guardarDatosFase(boton);
             setTimeout(
                 function () {
-                    closeModalGuardarExperimento();
+                    closeModalGuardarExperimento('save');
                 },
                 3000
             );
@@ -653,9 +657,14 @@ export default function PlanificacionExp() {
         setOpenModalGuardarExp(true);
     }
 
-    const closeModalGuardarExperimento = async () => {
+    const closeModalGuardarExperimento = async (saveStatus) => {
         let largoFase = fasesExp.length;
-        if(faseActiva === (largoFase - 1)){
+        console.log('FaseActivaGlobal', FaseActivaGlobal);
+        console.log('largoFase', largoFase);
+        if(saveStatus==='no' && FaseActivaGlobal === (largoFase - 1)){
+            setOpenModalGuardarExp(false);
+        }
+        if(saveStatus==='save' && FaseActivaGlobal === (largoFase - 1)){
             setOpenModalGuardarExp(false);
             let Etapa = {
                 nombreExp: nombreExp,
@@ -705,12 +714,12 @@ export default function PlanificacionExp() {
         let arrIdObservaciones = new Array();
         let arrIdFases = new Array();
         let idFase = '';
-        if (fasesExp[faseActiva].hasOwnProperty('_id')) {
-            idFase = fasesExp[faseActiva]['_id'];
+        if (fasesExp[FaseActivaGlobal].hasOwnProperty('_id')) {
+            idFase = fasesExp[FaseActivaGlobal]['_id'];
             arrIdObservaciones = idObservaciones;
             arrIdGrupos = idGrupos;
         }
-        let numeroFaseG = fasesExp[faseActiva]['numeroFase']
+        let numeroFaseG = fasesExp[FaseActivaGlobal]['numeroFase']
         let fechaFaseG = (fechaFase).toString();
         let horaIniG = ((horaInicio).toString()).split(separador);
         let horaTermG = ((horaTermino).toString()).split(separador);
@@ -758,7 +767,7 @@ export default function PlanificacionExp() {
                 tiempoFin: horaTermG,
                 tiempoInicio: horaIniG
             }
-            fasesExpe[faseActiva] = FaseExperimento;
+            fasesExpe[FaseActivaGlobal] = FaseExperimento;
             setFasesExp(fasesExpe);
 
         }
@@ -791,7 +800,7 @@ export default function PlanificacionExp() {
                 tiempoFin: horaTermG,
                 tiempoInicio: horaIniG
             }
-            fasesExpe[faseActiva] = FaseExperimento;
+            fasesExpe[FaseActivaGlobal] = FaseExperimento;
             setFasesExp(fasesExpe);
             fasesCompG.push(Fase);
             setFasesComparacion(fasesCompG);
@@ -876,7 +885,7 @@ export default function PlanificacionExp() {
                             </Grid>
 
                             <Grid item xs={9}>
-                                <Stepper activeStep={faseActiva} alternativeLabel>
+                                <Stepper activeStep={FaseActivaGlobal} alternativeLabel>
                                     {
                                         fasesExp.map(fase => (
                                             <Step key={fase._id}>
@@ -1133,7 +1142,7 @@ export default function PlanificacionExp() {
                                             <Button
                                                 variant="contained"
                                                 color="default"
-                                                onClick={() => handleOpenModalGuardarDatos(faseActiva + 1)}
+                                                onClick={() => handleOpenModalGuardarDatos(FaseActivaGlobal + 1)}
                                                 size="small"
                                                 style={{ margin: 3 }}
                                             >
@@ -1153,7 +1162,7 @@ export default function PlanificacionExp() {
                                     <Modal
                                         backdropColor="transparent"
                                         open={openModalGuardarExp}
-                                        onClose={() => closeModalGuardarExperimento()}
+                                        // onClose={() => closeModalGuardarExperimento()}
                                         closeAfterTransition
                                         BackdropComponent={Backdrop}
                                         BackdropProps={{
@@ -1168,11 +1177,11 @@ export default function PlanificacionExp() {
                                                             <h4>Cambiar Etapa</h4>
                                                         </div>
                                                         <div className="card-body">
-                                                            <h5>¿Desea guardar los cambios realizados en este Experimento?</h5>
+                                                            <h5>Para Avanzar a la siguiente etapa, se guardaran las configuraciones actuales, ¿Desea Avanzar a Preparación?</h5>
                                                         </div>
                                                         <div className="card-footer">
                                                             <div style={{ float: "right" }}>
-                                                                <Button variant="contained" onClick={() => closeModalGuardarExperimento()} size="small" color="secondary" style={{ margin: 3, textAlign: 'center' }}>
+                                                                <Button variant="contained" onClick={() => closeModalGuardarExperimento('no')} size="small" color="secondary" style={{ margin: 3, textAlign: 'center' }}>
                                                                     No
                                                                 </Button>
                                                                 <Button variant="contained" type="submit" onClick={() => eliminarFaseBD(idFasesEliminadas, 'Continuar')} size="small" color="primary" style={{ margin: 3, textAlign: 'center' }}>
