@@ -17,6 +17,7 @@ import { MuiPickersUtilsProvider, KeyboardTimePicker, KeyboardDatePicker } from 
 import DateFnsUtils from '@date-io/date-fns';
 import { DatePicker, TimePicker, DateTimePicker } from '@material-ui/pickers';
 import { es } from "date-fns/locale";
+import routesBD from '../helpers/routes';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -120,7 +121,7 @@ export default function AnalisisExp() {
             nombreExp: nombreNuevoExp,
             fasesId: fases,
         }
-        const res = await axios.post('http://localhost:81/api/experimentos', dataNueva);
+        const res = await axios.post(routesBD.experimentos, dataNueva);
         let idNuevoExp = res.data.mensaje
         console.log(idNuevoExp)
 

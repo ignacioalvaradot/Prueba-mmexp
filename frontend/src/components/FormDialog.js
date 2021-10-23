@@ -25,7 +25,7 @@ import DateFnsUtils from '@date-io/date-fns';
 import { DatePicker, TimePicker, DateTimePicker } from '@material-ui/pickers';
 import { es } from "date-fns/locale";
 import io from 'socket.io-client';
-
+import routesBD from '../helpers/routes';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -231,7 +231,7 @@ export default function FormDialog() {
     }
 
     const dataFase = async () => {
-        const res = await axios.get('http://localhost:81/api/experimentos/' + idUrl['id']);
+        const res = await axios.get(routesBD.experimentos + idUrl['id']);
         let faseActivaBD = parseInt(res.data.experimento.faseActiva)
         // console.log(faseActivaBD);
         setFaseActiva(faseActivaBD);
@@ -247,7 +247,7 @@ export default function FormDialog() {
         let arrfases = fases;
         let arregloNFase = new Array;
         for (var i = 0; i < arrfases.length; i++) {
-            let resF = await axios.get('http://localhost:81/api/fases/' + arrfases[i]);
+            let resF = await axios.get(routesBD.fases + arrfases[i]);
             arregloNFase.push(resF.data.fase);
         }
         setFasesExp(arregloNFase);
@@ -268,7 +268,7 @@ export default function FormDialog() {
         let arrMediciones = new Array();
 
         for (let j = 0; j < medicionesFase.length; j++) {
-            const resMediciones = await axios.get('http://localhost:81/api/mediciones/' + medicionesFase[j]);
+            const resMediciones = await axios.get(routesBD.mediciones + medicionesFase[j]);
             resMediciones.data.medicion.estado = false;
             arrMediciones.push(resMediciones.data.medicion);
             //por cada medicion, yo debo traer los dispositivos que tengan el mismo tipo de dispositivo que los asociados dentro de cada grupo
@@ -301,7 +301,7 @@ export default function FormDialog() {
                 valor: ""
             };
             nuevoArr.push(newObject);
-            const res = await axios.get('http://localhost:81/api/mediciones/' + medicionesFase[i]);
+            const res = await axios.get(routesBD.mediciones + medicionesFase[i]);
             arrNombreMediciones.push([res.data.medicion.nombre, i, nuevoArr]);
             arrMediciones.push(nuevoArr);
         }
@@ -438,7 +438,7 @@ export default function FormDialog() {
         }
         console.log('Guardando Fase Activa: ');
         console.log(faseActivaGuardar)
-        const resFaseActiva = await axios.put('http://localhost:81/api/experimentos/faseActiva/' + idUrl['id'], faseActivaGuardar);
+        const resFaseActiva = await axios.put(routesBD.experimentos + 'faseActiva/' + idUrl['id'], faseActivaGuardar);
     }
 
     useEffect(() => {
@@ -591,7 +591,7 @@ export default function FormDialog() {
             if (obs === 'vacio') {
                 setObservacionesTabla(arrObs);
             } else {
-                const res = await axios.get('http://localhost:81/api/observaciones/' + obs);
+                const res = await axios.get(routesBD.observaciones + obs);
                 if (res.data.observacion != null) {
                     arrObs.push(res.data.observacion);
                     if (i === termino) {
@@ -637,7 +637,7 @@ export default function FormDialog() {
 
 
     const onDeleteObs = async (id) => {
-        await axios.delete('http://localhost:81/api/observaciones/' + id);
+        await axios.delete(routesBD.observaciones + id);
         let arrdelete = idObserv;
         // console.log(arrdelete.length);
         for (let i = 0; i < arrdelete.length; i++) {
@@ -647,7 +647,7 @@ export default function FormDialog() {
                 let datoIdObsFase = {
                     idObservaciones: arrdelete
                 };
-                const resq = await axios.put('http://localhost:81/api/fases/agregarObservaciones/' + fasesExp[faseActiva]._id, datoIdObsFase);
+                const resq = await axios.put(routesBD.fases+ 'agregarObservaciones/' + fasesExp[faseActiva]._id, datoIdObsFase);
                 setActualizarTabla(!actualizarTabla);
 
                 console.log(resq);
@@ -661,7 +661,7 @@ export default function FormDialog() {
         //     let datoIdObs = {
         //         idObservaciones: arrObservaciones
         //     }
-        //     const resq = await axios.put('http://localhost:81/api/fases/agregarObservaciones/' + fases.[faseActiva]._id, datoIdObs);
+        //     const resq = await axios.put(routesBD.fases+ 'agregarObservaciones/' + fases.[faseActiva]._id, datoIdObs);
         // }
         // }
         // getObservaciones();
@@ -736,7 +736,7 @@ export default function FormDialog() {
         if (!data) {
             return (console.log('help'))
         } else {
-            const res = await axios.post('http://localhost:81/api/observaciones', data);
+            const res = await axios.post(routesBD.observaciones, data);
             // console.log(res.data.mensaje);
 
             let arrObservaciones = idObserv;
@@ -746,7 +746,7 @@ export default function FormDialog() {
             let datoIdObs = {
                 idObservaciones: arrObservaciones
             }
-            const resq = await axios.put('http://localhost:81/api/fases/agregarObservaciones/' + fasesExp[faseActiva]._id, datoIdObs);
+            const resq = await axios.put(routesBD.fases + 'agregarObservaciones/' + fasesExp[faseActiva]._id, datoIdObs);
             handleClose();
         }
     }
@@ -785,7 +785,7 @@ export default function FormDialog() {
                     nombreExp: nombreExp,
                     estado: 'Analisis'
                 }
-                const resEtapa = await axios.put('http://localhost:81/api/experimentos/' + idExperimento, Etapa);
+                const resEtapa = await axios.put(routesBD.experimentos + idExperimento, Etapa);
                 setTimeout(
                     function () {
                         window.location.href = "http://localhost/analisis/" + idUrl['id'];
@@ -820,14 +820,14 @@ export default function FormDialog() {
 
         for (let i = 0; i < fase['idGrupos'].length; i++) {
             if (fase['idGrupos'][i] != '') {
-                const res = await axios.get('http://localhost:81/api/grupos/' + fase['idGrupos'][i]);
+                const res = await axios.get(routesBD.grupos + fase['idGrupos'][i]);
                 arrTotal.push(res.data.grupo);
             }
         }
         for (let i = 0; i < arrTotal.length; i++) {
             let arregloParticipantes = new Array();
             for (let j = 0; j < arrTotal[i]['participantes'].length; j++) {
-                const resP = await axios.get('http://localhost:81/api/participantes/' + arrTotal[i]['participantes'][j]);
+                const resP = await axios.get(routesBD.participantes + arrTotal[i]['participantes'][j]);
                 arregloParticipantes.push(resP.data.participante);
             }
             participantes.push(arregloParticipantes);
@@ -930,7 +930,7 @@ export default function FormDialog() {
             }
             console.log(medicionFinal);
 
-            window[socket + medicionFinal] = io.connect('http://192.168.0.4:200/' + medicionFinal);
+            window[socket + medicionFinal] = io.connect('http://192.168.0.8:200/' + medicionFinal);
             arrConexiones.push(window[socket + medicionFinal])
 
             window[socket + medicionFinal].emit("iniciar", mensajeInicio);

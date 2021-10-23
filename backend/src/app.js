@@ -4,7 +4,7 @@ const cors = require('cors');
 const app = express();
 
 // settings
-app.set('port', 80);
+app.set('port', 81);
 //cambiar para dockers
 // app.set('port', process.env.PORT || 80);
 

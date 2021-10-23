@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { loadCSS } from 'fg-loadcss';
 import axios from 'axios';
 import { Grid, Button } from '@material-ui/core';
+import routesBD from '../helpers/routes';
 
 export default function Usuarios() {
 
@@ -24,7 +25,7 @@ export default function Usuarios() {
     }, []);
 
     const getUsers = async () => {
-        const res = await axios.get('http://localhost:81/api/users');
+        const res = await axios.get(routesBD.users);
         setUsuarios(res.data);
     }
 
@@ -45,7 +46,7 @@ export default function Usuarios() {
             tipoUsuario: 'regular',
             contraseña: contraseña
         }
-        await axios.post('http://localhost:81/api/users', nuevoNombreUsuario)
+        await axios.post(routesBD.users, nuevoNombreUsuario)
         setNombreUsuario('');
         setContraseña('');
         setTipoUsuario('');
@@ -64,12 +65,12 @@ export default function Usuarios() {
             contraseña: e.target[2].value
         }
         // console.log('actualizarUsuario', actualizarUsuario);
-        await axios.put('http://localhost:81/api/users/' + e.target[1].name, actualizarUsuario);
+        await axios.put(routesBD.users + e.target[1].name, actualizarUsuario);
         getUsers();
     }
 
     const deleteUser = async (idUsuario) => {
-        await axios.delete('http://localhost:81/api/users/' + idUsuario);
+        await axios.delete(routesBD.users + idUsuario);
         getUsers();
     }
 

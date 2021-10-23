@@ -10,4 +10,21 @@ const routes = {
     FormDialog: "/ejecucion/:id",
     AnalisisExp: "/analisis/:id",
     TestSocket: "/testSocket/",
+};
+
+//deben quedar como localhost2
+const routesBD = {
+    dispositivos: "http://localhost:81/api/dispositivos/",
+    experimentos: "http://localhost:81/api/experimentos/",
+    fases: "http://localhost:81/api/fases/",
+    grupos: "http://localhost:81/api/grupos/",
+    mediciones: "http://localhost:81/api/mediciones/",
+    observaciones: "http://localhost:81/api/observaciones/",
+    participantes: "http://localhost:81/api/participantes/",
+    reporteResultados: "http://localhost:81/api/reporteResultados/",
+    tipoDispositivo: "http://localhost:81/api/tipoDispositivo/",
+    tipoMediciones: "http://localhost:81/api/tipoMediciones/",
+    users: "http://localhost:81/api/users/",
 }
+
+export default routesBD;
