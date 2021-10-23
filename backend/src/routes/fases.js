@@ -2,7 +2,7 @@
 const { Router } = require('express');
 const router = Router();
 
-const { getFases, createFase, getFase, updateFase, updateFaseMediciones, updateFaseObservaciones, deleteFase } = require('../controllers/fases.controller');
+const { getFases, createFase, getFase, updateFase, updateFaseMediciones, updateFaseObservaciones, updateFaseGrupos, updateNumeroFase, deleteFase } = require('../controllers/fases.controller');
 
 // Tomar de la ruta inicial, consultas HTTP
 router.route('/')
@@ -21,5 +21,9 @@ router.route('/agregarMediciones/:id')
 router.route('/agregarObservaciones/:id')
     .put(updateFaseObservaciones);
 
+router.route('/agregarGrupos/:id')
+    .put(updateFaseGrupos);
+router.route('/actualizarNumeroFase/:id')
+    .put(updateNumeroFase);
 
 module.exports = router;

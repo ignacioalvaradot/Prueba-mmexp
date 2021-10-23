@@ -3,18 +3,18 @@ const { Schema, model } = require('mongoose');
 
 // Definir esquema de datos
 const dispositivoSchema = new Schema({
-    numeroSerie: {
+    nombre: {
         type: String, 
         required: true 
     },
-    idDispositivoMM: {
-        type: String,
+    canales: {
+        type: Number,
         required: true 
     },
-    modelo: {
-        type: String,
-        required: true
-    },
+    // modelo: {
+    //     type: String,
+    //     required: true
+    // },
 }, {
     timestamps: true
 });

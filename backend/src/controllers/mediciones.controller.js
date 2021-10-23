@@ -10,10 +10,12 @@ MedicionCtrl.getMediciones = async (req, res) => {
 
 MedicionCtrl.createMedicion = async (req, res) => {
     const { idTipoMedicion, nombre } = req.body;
+    let nuevosDispositivos = new Array();
     const newMedicion = new Medicion({
         idTipoMedicion: idTipoMedicion,
         // idParticipante: idParticipante,
         nombre: nombre,
+        dispositivosAsociados: nuevosDispositivos
         // tiempo: tiempo
     });
     await newMedicion.save();
@@ -33,6 +35,14 @@ MedicionCtrl.updateMedicion = async (req, res) => {
         nombre
     });
     res.json({mensaje: 'Medicion Actualizada'});
+};
+
+MedicionCtrl.updateMedicionDispositivos = async (req, res) => {
+    const { dispositivosAsociados } = req.body;
+    await Medicion.findOneAndUpdate({_id: req.params.id}, {
+        dispositivosAsociados
+    });
+    res.json({mensaje: 'Dispositivos de la Medicion Actualizados'});
 };
 
 MedicionCtrl.deleteMedicion = async (req, res) => {

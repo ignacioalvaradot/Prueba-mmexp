@@ -9,14 +9,13 @@ DispositivoCtrl.getDispositivos = async (req, res) => {
 }
 
 DispositivoCtrl.createDispositivo = async (req, res) => {
-    const { numeroSerie, idDispositivoMM, modelo } = req.body;
+    const { nombre, canales } = req.body;
     const newDispositivo = new Dispositivo({
-        numeroSerie: numeroSerie,
-        idDispositivoMM: idDispositivoMM,
-        modelo: modelo
+        nombre: nombre,
+        canales: canales
     });
     await newDispositivo.save();
-    res.json({mensaje: 'Dispositivo Guardada'});
+    res.json({mensaje: 'Dispositivo Creado'});
 };
 
 DispositivoCtrl.getDispositivo = async (req, res) => {
@@ -25,13 +24,12 @@ DispositivoCtrl.getDispositivo = async (req, res) => {
 };
 
 DispositivoCtrl.updateDispositivo = async (req, res) => {
-    const { numeroSerie, idDispositivoMM, modelo } = req.body;
+    const { nombre, canales } = req.body;
     await Dispositivo.findOneAndUpdate({_id: req.params.id}, {
-        numeroSerie,
-        idDispositivoMM,
-        modelo
+        nombre,
+        canales
     });
-    res.json({mensaje: 'Dispositivo Actualizada'});
+    res.json({mensaje: 'Dispositivo Actualizado'});
 };
 
 DispositivoCtrl.deleteDispositivo = async (req, res) => {

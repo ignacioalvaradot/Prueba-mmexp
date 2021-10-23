@@ -2,7 +2,7 @@
 const { Router } = require('express');
 const router = Router();
 
-const { getGrupos, createGrupo, getGrupo, updateGrupo, deleteGrupo } = require('../controllers/grupos.controller');
+const { getGrupos, createGrupo, getGrupo, updateGrupo, updateArrParticipantes, updateDispositivos, deleteGrupo } = require('../controllers/grupos.controller');
 
 // Tomar de la ruta inicial, consultas HTTP
 router.route('/')
@@ -14,5 +14,11 @@ router.route('/:id')
     .get(getGrupo)
     .put(updateGrupo)
     .delete(deleteGrupo);
+
+router.route('/agregarParticipantes/:id')
+    .put(updateArrParticipantes);
+
+router.route('/actualizarDispositivos/:id')
+    .put(updateDispositivos);
 
 module.exports = router;

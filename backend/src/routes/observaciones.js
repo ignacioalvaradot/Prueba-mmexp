@@ -2,7 +2,7 @@
 const { Router } = require('express');
 const router = Router();
 
-const { getObservaciones, createObservacion, getObservacion, updateObservacion, deleteObservacion } = require('../controllers/Observaciones.controller');
+const { getObservaciones, createObservacion, getObservacion, updateObservacion, deleteObservacion } = require('../controllers/observaciones.controller');
 
 // Tomar de la ruta inicial, consultas HTTP
 router.route('/')

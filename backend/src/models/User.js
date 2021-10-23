@@ -6,7 +6,7 @@ const userSchema = new Schema({
     tipoUsuario: {
         type: String,
         required: true,
-        default: "Admin"
+        default: "regular"
     },
     nombreUsuario: {
         type: String,
@@ -14,6 +14,10 @@ const userSchema = new Schema({
         //trim separa por espacios
         trim: true,
         unique: true
+    },
+    contraseña: {
+        type: String,
+        required: true
     }
 },{
     timestamps: true
