@@ -21,6 +21,7 @@ import { MuiPickersUtilsProvider, KeyboardTimePicker, KeyboardDatePicker } from 
 import DateFnsUtils from '@date-io/date-fns';
 import { DatePicker, TimePicker, DateTimePicker } from '@material-ui/pickers';
 import { es } from "date-fns/locale";
+import routesBD from '../helpers/routes';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -255,7 +256,7 @@ export default function PlanificacionExp() {
         };
 
         const traerMedicionesRegistrar = async () => {
-            const medicionesExp = await axios.get('http://localhost:81/api/mediciones');
+            const medicionesExp = await axios.get(routesBD.mediciones);
             for (let i = 0; i < (medicionesExp.data).length; i++) {
                 medicionesExp.data[i].boolean = false;
             }
@@ -270,7 +271,7 @@ export default function PlanificacionExp() {
     }, []);
 
     const dataFase = async () => {
-        const res = await axios.get('http://localhost:81/api/experimentos/' + idUrl.id);
+        const res = await axios.get(routesBD.experimentos + idUrl.id);
         setIdExperimento(idUrl.id);
         obtenerFases(res.data.experimento.fasesId);
         obtenerFasesComparacion(res.data.experimento.fasesId);
@@ -282,7 +283,7 @@ export default function PlanificacionExp() {
         let arrfases = fases;
         let arregloNFase = new Array;
         for (var i = 0; i < arrfases.length; i++) {
-            let resF = await axios.get('http://localhost:81/api/fases/' + arrfases[i]);
+            let resF = await axios.get(routesBD.fases + arrfases[i]);
             arregloNFase.push(resF.data.fase);
 
         }
@@ -297,7 +298,7 @@ export default function PlanificacionExp() {
         let arrefases = fases;
         let arreglosNFase = new Array;
         for (var i = 0; i < arrefases.length; i++) {
-            let resFase = await axios.get('http://localhost:81/api/fases/' + arrefases[i]);
+            let resFase = await axios.get(routesBD.fases + arrefases[i]);
             arreglosNFase.push(resFase.data.fase);
         }
         setFasesComparacion(arreglosNFase);
@@ -587,18 +588,18 @@ export default function PlanificacionExp() {
                     if (arregloEliminado[i] === fasesComp[j]['_id']) {
                         idGrupos = fasesComp[j]['idGrupos'];
                         for (let k = 0; k < idGrupos.length; k++) {
-                            const resGruposGet = await axios.get('http://localhost:81/api/grupos/' + idGrupos[k]);
+                            const resGruposGet = await axios.get(routesBD.grupos + idGrupos[k]);
                             idParticipantes = resGruposGet.data.grupo.participantes;
                             for (let l = 0; l < idParticipantes.length; l++) {
-                                const resPartDel = await axios.delete('http://localhost:81/api/participantes/' + idParticipantes[l]);
+                                const resPartDel = await axios.delete(routesBD.participantes + idParticipantes[l]);
                             }
-                            const resGrupoDel = await axios.delete('http://localhost:81/api/grupos/' + idGrupos[k]);
+                            const resGrupoDel = await axios.delete(routesBD.grupos + idGrupos[k]);
                         }
                         fasesComp.splice(j, 1);
 
                     }
                 }
-                const resFasesDel = await axios.delete('http://localhost:81/api/fases/' + arregloEliminado[i]);
+                const resFasesDel = await axios.delete(routesBD.fases + arregloEliminado[i]);
             }
             setFasesComparacion(fasesComp);
             // console.log('fasesComp');
@@ -616,7 +617,7 @@ export default function PlanificacionExp() {
                                 let numFase = {
                                     numeroFase: fasesExper[j]['numeroFase'],
                                 }
-                                const resNumFases = await axios.put('http://localhost:81/api/fases/actualizarNumeroFase/' + fasesComp[i]['_id'], numFase);
+                                const resNumFases = await axios.put(routesBD.fases +'actualizarNumeroFase/' + fasesComp[i]['_id'], numFase);
                                 console.log('numeroFase actualizado');
                             }
 
@@ -630,7 +631,7 @@ export default function PlanificacionExp() {
             }
             console.log('arregloIDFases');
             console.log(arregloIDFases);
-            const resFasesExp = await axios.put('http://localhost:81/api/experimentos/agregarFases/' + idExperimento, arregloIDFases);
+            const resFasesExp = await axios.put(routesBD.experimentos+'agregarFases/' + idExperimento, arregloIDFases);
             guardarDatosFase(boton);
             setTimeout(
                 function () {
@@ -670,7 +671,7 @@ export default function PlanificacionExp() {
                 nombreExp: nombreExp,
                 estado: 'Preparacion'
             }
-            const resEtapa = await axios.put('http://localhost:81/api/experimentos/' + idExperimento, Etapa);
+            const resEtapa = await axios.put(routesBD.experimentos + idExperimento, Etapa);
             setTimeout(
                 function () {
                     window.location.href = "http://localhost/preparacionConfig/" + idExperimento;
@@ -754,7 +755,7 @@ export default function PlanificacionExp() {
             }
             console.log('Fase PUT...')
 
-            const resFases = await axios.put('http://localhost:81/api/fases/' + idFase, Fase);
+            const resFases = await axios.put(routesBD.fases + idFase, Fase);
             let FaseExperimento = {
                 _id: idFase,
                 descripcion: DescripcionG,
@@ -785,7 +786,7 @@ export default function PlanificacionExp() {
                 tiempoFin: horaTermG,
                 tiempoInicio: horaIniG
             }
-            const resFases = await axios.post('http://localhost:81/api/fases/', Fase);
+            const resFases = await axios.post(routesBD.fases, Fase);
             Fase._id = resFases.data.mensaje;
             let FaseExperimento = {
                 _id: Fase['_id'],
@@ -812,7 +813,7 @@ export default function PlanificacionExp() {
                 fasesId: arrIdFases
             }
             console.log('Fase POST...')
-            const resFasesExp = await axios.put('http://localhost:81/api/experimentos/agregarFases/' + idExperimento, arregloIDFases);
+            const resFasesExp = await axios.put(routesBD.experimentos+'agregarFases/' + idExperimento, arregloIDFases);
 
         }
         if (estado === 'Continuar') {

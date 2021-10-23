@@ -15,6 +15,7 @@ import Fade from '@material-ui/core/Fade';
 import { Stepper, Step, StepButton, LinearProgress } from '@material-ui/core/'
 import CancelIcon from '@material-ui/icons/Cancel';
 import VisibilityIcon from '@material-ui/icons/Visibility';
+import routesBD from '../helpers/routes';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -286,7 +287,7 @@ export default function PreparacionExp() {
         for (let i = 0; i < arrGrupos.length; i++) {
             for (let j = 0; j < arrGrupos[i].length; j++) {
                 if (arrGrupos[i][j] != '') {
-                    const res = await axios.get('http://localhost:81/api/grupos/' + arrGrupos[i][j]);
+                    const res = await axios.get(routesBD.grupos + arrGrupos[i][j]);
                     arrTotal.push(res.data.grupo);
                 }
             }
@@ -311,7 +312,7 @@ export default function PreparacionExp() {
         for (let i = 0; i < arreGrupos.length; i++) {
             for (let j = 0; j < arreGrupos[i].length; j++) {
                 if (arreGrupos[i][j] != '') {
-                    const res = await axios.get('http://localhost:81/api/grupos/' + arreGrupos[i][j]);
+                    const res = await axios.get(routesBD.grupos + arreGrupos[i][j]);
                     arreTotal.push(res.data.grupo);
                 }
             }
@@ -336,7 +337,7 @@ export default function PreparacionExp() {
         for (let i = 0; i < arreParticipantes.length; i++) {
             for (let j = 0; j < arreParticipantes[i].length; j++) {
                 if (arreParticipantes[i][j] != '') {
-                    const res = await axios.get('http://localhost:81/api/participantes/' + arreParticipantes[i][j]);
+                    const res = await axios.get(routesBD.participantes + arreParticipantes[i][j]);
                     arrTotal.push(res.data.participante);
                 }
             }
@@ -364,7 +365,7 @@ export default function PreparacionExp() {
         for (let i = 0; i < arrParticipantes.length; i++) {
             for (let j = 0; j < arrParticipantes[i].length; j++) {
                 if (arrParticipantes[i][j] != '') {
-                    const res = await axios.get('http://localhost:81/api/participantes/' + arrParticipantes[i][j]);
+                    const res = await axios.get(routesBD.participantes + arrParticipantes[i][j]);
                     arrTotal.push(res.data.participante);
                 }
             }
@@ -383,7 +384,7 @@ export default function PreparacionExp() {
 
 
     const dataFase = async () => {
-        const res = await axios.get('http://localhost:81/api/experimentos/' + idUrl['id']);
+        const res = await axios.get(routesBD.experimentos + idUrl['id']);
 
         setIdExperimento(idUrl['id']);
         obtenerFases(res.data.experimento.fasesId);
@@ -396,7 +397,7 @@ export default function PreparacionExp() {
         let arrfases = fases;
         let arregloNFase = new Array;
         for (var i = 0; i < arrfases.length; i++) {
-            let resF = await axios.get('http://localhost:81/api/fases/' + arrfases[i]);
+            let resF = await axios.get(routesBD.fases + arrfases[i]);
             arregloNFase.push(resF.data.fase);
         }
         setFasesExp(arregloNFase);
@@ -412,7 +413,7 @@ export default function PreparacionExp() {
             let medicionesFase = fases[i].idMediciones;
             let arrMediciones = new Array();
             for (let j = 0; j < medicionesFase.length; j++) {
-                const resMediciones = await axios.get('http://localhost:81/api/mediciones/' + medicionesFase[j]);
+                const resMediciones = await axios.get(routesBD.mediciones + medicionesFase[j]);
                 resMediciones.data.medicion.estado = false;
                 arrMediciones.push(resMediciones.data.medicion);
             }
@@ -835,7 +836,7 @@ export default function PreparacionExp() {
                 nombreExp: nombreExp,
                 estado: 'Ejecucion'
             }
-            const resEtapa = await axios.put('http://localhost:81/api/experimentos/' + idExperimento, Etapa);
+            const resEtapa = await axios.put(routesBD.experimentos + idExperimento, Etapa);
             setTimeout(
                 function () {
                     window.location.href = "http://localhost/ejecucion/" + idExperimento;
@@ -900,15 +901,15 @@ export default function PreparacionExp() {
                         idGrupos: arregIdGrupos
                     }
                     console.log('Actualizando Fase - Grupo Eliminado... ');
-                    const resFases = await axios.put('http://localhost:81/api/fases/agregarGrupos/' + idFaseActiva, arrGruposID);
+                    const resFases = await axios.put(routesBD.fases+'agregarGrupos/' + idFaseActiva, arrGruposID);
                     let arrDelGrupo = comparacionGrupo[i]['_id'];
                     console.log('Eliminando Grupo... ');
-                    const resGrupos = await axios.delete('http://localhost:81/api/grupos/' + arrDelGrupo);
+                    const resGrupos = await axios.delete(routesBD.grupos + arrDelGrupo);
 
                     let arrDelPart = comparacionParticipantes[i];
                     for (let p = 0; p < arrDelPart.length; p++) {
                         console.log('Eliminando varios Participantes...  ');
-                        const resParticipantes = await axios.delete('http://localhost:81/api/participantes/' + arrDelPart[p]['_id']);
+                        const resParticipantes = await axios.delete(routesBD.participantes+ arrDelPart[p]['_id']);
                     }
                     comparacionGrupo.splice(i, 1)
                     comparacionParticipantes.splice(i, 1);
@@ -942,13 +943,13 @@ export default function PreparacionExp() {
                                     }
 
                                     console.log('Actualizando Grupos con nuevosParticipantes... ');
-                                    const res = await axios.put('http://localhost:81/api/grupos/agregarParticipantes/' + idGrupoArreglo, arrParticipantesID);
+                                    const res = await axios.put(routesBD.grupos+'agregarParticipantes/' + idGrupoArreglo, arrParticipantesID);
                                 }
                             }
                             comparacionGrupo[i]['participantes'] = nuevoArrIdParticipantes;
 
                             console.log('Eliminando Participante... ');
-                            const resParticipante = await axios.delete('http://localhost:81/api/participantes/' + idParticipante);
+                            const resParticipante = await axios.delete(routesBD.participantes + idParticipante);
                             comparacionParticipantes[i].splice(j, 1);
                             comparacionP = comparacionP - 1;
 
@@ -973,7 +974,7 @@ export default function PreparacionExp() {
                                 };
 
                                 console.log('Actualizando Participante..');
-                                const resParticipante = await axios.put('http://localhost:81/api/participantes/' + arregloParticipantesxGrupo[i][j]['_id'], datosParticipante);
+                                const resParticipante = await axios.put(routesBD.participantes + arregloParticipantesxGrupo[i][j]['_id'], datosParticipante);
                                 arrIdParticipantes.push(arregloParticipantesxGrupo[i][j]['_id']);
 
                             }
@@ -982,7 +983,7 @@ export default function PreparacionExp() {
                                     numeroSerie: arregloParticipantesxGrupo[i][j]['numeroSerie'],
                                     descripcion: arregloParticipantesxGrupo[i][j]['descripcion']
                                 };
-                                const resParticipante = await axios.post('http://localhost:81/api/participantes', datosParticipante);
+                                const resParticipante = await axios.post(routesBD.participantes, datosParticipante);
                                 arrIdParticipantes.push(resParticipante.data.mensaje);
                                 console.log('Nuevo Participante creado... ');
                                 //ademas debo recibir su id y guardarla en arrIDParticipantes para subirlo a grupos
@@ -999,7 +1000,7 @@ export default function PreparacionExp() {
                         numeroSerie: arregloGrupos[i]['numeroSerie'],
                     }
                     console.log('Actualizando Grupo...');
-                    const resGrupos = await axios.put('http://localhost:81/api/grupos/' + arregloGrupos[i]['_id'], datosGrupo);
+                    const resGrupos = await axios.put(routesBD.grupos + arregloGrupos[i]['_id'], datosGrupo);
                     arrIdGrupos.push(arregloGrupos[i]['_id']);
                     nuevaData = true;
                     arrIdParticipantes = new Array();
@@ -1013,7 +1014,7 @@ export default function PreparacionExp() {
                         numeroSerie: arregloGrupos[i]['numeroSerie'],
                     }
                     console.log('Creando Grupo Nuevo... ');
-                    const resGrupos = await axios.post('http://localhost:81/api/grupos', datosGrupo);
+                    const resGrupos = await axios.post(routesBD.grupos, datosGrupo);
                     arrIdGrupos.push(resGrupos.data.mensaje);
 
                     nuevaData = true;
@@ -1027,7 +1028,7 @@ export default function PreparacionExp() {
                     idGrupos: arrIdGrupos
                 };
                 console.log('actualizando fase arregloGrupos... ')
-                const resFases = await axios.put('http://localhost:81/api/fases/agregarGrupos/' + idFase, arregloIdGrupos);
+                const resFases = await axios.put(routesBD.fases+'agregarGrupos/' + idFase, arregloIdGrupos);
                 arregloIdGrupos = new Array();
             }
         }

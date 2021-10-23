@@ -17,6 +17,7 @@ import { MuiPickersUtilsProvider, KeyboardTimePicker, KeyboardDatePicker } from 
 import DateFnsUtils from '@date-io/date-fns';
 import { DatePicker, TimePicker, DateTimePicker } from '@material-ui/pickers';
 import { es } from "date-fns/locale";
+import routesBD from '../helpers/routes';
 
 
 function crearData(descripcion, fechaRealizacion, fechaModificacion) {
@@ -141,7 +142,7 @@ export default function AnalisisExp() {
             if (tipo != '') {
                 console.log(tipo);
                 setTipoEdicion(tipo);
-                axios.get('http://localhost:81/api/experimentos/traerExp/' + tipo).then((value) => { setGetExperimentos(value.data.experimento) });
+                axios.get(routesBD.experimentos + 'traerExp/' + tipo).then((value) => { setGetExperimentos(value.data.experimento) });
                 if(tipo==='Preparacion'){
                     setTipoEdicion('preparacionConfig');
                 }
@@ -190,30 +191,30 @@ export default function AnalisisExp() {
                 idFases = Experimentos[i]['fasesId'];
                 if (idFases.length > 0) {
                     for (let j = 0; j < idFases.length; j++) {
-                        const resFases = await axios.get('http://localhost:81/api/fases/' + idFases[j]);
+                        const resFases = await axios.get(routesBD.fases + idFases[j]);
                         idGrupos = resFases.data.fase.idGrupos;
                         if (idGrupos.length > 0) {
                             for (let k = 0; k < idGrupos.length; k++) {
-                                const resGrupos = await axios.get('http://localhost:81/api/grupos/' + idGrupos[k]);
+                                const resGrupos = await axios.get(routesBD.grupos + idGrupos[k]);
                                 idParticipantes = resGrupos.data.grupo.participantes;
                                 if (idParticipantes.length > 0) {
                                     for (let l = 0; l < idParticipantes.length; l++) {
-                                        const resDelParticipantes = await axios.delete('http://localhost:81/api/participantes/' + idParticipantes[l]);
+                                        const resDelParticipantes = await axios.delete(routesBD.participantes + idParticipantes[l]);
                                     }
                                 }
-                                const resDelGrupos = await axios.delete('http://localhost:81/api/grupos/' + idGrupos[k]);
+                                const resDelGrupos = await axios.delete(routesBD.grupos + idGrupos[k]);
                             }
                         }
                         idObservaciones = resFases.data.fase.idObservaciones
                         if (idObservaciones.length > 0) {
                             for (let m = 0; m < idObservaciones.length; m++) {
-                                const resDelObservaciones = await axios.delete('http://localhost:81/api/observaciones/' + idObservaciones[m]);
+                                const resDelObservaciones = await axios.delete(routesBD.observaciones + idObservaciones[m]);
                             }
                         }
-                        const resDelFases = await axios.delete('http://localhost:81/api/fases/' + idFases[j]);
+                        const resDelFases = await axios.delete(routesBD.fases + idFases[j]);
                     }
                 }
-                const resDelExperimento = await axios.delete('http://localhost:81/api/experimentos/' + idExperEliminar);
+                const resDelExperimento = await axios.delete(routesBD.experimentos + idExperEliminar);
                 Experimentos.splice(i, 1);
             }
         }

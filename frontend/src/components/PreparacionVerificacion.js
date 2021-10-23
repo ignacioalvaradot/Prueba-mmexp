@@ -18,6 +18,7 @@ import VisibilityIcon from '@material-ui/icons/Visibility';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import io from 'socket.io-client';
+import routesBD from '../helpers/routes';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -358,10 +359,10 @@ export default function PreparacionExp() {
         let medicion = '';
         let separador = ' ';
         let medicionFinal = '';
-        console.log('tablaEstadoMediciones');
-        console.log(tablaEstadoMediciones);
-        console.log('medicionesFaseActual');
-        console.log(medicionesFaseActual);
+        // console.log('tablaEstadoMediciones');
+        // console.log(tablaEstadoMediciones);
+        // console.log('medicionesFaseActual');
+        // console.log(medicionesFaseActual);
         for (let i = 0; i < medicionesFaseActual[0].length; i++) {
             medicion = medicionesFaseActual[0][i]['nombre'].toLowerCase();
             let medicionFiltro = medicion.split(separador);
@@ -377,9 +378,10 @@ export default function PreparacionExp() {
                 idFase: 1
             }
 
-            console.log(tablaEstadoMediciones[i]);
+            // console.log(tablaEstadoMediciones[i]);
 
-            window[socket + (i).toString()] = io.connect('http://192.168.0.4:200/' + medicionFinal);
+            window[socket + (i).toString()] = io.connect('http://192.168.0.8:200/' + medicionFinal);
+            // console.log(window[socket + (i).toString()])
             // window[socket + (i).toString()].emit("my_event", { query: "foo=bar" })
             // console.log(window[socket + (i).toString()]);
             setTimeout(
@@ -389,6 +391,7 @@ export default function PreparacionExp() {
                 1000
             );
             window[socket + (i).toString()].on('SendMetrics', function (msg) {
+                console.log(msg.data);
                 //debe quedar en pos de los canales que recibe, primero, si encuentra el disp, luego si encuentra el canal, y eso
                 let contadorGrupos = 0;
                 for (let k = 0; k < tablaEstadoMediciones[i]['grupos'].length; k++) {
@@ -486,7 +489,7 @@ export default function PreparacionExp() {
         let arrFasesGrupos = new Array();
         for (let i = 0; i < fase['idGrupos'].length; i++) {
             if (fase['idGrupos'][i] != '') {
-                const res = await axios.get('http://localhost:81/api/grupos/' + fase['idGrupos'][i]);
+                const res = await axios.get(routesBD.grupos + fase['idGrupos'][i]);
                 arrTotal.push(res.data.grupo);
             }
 
@@ -542,14 +545,14 @@ export default function PreparacionExp() {
         let participantes = new Array();
         for (let i = 0; i < fase['idGrupos'].length; i++) {
             if (fase['idGrupos'][i] != '') {
-                const res = await axios.get('http://localhost:81/api/grupos/' + fase['idGrupos'][i]);
+                const res = await axios.get(routesBD.grupos + fase['idGrupos'][i]);
                 arrTotal.push(res.data.grupo);
             }
         }
         for (let i = 0; i < arrTotal.length; i++) {
             let arregloParticipantes = new Array();
             for (let j = 0; j < arrTotal[i]['participantes'].length; j++) {
-                const resP = await axios.get('http://localhost:81/api/participantes/' + arrTotal[i]['participantes'][j]);
+                const resP = await axios.get(routesBD.participantes + arrTotal[i]['participantes'][j]);
                 arregloParticipantes.push(resP.data.participante);
             }
             participantes.push(arregloParticipantes);
@@ -648,7 +651,7 @@ export default function PreparacionExp() {
         for (let i = 0; i < arreGrupos.length; i++) {
             for (let j = 0; j < arreGrupos[i].length; j++) {
                 if (arreGrupos[i][j] != '') {
-                    const res = await axios.get('http://localhost:81/api/grupos/' + arreGrupos[i][j]);
+                    const res = await axios.get(routesBD.grupos + arreGrupos[i][j]);
                     arreTotal.push(res.data.grupo);
                 }
             }
@@ -673,7 +676,7 @@ export default function PreparacionExp() {
         for (let i = 0; i < arreParticipantes.length; i++) {
             for (let j = 0; j < arreParticipantes[i].length; j++) {
                 if (arreParticipantes[i][j] != '') {
-                    const res = await axios.get('http://localhost:81/api/participantes/' + arreParticipantes[i][j]);
+                    const res = await axios.get(routesBD.participantes + arreParticipantes[i][j]);
                     arrTotal.push(res.data.participante);
                 }
             }
@@ -686,7 +689,7 @@ export default function PreparacionExp() {
     }
 
     const dataFase = async () => {
-        const res = await axios.get('http://localhost:81/api/experimentos/' + idUrl['id']);
+        const res = await axios.get(routesBD.experimentos + idUrl['id']);
 
         setIdExperimento(idUrl['id']);
         obtenerFases(res.data.experimento.fasesId);
@@ -699,7 +702,7 @@ export default function PreparacionExp() {
         let arrfases = fases;
         let arregloNFase = new Array;
         for (var i = 0; i < arrfases.length; i++) {
-            let resF = await axios.get('http://localhost:81/api/fases/' + arrfases[i]);
+            let resF = await axios.get(routesBD.fases + arrfases[i]);
             arregloNFase.push(resF.data.fase);
         }
         setFasesExp(arregloNFase);
@@ -715,7 +718,7 @@ export default function PreparacionExp() {
         let arrMediciones = new Array();
 
         for (let j = 0; j < medicionesFase.length; j++) {
-            const resMediciones = await axios.get('http://localhost:81/api/mediciones/' + medicionesFase[j]);
+            const resMediciones = await axios.get(routesBD.mediciones + medicionesFase[j]);
             resMediciones.data.medicion.estado = false;
             arrMediciones.push(resMediciones.data.medicion);
             //por cada medicion, yo debo traer los dispositivos que tengan el mismo tipo de dispositivo que los asociados dentro de cada grupo

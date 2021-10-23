@@ -21,6 +21,7 @@ import { MuiPickersUtilsProvider, KeyboardTimePicker, KeyboardDatePicker } from 
 import DateFnsUtils from '@date-io/date-fns';
 import { DatePicker, TimePicker, DateTimePicker } from '@material-ui/pickers';
 import { es } from "date-fns/locale";
+import routesBD from '../helpers/routes';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -176,7 +177,7 @@ export default function AnalisisExp() {
 
             // const traerMedicionesFase = async (medicionesFase) => {
             //     for (let i = 0; i < medicionesFase.length; i++) {
-            //         const res = await axios.get('http://localhost:81/api/mediciones/' + medicionesFase[i]);
+            //         const res = await axios.get(routesBD.mediciones + medicionesFase[i]);
             //         if (res.data.medicion.nombre === 'Intensidad') {
             //             arrNombreMediciones.push([res.data.medicion.nombre, i, Intensidad]);
             //             setNombresMediciones(arrNombreMediciones);
@@ -205,7 +206,9 @@ export default function AnalisisExp() {
 
     useEffect(() => {
         const getObservaciones = async (obs, arrObs, i, termino) => {
-            const res = await axios.get('http://localhost:81/api/observaciones/' + obs);
+            const res = await axios.get(routesBD.observaciones + obs);
+            // const res = await axios.get('http://localhost:81/api/observaciones/' + obs);
+
 
             if (res.data.observacion != null) {
                 arrObs.push(res.data.observacion);
@@ -257,7 +260,7 @@ export default function AnalisisExp() {
         };
 
         const traerMedicionesRegistrar = async () => {
-            const medicionesExp = await axios.get('http://localhost:81/api/mediciones');
+            const medicionesExp = await axios.get(routesBD.observaciones);
 
         }
         url();
@@ -269,7 +272,7 @@ export default function AnalisisExp() {
     }, []);
 
     const dataFase = async () => {
-        const res = await axios.get('http://localhost:81/api/experimentos/' + idUrl.id);
+        const res = await axios.get(routesBD.experimentos + idUrl.id);
         setIdExperimento(idUrl.id);
         obtenerFases(res.data.experimento.fasesId);
         setNombreExp(res.data.experimento.nombreExp);
@@ -280,7 +283,7 @@ export default function AnalisisExp() {
         let arrfases = fases;
         let arregloNFase = new Array;
         for (var i = 0; i < arrfases.length; i++) {
-            let resF = await axios.get('http://localhost:81/api/fases/' + arrfases[i]);
+            let resF = await axios.get(routesBD.fases+ arrfases[i]);
             arregloNFase.push(resF.data.fase);
         }
         setFasesExp(arregloNFase);
@@ -307,7 +310,7 @@ export default function AnalisisExp() {
                 valor: ""
             };
             nuevoArr.push(newObject);
-            const res = await axios.get('http://localhost:81/api/mediciones/' + medicionesFase[i]);
+            const res = await axios.get(routesBD.mediciones + medicionesFase[i]);
             arrNombreMediciones.push([res.data.medicion.nombre, i, nuevoArr]);
             arrMediciones.push(nuevoArr);
         }
