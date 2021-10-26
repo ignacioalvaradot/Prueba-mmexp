@@ -1,16 +1,16 @@
-const routes = {
-    login: "/login",
-    inicio: "/inicio", 
-    Usuarios: "/gestionarUsuarios" ,
-    Experimentos: "/experimentos/:tipoExperimentos" ,
-    PlanificacionExp: "/planificacion/:id",
-    PreparacionExp: "/preparacion/:id",
-    PreparacionConfig: "/preparacionConfig/:id",
-    PreparacionVerific: "/preparacionVerific/:id",
-    FormDialog: "/ejecucion/:id",
-    AnalisisExp: "/analisis/:id",
-    TestSocket: "/testSocket/",
-};
+// const routes = {
+//     login: "/login",
+//     inicio: "/inicio", 
+//     Usuarios: "/gestionarUsuarios" ,
+//     Experimentos: "/experimentos/:tipoExperimentos" ,
+//     PlanificacionExp: "/planificacion/:id",
+//     PreparacionExp: "/preparacion/:id",
+//     PreparacionConfig: "/preparacionConfig/:id",
+//     PreparacionVerific: "/preparacionVerific/:id",
+//     FormDialog: "/ejecucion/:id",
+//     AnalisisExp: "/analisis/:id",
+//     TestSocket: "/testSocket/",
+// };
 
 //deben quedar como localhost2
 const routesBD = {

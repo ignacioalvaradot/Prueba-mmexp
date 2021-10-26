@@ -1,55 +1,20 @@
+/* eslint-disable */
 import React, { useState, useEffect } from 'react';
 import { loadCSS } from 'fg-loadcss';
 import axios from 'axios';
 import PropTypes from 'prop-types';
-import { Grid, Modal, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Icon, Checkbox, IconButton, CircularProgress, Collapse } from '@material-ui/core/';
-import { Tab, Tabs, AppBar, Box, Typography } from '@material-ui/core/';
-import { Dialog, DialogTitle, DialogContent, DialogActions } from '@material-ui/core/';
+import { Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Icon, IconButton, Collapse } from '@material-ui/core/';
+import {  Box, Typography } from '@material-ui/core/';
 import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import { useLocation, useParams } from "react-router-dom";
-import Backdrop from '@material-ui/core/Backdrop';
-import Fade from '@material-ui/core/Fade';
 
-import { Stepper, Step, StepButton, LinearProgress } from '@material-ui/core/'
-import CancelIcon from '@material-ui/icons/Cancel';
-import VisibilityIcon from '@material-ui/icons/Visibility';
+import { Stepper, Step, StepButton } from '@material-ui/core/'
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import io from 'socket.io-client';
 import routesBD from '../helpers/routes';
 
-
-const useStyles = makeStyles((theme) => ({
-    root: {
-        '& .MuiTextField-root': {
-            margin: theme.spacing(1),
-            width: '25ch',
-        },
-    },
-    tabsStyles: {
-        flexGrow: 1,
-        width: '100%',
-        backgroundColor: theme.palette.background.paper,
-    },
-    fawesome: {
-        '& > .fa': {
-            margin: theme.spacing(2),
-        },
-    },
-    modal: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    paper: {
-        backgroundColor: theme.palette.background.paper,
-        border: '2px solid #000',
-        boxShadow: theme.shadows[5],
-        padding: theme.spacing(2, 4, 3),
-    },
-}));
 
 const useRowStyles = makeStyles({
     root: {
@@ -58,103 +23,6 @@ const useRowStyles = makeStyles({
         },
     },
 });
-
-function createData(nombre, grupo, participante, dispositivo, tiempoMedicion, valor) {
-    return { nombre, grupo, participante, dispositivo, tiempoMedicion, valor };
-}
-function crearData(id, nombre, seleccionado) {
-    return { id, nombre, seleccionado };
-}
-function createDataTest(name, estado) {
-    return {
-        name, estado,
-        history: [
-            { date: '2020-01-05', customerId: '11091700', amount: 3 },
-            { date: '2020-01-02', customerId: 'Anonymous', amount: 1 },
-        ],
-    };
-}
-const rows = [
-    createDataTest('Intensidad', false),
-    createDataTest('Tiempo Habla', false),
-    createDataTest('Posturas', false),
-    createDataTest('Gestos', false),
-    createDataTest('Expresiones', false),
-];
-// function createDataTest(name, calories, fat, carbs, protein, price) {
-//     return {
-//         name,
-//         calories,
-//         fat,
-//         carbs,
-//         protein,
-//         price,
-//         history: [
-//             { date: '2020-01-05', customerId: '11091700', amount: 3 },
-//             { date: '2020-01-02', customerId: 'Anonymous', amount: 1 },
-//         ],
-//     };
-// }
-// // const rows = [
-// //     createData('Speech Count', '01', '04', 'Mic.', '05:30', '02:00'),
-// //     createData('Pos. Mic', '01', '04', 'Mic.', '05:32', 'Coord'),
-// //     createData('Speech Count', '03', '01', 'Mic.', '05:35', '05:00'),
-// //     createData('Pos. Hombros', '02', '03', 'Cam.', '05:38', 'Coord'),
-// //     createData('Speech Count', '01', '02', 'Mic.', '05:45', '10:00'),
-// //     createData('Pos. Manos', '01', '04', 'Cam.', '05:46', 'Coord'),
-// //     createData('Gestos', '01', '05', 'Cam.', '05:49', 'Coord'),
-// //     createData('Pos. Mic', '01', '02', 'Mic.', '05:49', 'Coord'),
-// //     createData('Pos. Mic', '01', '02', 'Mic.', '05:50', 'Coord'),
-// //     createData('Pos. Mic', '01', '03', 'Mic.', '05:51', 'Coord'),
-// //     createData('Speech Count', '01', '04', 'Mic.', '05:52', '03:00'),
-// // ];
-// const rows = [
-//     createDataTest('Frozen yoghurt', 159, 6.0, 24, 4.0, 3.99),
-//     createDataTest('Ice cream sandwich', 237, 9.0, 37, 4.3, 4.99),
-//     createDataTest('Eclair', 262, 16.0, 24, 6.0, 3.79),
-//     createDataTest('Cupcake', 305, 3.7, 67, 4.3, 2.5),
-//     createDataTest('Gingerbread', 356, 16.0, 49, 3.9, 1.5),
-// ];
-const fila = [
-    crearData('1', 'Speech Count', false),
-    crearData('2', 'Pos. Mic', false),
-    crearData('3', 'Speech Count', false),
-    crearData('4', 'Pos. Hombros', false),
-    crearData('5', 'Speech Count', false),
-    crearData('6', 'Pos. Manos', false),
-    crearData('7', 'Gestos', false),
-    crearData('8', 'Pos. Mic', false),
-    crearData('9', 'Pos. Mic', false),
-    crearData('10', 'Pos. Mic', false),
-    crearData('11', 'Speech Count', false),
-];
-const Intensidad = [
-    createData('Speech Count', '01', '04', 'Mic.', '05:30', '02:00'),
-    createData('Pos. Mic', '01', '04', 'Mic.', '05:32', '02:00'),
-    createData('Speech Count', '03', '01', 'Mic.', '05:35', '05:00'),
-    createData('Pos. Hombros', '02', '03', 'Mic.', '05:38', '05:00'),
-    createData('Speech Count', '01', '02', 'Mic.', '05:45', '10:00'),
-    createData('Pos. Manos', '01', '04', 'Mic.', '05:46', '02:00'),
-    createData('Gestos', '01', '05', 'Mic.', '05:49', '05:00'),
-    createData('Pos. Mic', '01', '02', 'Mic.', '05:49', '05:00'),
-    createData('Pos. Mic', '01', '02', 'Mic.', '05:50', '10:00'),
-    createData('Pos. Mic', '01', '03', 'Mic.', '05:51', '10:00'),
-    createData('Speech Count', '01', '04', 'Mic.', '05:52', '03:00'),
-];
-const Postura = [
-    createData('Speech Count', '01', '04', 'Cam.', '05:30', 'Coord'),
-    createData('Pos. Mic', '01', '04', 'Cam.', '05:32', 'Coord'),
-    createData('Speech Count', '03', '01', 'Cam.', '05:35', 'Coord'),
-    createData('Pos. Hombros', '02', '03', 'Cam.', '05:38', 'Coord'),
-    createData('Speech Count', '01', '02', 'Cam.', '05:45', 'Coord'),
-    createData('Pos. Manos', '01', '04', 'Cam.', '05:46', 'Coord'),
-    createData('Gestos', '01', '05', 'Cam.', '05:49', 'Coord'),
-    createData('Pos. Mic', '01', '02', 'Cam.', '05:49', 'Coord'),
-    createData('Pos. Mic', '01', '02', 'Cam.', '05:50', 'Coord'),
-    createData('Pos. Mic', '01', '03', 'Cam.', '05:51', 'Coord'),
-    createData('Speech Count', '01', '04', 'Cam.', '05:52', 'Coord'),
-];
-
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -182,66 +50,21 @@ TabPanel.propTypes = {
     value: PropTypes.any.isRequired,
 };
 
-// function a11yProps(index) {
-//     return {
-//         id: `simple-tab-${index}`,
-//         'aria-controls': `simple-tabpanel-${index}`,
-//     };
-// }
-
 var socket;
 export default function PreparacionExp() {
-
     const location = useLocation();
     const idUrl = useParams();
-    const classes = useStyles();
-    const [datosGrupos, setDatosGrupos] = useState({
-        grupo: '',
-        numeroSerie: '',
-    })
-    const [datosParticipantes, setDatosParticipantes] = useState({
-        participante: '',
-        numeroSerie: '',
-    })
-
-    // const [open, setOpen] = React.useState(false);
     const [urlconsulta, setUrlConsulta] = useState('');
-    const [tab, setTab] = React.useState(0);
-    const [fases, setFases] = React.useState([]);
-    const [idmediciones, setIdmediciones] = React.useState('');
-    const [nombreMediciones, setNombresMediciones] = React.useState([]);
-    const [idObserv, setIdObserv] = React.useState([]);
     const [faseActiva, setFaseActiva] = React.useState(0);
     const [nombreExp, setNombreExp] = React.useState('');
     const [idExp, setIdExp] = React.useState('');
     const [fasesExp, setFasesExp] = React.useState([]);
-    const [actualizarTabla, setActualizarTabla] = React.useState(false);
-    const [selected, setSelected] = React.useState(false);
-    const [grupoSeleccionado, setGrupoSeleccionado] = React.useState(false);
-    const [banderaGrupo, setBanderaGrupo] = React.useState(false);
-    const [banderaParticipantes, setBanderaParticipantes] = React.useState(false);
-    const [conteoSelectedG, setConteoSelectedG] = React.useState(0);
-    const [conteoSelectedPart, setConteoSelectedPart] = React.useState(0);
-    const [dataGrupos, setDataGrupos] = React.useState([]);
-    const [dataParticipantes, setDataParticipantes] = React.useState([]);
-    const [participanteActivo, setParticipanteActivo] = React.useState('');
-    const [grupoEditar, setGrupoEditar] = React.useState('');
-    const [arrarrParticipantes, setArrArrParticipantes] = React.useState([]);
     const [arrFasesxGrupo, setArrFasesxGrupo] = React.useState([]);
-    const [arrFasesxParticipantesxGrupo, setArrFasesxParticipantesxGrupo] = React.useState([]);
-    const [nombreGrupoHeader, setNombreGrupoHeader] = React.useState('');
-    const [hiddenParticipantes, setHiddenParticipantes] = React.useState(true);
     const [grupoComparacion, setGrupoComparacion] = React.useState([]);
     const [particiComparacion, setParticiComparacion] = React.useState([]);
     const [arregloFasesGrupos, setArregloFasesGrupos] = React.useState([]);
     const [banderaComparacion, setBanderaComparacion] = React.useState(0);
-    const [direccionFaseActiva, setDireccionFaseActiva] = React.useState(0);
 
-    const [openModalGrupo, setOpenModalGrupo] = React.useState(false);
-    const [openModalParticipante, setOpenModalParticipante] = React.useState(false);
-    const [openModalNuevoGrupo, setOpenModalNuevoGrupo] = React.useState(false);
-    const [openModalNuevoParticipante, setOpenModalNuevoParticipante] = React.useState(false);
-    const [openModalGuardarDatos, setOpenModalGuardarDatos] = React.useState(false);
     const [banderaTabla, setBanderaTabla] = React.useState(true);
     const [medicionesSelected, setMedicionesSelected] = React.useState([]);
     const [medicionesFases, setMedicionesFases] = useState([]);
@@ -250,91 +73,11 @@ export default function PreparacionExp() {
     const [tablaMedicionesRegistrar, setTablaMedicionesRegistrar] = useState([]);
 
     // const { row } = props;
-    const [open, setOpen] = React.useState(false);
+    // const [open, setOpen] = React.useState(false);
     const classes2 = useRowStyles();
 
     const [estadoMediciones, setEstadoMediciones] = useState([]);
-    // const [estadoMediciones, setEstadoMediciones] = useState([
-    //     {
-    //         nombre: 'Intensidad',
-    //         estado: false,
-    //         grupos: [
-    //             {
-    //                 nombre: 'Grupo 1',
-    //                 estado: false,
-    //                 participantes: [
-    //                     { nombre: '2020-01-05', dispositivo: '11091700', canal: 3, estado: false },
-    //                     { nombre: '2020-01-02', dispositivo: 'Anonymous', canal: 1, estado: false },
-    //                 ]
-    //             }
-    //         ]
-    //     },
-    //     {
-    //         nombre: 'Tiempo Habla',
-    //         estado: false,
-    //         grupos: [
-    //             {
-    //                 nombre: 'Grupo 1',
-    //                 estado: false,
-    //                 participantes: [
-    //                     { nombre: '2020-01-05', dispositivo: '11091700', canal: 3, estado: false },
-    //                     { nombre: '2020-01-02', dispositivo: 'Anonymous', canal: 1, estado: false },
-    //                 ]
-    //             }
-    //         ]
-    //     },
-    //     {
-    //         nombre: 'Posturas',
-    //         estado: false,
-    //         grupos: [
-    //             {
-    //                 nombre: 'Grupo 1',
-    //                 estado: false,
-    //                 participantes: [
-    //                     { nombre: '2020-01-05', dispositivo: '11091700', canal: 3, estado: false },
-    //                     { nombre: '2020-01-02', dispositivo: 'Anonymous', canal: 1, estado: false },
-    //                 ]
-    //             }
-    //         ]
-    //     },
-    //     {
-    //         nombre: 'Gestos',
-    //         estado: false,
-    //         grupos: [
-    //             {
-    //                 nombre: 'Grupo 1',
-    //                 estado: false,
-    //                 participantes: [
-    //                     { nombre: '2020-01-05', dispositivo: '11091700', canal: 3, estado: false },
-    //                     { nombre: '2020-01-02', dispositivo: 'Anonymous', canal: 1, estado: false },
-    //                 ]
-    //             }
-    //         ]
-    //     },
-    //     {
-    //         nombre: 'Expresiones',
-    //         estado: false,
-    //         grupos: [
-    //             {
-    //                 nombre: 'Grupo 1',
-    //                 estado: false,
-    //                 participantes: [
-    //                     { nombre: '2020-01-05', dispositivo: '11091700', canal: 3, estado: false },
-    //                     { nombre: '2020-01-02', dispositivo: 'Anonymous', canal: 1, estado: false },
-    //                 ]
-    //             }
-    //         ]
-    //     }
-    // ]);
 
-    // let desconectar = {
-    //     disabled: true
-    // }
-    // let conectar = {
-    //     disabled: false
-    // }
-    // let varDireccion= 'vad_doa';
-    // var jobValue = document.getElementsByName('txtJob')[0].value
 
     const conectarSocket = () => {
         // conectando al servidor
@@ -351,9 +94,7 @@ export default function PreparacionExp() {
         let dispositivosParticipantes = new Array();
         let dispositivosGrupo = new Array();
         let medicionesRegistrarEstado = new Array();
-        // for(let i = 0; i < tablaEstadoMediciones.length; i++){
 
-        // }
         let tablaDispositivos = tablaMedicionesRegistrar;
         let medicionesFaseActual = medicionesFases;
         let medicion = '';
@@ -403,11 +144,12 @@ export default function PreparacionExp() {
                             for (let j = 0; j < msg.data.devices.length; j++) {
                                 let dispositivoRecibido = msg.data.devices[j];
                                 if (dispositivoRecibido['name'] === tablaEstadoMediciones[i]['grupos'][k]['participantes'][l]['dispositivo']) {
-                                    // banderaEncontrado = true;
-                                    // contadorBandera = contadorBandera + 1;
-                                    console.log('dispositivo Encontrado');
-                                    banderaEncontrado = true;
-
+                                    if (dispositivoRecibido['channel'][tablaEstadoMediciones[i]['grupos'][k]['participantes'][l]['canal']]['channelId']) {
+                                        // banderaEncontrado = true;
+                                        // contadorBandera = contadorBandera + 1;
+                                        console.log('dispositivo Encontrado');
+                                        banderaEncontrado = true;
+                                    }
                                 }
                             }
                             if (banderaEncontrado === true) {
