@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { Container, Grid } from "@material-ui/core";
 import logo from '../public/img/404notfound.png';
 
