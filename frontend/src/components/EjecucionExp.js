@@ -807,7 +807,7 @@ export default function EjecucionExp() {
             }
             console.log(medicionFinal);
 
-            window[socket + medicionFinal] = io.connect('http://192.168.0.8:200/' + medicionFinal);
+            window[socket + medicionFinal] = io.connect(routesBD.socket + medicionFinal);
             arrConexiones.push(window[socket + medicionFinal])
 
             window[socket + medicionFinal].emit("iniciar", mensajeInicio);

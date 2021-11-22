@@ -10,6 +10,7 @@ export default function Usuarios() {
     const [nombreUsuario, setNombreUsuario] = useState('');
     const [contraseña, setContraseña] = useState('');
     const [tipoUsuario, setTipoUsuario] = useState('');
+    const [correo, setCorreo] = useState('');
 
     useEffect(() => {
         getUsers();
@@ -38,18 +39,23 @@ export default function Usuarios() {
     const onChangeContraseña = (e) => {
         setContraseña(e.target.value);
     }
+    const onChangeCorreo = (e) => {
+        setCorreo(e.target.value);
+    }
 
     const onSubmit = async e => {
         e.preventDefault();
         let nuevoNombreUsuario = {
             nombreUsuario: nombreUsuario,
             tipoUsuario: 'regular',
-            contraseña: contraseña
+            contraseña: contraseña,
+            correo: correo
         }
         await axios.post(routesBD.users, nuevoNombreUsuario)
         setNombreUsuario('');
         setContraseña('');
         setTipoUsuario('');
+        setCorreo('');
         getUsers();
     }
 
@@ -62,7 +68,8 @@ export default function Usuarios() {
         let actualizarUsuario = {
             tipoUsuario: e.target[0].value,
             nombreUsuario: e.target[1].value,
-            contraseña: e.target[2].value
+            contraseña: e.target[2].value,
+            correo: e.target[3].value
         }
         // console.log('actualizarUsuario', actualizarUsuario);
         await axios.put(routesBD.users + e.target[1].name, actualizarUsuario);
@@ -107,6 +114,15 @@ export default function Usuarios() {
                                 onChange={onChangeTipoUsuario}
                             />
                         </div>
+                        <div className="form-group">
+                            <h5>Correo</h5>
+                            <input
+                                type="text"
+                                className="form-control"
+                                value={correo}
+                                onChange={onChangeCorreo}
+                            />
+                        </div>
                         <Button
                             type="submit"
                             variant="contained"
@@ -125,16 +141,19 @@ export default function Usuarios() {
                         className="list-group-item list-group-item-action"
                     >
                         <Grid container spacing={1}>
-                            <Grid item xs={3}>
+                            <Grid item xs={2}>
                                 <h6>Tipo Usuario</h6>
                             </Grid>
                             <Grid item xs={3}>
                                 <h6>Nombre Usuario</h6>
                             </Grid>
-                            <Grid item xs={3}>
+                            <Grid item xs={2}>
                                 <h6>Contraseña</h6>
                             </Grid>
                             <Grid item xs={3}>
+                                <h6>Correo</h6>
+                            </Grid>
+                            <Grid item xs={2}>
                                 <h6>Acción</h6>
                             </Grid>
                         </Grid>
@@ -147,7 +166,7 @@ export default function Usuarios() {
                             >
                                 <form onSubmit={onUpdate}>
                                     <Grid container spacing={1}>
-                                        <Grid item xs={3}>
+                                        <Grid item xs={2}>
                                             <div className="form-group">
                                                 <input
                                                     type="text"
@@ -168,7 +187,7 @@ export default function Usuarios() {
                                                 />
                                             </div>
                                         </Grid>
-                                        <Grid item xs={3}>
+                                        <Grid item xs={2}>
                                             <div className="form-group">
                                                 <input
                                                     type="text"
@@ -178,8 +197,18 @@ export default function Usuarios() {
                                                 />
                                             </div>
                                         </Grid>
-
                                         <Grid item xs={3}>
+                                            <div className="form-group">
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    defaultValue={user.correo}
+                                                // onChange={user.contraseña}
+                                                />
+                                            </div>
+                                        </Grid>
+
+                                        <Grid item xs={2}>
                                             <Button
                                                 type="submit"
                                                 variant="contained"

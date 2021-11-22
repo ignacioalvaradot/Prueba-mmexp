@@ -32,10 +32,6 @@ export default function Inscripcion() {
         }
     }
 
-    const Ingreso = () => {
-        // history.push("Grupo2/Ingreso");
-    };
-
     const useStyles = makeStyles((theme) => ({
         paper: {
             //marginTop: theme.spacing(8),
@@ -93,8 +89,10 @@ export default function Inscripcion() {
                 let credenciales = {
                     nombreUsuario: res.data[0].nombreUsuario,
                     contraseña: res.data[0].contraseña,
-                    role: res.data[0].tipoUsuario
+                    role: res.data[0].tipoUsuario,
+                    correo: res.data[0].correo
                 };
+                // console.log(res.data[0].correo);
                 // userCredentials = credenciales;
                 login(credenciales);
                 setBandera(true);
