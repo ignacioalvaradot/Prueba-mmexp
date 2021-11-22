@@ -27,7 +27,7 @@ services:
             - red-proxy
             - red_privada
         environment: 
-            VIRTUAL_HOST: localhost2
+            VIRTUAL_HOST: api.mmexp.informatica.uv.cl
     react-app:
         depends_on:
             - server
@@ -39,11 +39,11 @@ services:
         networks: 
             - red-proxy
         environment: 
-            VIRTUAL_HOST: localhost
+            VIRTUAL_HOST: mmexp.informatica.uv.cl
 networks: 
     red-proxy:
         external:
-            name: nginx-proxy
+            name: network-docker
     red_privada:
         
 volumes: 
