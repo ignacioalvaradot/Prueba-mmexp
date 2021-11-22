@@ -24,5 +24,8 @@ app.use('/api/grupos', require('./routes/grupos'));
 app.use('/api/dispositivos', require('./routes/dispositivos'));
 app.use('/api/tipoDispositivo', require('./routes/tipoDispositivo'));
 app.use('/api/reporteResultados', require('./routes/reporteResultados'));
+app.use('/api/descargaTest', require('./routes/descargaTest'));
+app.use('/api/archivos', require('./routes/archivoPrueba'));
+app.use('/src/uploads', express.static('src/uploads'));
 // - Variables globales o validaciones - 
 module.exports = app;

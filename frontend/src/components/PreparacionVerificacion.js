@@ -121,7 +121,7 @@ export default function PreparacionExp() {
 
             // console.log(tablaEstadoMediciones[i]);
 
-            window[socket + (i).toString()] = io.connect('http://192.168.0.8:200/' + medicionFinal);
+            window[socket + (i).toString()] = io.connect(routesBD.socket + medicionFinal);
             // console.log(window[socket + (i).toString()])
             // window[socket + (i).toString()].emit("my_event", { query: "foo=bar" })
             // console.log(window[socket + (i).toString()]);

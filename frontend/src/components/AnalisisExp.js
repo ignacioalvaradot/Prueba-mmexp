@@ -1,28 +1,19 @@
-/* eslint-disable */
+// /* eslint-disable */
 import React, { useState, useEffect } from 'react';
 import { loadCSS } from 'fg-loadcss';
 import axios from 'axios';
 import PropTypes from 'prop-types';
-import { Grid, Modal, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Icon, Checkbox, IconButton, TextareaAutosize, CircularProgress } from '@material-ui/core/';
+import { Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Modal, Backdrop, Fade } from '@material-ui/core/';
+// import {DataGrid, GridToolbarContainer, GridToolbarExport,} from '@mui/x-data-grid';
 import { Tab, Tabs, AppBar, Box, Typography } from '@material-ui/core/';
-import { Dialog, DialogTitle, DialogContent, DialogActions } from '@material-ui/core/';
 import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import { useLocation, useParams } from "react-router-dom";
-import Backdrop from '@material-ui/core/Backdrop';
-import Fade from '@material-ui/core/Fade';
 
-import { Stepper, Step, StepButton, LinearProgress } from '@material-ui/core/'
-import CancelIcon from '@material-ui/icons/Cancel';
-import VisibilityIcon from '@material-ui/icons/Visibility';
-
+import { Stepper, Step, StepButton } from '@material-ui/core/'
 import 'date-fns';
-import { MuiPickersUtilsProvider, KeyboardTimePicker, KeyboardDatePicker } from '@material-ui/pickers';
-import DateFnsUtils from '@date-io/date-fns';
-import { DatePicker, TimePicker, DateTimePicker } from '@material-ui/pickers';
-import { es } from "date-fns/locale";
 import routesBD from '../helpers/routes';
+import useAuth from './auth/useAuth';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -59,49 +50,19 @@ function createData(nombre, grupo, participante, dispositivo, tiempoMedicion, va
     return { nombre, grupo, participante, dispositivo, tiempoMedicion, valor };
 }
 
-function crearData(id, nombre, seleccionado) {
-    return { id, nombre, seleccionado };
-}
-
-const rows = [
-    createData('Speech Count', '01', '04', 'Mic.', '05:30', '02:00'),
-    createData('Pos. Mic', '01', '04', 'Mic.', '05:32', 'Coord'),
-    createData('Speech Count', '03', '01', 'Mic.', '05:35', '05:00'),
-    createData('Pos. Hombros', '02', '03', 'Cam.', '05:38', 'Coord'),
-    createData('Speech Count', '01', '02', 'Mic.', '05:45', '10:00'),
-    createData('Pos. Manos', '01', '04', 'Cam.', '05:46', 'Coord'),
-    createData('Gestos', '01', '05', 'Cam.', '05:49', 'Coord'),
-    createData('Pos. Mic', '01', '02', 'Mic.', '05:49', 'Coord'),
-    createData('Pos. Mic', '01', '02', 'Mic.', '05:50', 'Coord'),
-    createData('Pos. Mic', '01', '03', 'Mic.', '05:51', 'Coord'),
-    createData('Speech Count', '01', '04', 'Mic.', '05:52', '03:00'),
-];
-const Intensidad = [
-    createData('Speech Count', '01', '04', 'Mic.', '05:30', '02:00'),
-    createData('Pos. Mic', '01', '04', 'Mic.', '05:32', '02:00'),
-    createData('Speech Count', '03', '01', 'Mic.', '05:35', '05:00'),
-    createData('Pos. Hombros', '02', '03', 'Mic.', '05:38', '05:00'),
-    createData('Speech Count', '01', '02', 'Mic.', '05:45', '10:00'),
-    createData('Pos. Manos', '01', '04', 'Mic.', '05:46', '02:00'),
-    createData('Gestos', '01', '05', 'Mic.', '05:49', '05:00'),
-    createData('Pos. Mic', '01', '02', 'Mic.', '05:49', '05:00'),
-    createData('Pos. Mic', '01', '02', 'Mic.', '05:50', '10:00'),
-    createData('Pos. Mic', '01', '03', 'Mic.', '05:51', '10:00'),
-    createData('Speech Count', '01', '04', 'Mic.', '05:52', '03:00'),
-];
-const Postura = [
-    createData('Speech Count', '01', '04', 'Cam.', '05:30', 'Coord'),
-    createData('Pos. Mic', '01', '04', 'Cam.', '05:32', 'Coord'),
-    createData('Speech Count', '03', '01', 'Cam.', '05:35', 'Coord'),
-    createData('Pos. Hombros', '02', '03', 'Cam.', '05:38', 'Coord'),
-    createData('Speech Count', '01', '02', 'Cam.', '05:45', 'Coord'),
-    createData('Pos. Manos', '01', '04', 'Cam.', '05:46', 'Coord'),
-    createData('Gestos', '01', '05', 'Cam.', '05:49', 'Coord'),
-    createData('Pos. Mic', '01', '02', 'Cam.', '05:49', 'Coord'),
-    createData('Pos. Mic', '01', '02', 'Cam.', '05:50', 'Coord'),
-    createData('Pos. Mic', '01', '03', 'Cam.', '05:51', 'Coord'),
-    createData('Speech Count', '01', '04', 'Cam.', '05:52', 'Coord'),
-];
+// const rows = [
+//     createData('Speech Count', '01', '04', 'Mic.', '05:30', '02:00'),
+//     createData('Pos. Mic', '01', '04', 'Mic.', '05:32', 'Coord'),
+//     createData('Speech Count', '03', '01', 'Mic.', '05:35', '05:00'),
+//     createData('Pos. Hombros', '02', '03', 'Cam.', '05:38', 'Coord'),
+//     createData('Speech Count', '01', '02', 'Mic.', '05:45', '10:00'),
+//     createData('Pos. Manos', '01', '04', 'Cam.', '05:46', 'Coord'),
+//     createData('Gestos', '01', '05', 'Cam.', '05:49', 'Coord'),
+//     createData('Pos. Mic', '01', '02', 'Mic.', '05:49', 'Coord'),
+//     createData('Pos. Mic', '01', '02', 'Mic.', '05:50', 'Coord'),
+//     createData('Pos. Mic', '01', '03', 'Mic.', '05:51', 'Coord'),
+//     createData('Speech Count', '01', '04', 'Mic.', '05:52', '03:00'),
+// ];
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -130,7 +91,6 @@ TabPanel.propTypes = {
 };
 
 export default function AnalisisExp() {
-
     const [idExperimento, setIdExperimento] = React.useState('');
     const location = useLocation();
     const idUrl = useParams();
@@ -146,20 +106,23 @@ export default function AnalisisExp() {
     const [nombreExp, setNombreExp] = React.useState('');
     const [idExp, setIdExp] = React.useState('');
     const [fasesExp, setFasesExp] = React.useState([]);
-    const [idObservaciones, setIdObservaciones] = React.useState([]);
-    const [idGrupos, setIdGrupos] = React.useState([]);
 
-
-
-    const [fases, setFases] = React.useState([]);
-    const [tiempoInicio, setTiempoInicio] = React.useState('');
-    const [tiempoFin, setTiempoFin] = React.useState('');
-    const [tiempoString, setTiempoString] = React.useState('');
     const [observacionesTabla, setObservacionesTabla] = React.useState([]);
     const [actualizarTabla, setActualizarTabla] = React.useState(false);
     const [tab, setTab] = React.useState(0);
     const [arrMedicionesRecibidas, setArrMedicionesRecibidas] = useState([]);
+    const [tablaArchivo, setTablaArchivo] = useState([]);
+    const [headerTablaArchivo, setHeaderTablaArchivo] = useState([]);
+    const [botonDescarga, setBotonDescarga] = useState('');
+    const [gruposActuales, setGruposActuales] = useState([]);
+    const [arregloParticipantesActuales, setArregloParticipantesActuales] = useState([]);
+    const [tablaGeneral, setTablaGeneral] = useState([]);
+    const [headerTablaGeneral, setHeaderTablaGeneral] = useState([]);
+    const [arregloDataArchivos, setArregloDataArchivos] = useState([]);
+    const [openModalDescargar, setOpenModalDescargar] = useState(false);
+    const [estadoModal, setEstadoModal] = useState(false);
 
+    const { user } = useAuth();
 
     useEffect(() => {
         console.log('Fase: ' + faseActiva);
@@ -174,33 +137,11 @@ export default function AnalisisExp() {
             setIdObserv(arrObsv);
             setIdmediciones(medicionesFase);
             setArrMedicionesRecibidas([]);
-                setNombresMediciones([]);
+            setNombresMediciones([]);
 
-            // const traerMedicionesFase = async (medicionesFase) => {
-            //     for (let i = 0; i < medicionesFase.length; i++) {
-            //         const res = await axios.get(routesBD.mediciones + medicionesFase[i]);
-            //         if (res.data.medicion.nombre === 'Intensidad') {
-            //             arrNombreMediciones.push([res.data.medicion.nombre, i, Intensidad]);
-            //             setNombresMediciones(arrNombreMediciones);
-            //         }
-            //         if (res.data.medicion.nombre === 'Tiempo Habla') {
-            //             arrNombreMediciones.push([res.data.medicion.nombre, i, Intensidad]);
-            //             setNombresMediciones(arrNombreMediciones);
-            //         }
-            //         if (res.data.medicion.nombre === 'Postura') {
-            //             arrNombreMediciones.push([res.data.medicion.nombre, i, Postura]);
-            //             setNombresMediciones(arrNombreMediciones);
-            //         }
-            //     }
-            // };
-            // traerMedicionesFase(medicionesFase);
             traerMediciones(medicionesFase);
 
         }
-        // if (faseActiva === (fasesExp.length - 1)) {
-        //     setCambiarBoton(false);
-        // }
-
         return () => {
         }
     }, [faseActiva, fasesExp]);
@@ -284,7 +225,7 @@ export default function AnalisisExp() {
         let arrfases = fases;
         let arregloNFase = new Array;
         for (var i = 0; i < arrfases.length; i++) {
-            let resF = await axios.get(routesBD.fases+ arrfases[i]);
+            let resF = await axios.get(routesBD.fases + arrfases[i]);
             arregloNFase.push(resF.data.fase);
         }
         setFasesExp(arregloNFase);
@@ -318,41 +259,174 @@ export default function AnalisisExp() {
         //Yo no paso fases hacia atras, solo avanzo fases en esta etapa, asi que no deberia haber problemas
         setArrMedicionesRecibidas(arrMediciones);
         setNombresMediciones(arrNombreMediciones);
+        parametrosGenerales();
+        // traerArchivos();
 
     }
-
-    // const traerMediciones = async (fasesExp) => {
-    //     let mediciones = fasesExp;
-    //     // de primera debe entrar la primera fase del experimento actual
-    //     const medicionesFase = mediciones[0].idMediciones;
-    //     let arrNombreMediciones = new Array();
-    //     setIdmediciones(medicionesFase);
-    //     for (let i = 0; i < medicionesFase.length; i++) {
-    //         const res = await axios.get('http://localhost:81/api/mediciones/' + medicionesFase[i]);
-    //         if (res.data.medicion.nombre === 'Intensidad') {
-    //             arrNombreMediciones.push([res.data.medicion.nombre, i, Intensidad]);
-    //             setNombresMediciones(arrNombreMediciones);
-    //         }
-    //         if (res.data.medicion.nombre === 'Tiempo Habla') {
-    //             arrNombreMediciones.push([res.data.medicion.nombre, i, Intensidad]);
-    //             setNombresMediciones(arrNombreMediciones);
-    //         }
-    //         if (res.data.medicion.nombre === 'Postura') {
-    //             arrNombreMediciones.push([res.data.medicion.nombre, i, Postura]);
-    //             setNombresMediciones(arrNombreMediciones);
-    //         }
-    //     }
-    // }
 
     const cambiarFaseActiva = (fase) => {
         if (fase === fasesExp.length - 1) {
             setFaseActiva(fase);
+            setTab(0);
         } else {
             setFaseActiva(fase);
+            setTab(0);
         }
 
     }
 
+    const downloadFile = ({ data, fileName, fileType }) => {
+        const blob = new Blob([data], { type: fileType })
+
+        const a = document.createElement('a')
+        a.download = fileName
+        a.href = window.URL.createObjectURL(blob)
+        const clickEvt = new MouseEvent('click', {
+            view: window,
+            bubbles: true,
+            cancelable: true,
+        })
+        a.dispatchEvent(clickEvt)
+        a.remove()
+    }
+
+    // const exportToJson = e => {
+    //     e.preventDefault()
+    //     downloadFile({
+    //         data: JSON.stringify(rows),
+    //         fileName: 'users.json',
+    //         fileType: 'text/json',
+    //     })
+    // }
+
+    const exportToCsv = e => {
+        e.preventDefault()
+        // window.open(botonDescarga);
+
+        // Headers for each column
+        // let headers = ['Nombre;Grupo;Participante;Dispositivo;tiempoMedicion;valor']
+        let headers = ['Grupo;Participante;Dispositivo;Canal'];
+
+        // Convert users data to a csv
+        let usersCsv = tablaGeneral.reduce((acc, user) => {
+            const { Grupo, Participante, Dispositivo, Canal } = user
+            acc.push([Grupo, Participante, Dispositivo, Canal].join(';'))
+            return acc
+        }, [])
+
+        downloadFile({
+            data: [...headers, ...usersCsv].join('\n'),
+            fileName: 'configuracionExp.csv',
+            fileType: 'text/csv',
+        })
+    }
+
+    const parametrosGenerales = async () => {
+        let gruposFase = [];
+        for (let i = 0; i < fasesExp[faseActiva]['idGrupos'].length; i++) {
+            const grupos = await axios.get(routesBD.grupos + fasesExp[faseActiva]['idGrupos'][i]);
+            gruposFase.push(grupos.data.grupo);
+        }
+        // console.log('gruposFase');
+        // console.log(gruposFase);
+        setGruposActuales([...gruposFase]);
+        let arrGeneralParticipantes = [];
+        for (let j = 0; j < gruposFase.length; j++) {
+            let arrParticipantes = [];
+            for (let k = 0; k < gruposFase[j]['participantes'].length; k++) {
+                const participantes = await axios.get(routesBD.participantes + gruposFase[j]['participantes'][k]);
+                arrParticipantes.push(participantes.data.participante);
+            }
+            arrGeneralParticipantes.push(arrParticipantes);
+        }
+        // console.log('arrGeneralParticipantes');
+        // console.log(arrGeneralParticipantes);
+        setArregloParticipantesActuales([...arrGeneralParticipantes]);
+        //necesito arreglar esta informacion para tablaGeneral
+        let tablaGeneralActual = [];
+        for (let i = 0; i < gruposFase.length; i++) {
+            for (let j = 0; j < arrGeneralParticipantes.length; j++) {
+                for (let k = 0; k < arrGeneralParticipantes[j].length; k++) {
+                    for (let l = 0; l < arrGeneralParticipantes[j][k]['dispositivos'].length; l++) {
+                        let dataArr = {
+                            Grupo: gruposFase[i]['descripcion'],
+                            Participante: arrGeneralParticipantes[j][k]['descripcion'],
+                            Dispositivo: arrGeneralParticipantes[j][k]['dispositivos'][l]['dispositivo'],
+                            Canal: arrGeneralParticipantes[j][k]['dispositivos'][l]['canal']
+                        };
+                        tablaGeneralActual.push(dataArr);
+                    }
+                }
+            }
+        }
+        setTablaGeneral(tablaGeneralActual);
+        let headers = ['Grupo', 'Participante', 'Dispositivo', 'Canal'];
+        setHeaderTablaGeneral([...headers]);
+    }
+
+    const traerArchivos = async (idMedicion) => {
+        let data = {
+            medicion: idMedicion,
+            correoUsuario: user.correo,
+            idExperimento: idExperimento,
+            idFase: fasesExp[faseActiva]['_id'],
+            idGrupos: gruposActuales,
+            participantes: arregloParticipantesActuales
+        };
+        //Solo debe enviar correoUsuario, idExperimento, idFase, idGrupos, idParticipantes, Dispositivos, canales, medicion
+        // participantes contiene la informacion del dispositivo y del canal
+        // let idFase = fasesExp[faseActiva]['_id'];
+        let arrArchivos = [];
+        const archivo = await axios.post(routesBD.archivosPruebas, data);
+        let file = {};
+
+        //en caso de traer varios archivos
+        // if (archivo.data.archivoPrueba.length > 1) {
+        //     arrArchivos.push(archivo.data.archivoPrueba.archivo);
+        //     setArregloDataArchivos(arrArchivos);
+        //     file = routesBD.rutaLocal + archivo.data.archivoPrueba[0].archivo;
+        // } else {
+        setArregloDataArchivos(archivo.data.archivoPrueba);
+        file = routesBD.rutaLocal + archivo.data.archivoPrueba.archivo;
+        // }
+        // let file = routesBD.rutaLocal + archivo.data.archivoPrueba.archivo;
+        file = file.replace(/\\/g, '/');
+        const archivoReader = await axios.get(file);
+        let archivoSplit = archivoReader.data.split("\n");
+        let headers = archivoSplit[0].split(";");
+        setHeaderTablaArchivo([...headers]);
+        archivoSplit.splice(0, 1);
+        // arrArchivos.push(archivoSplit);
+        setTablaArchivo([...archivoSplit]);
+    }
+
+    const handleModalDescargar = async () => {
+        // medicion, correoUsuario, archivo, idExperimento, idFase, idGrupos, Participantes tiene -> Dispositivos y canales
+        let medicionesFase = [];
+        for (let i = 0; i < nombreMediciones.length; i++) {
+            medicionesFase.push(nombreMediciones[i][0]);
+        }
+        let data = {
+            medicion: medicionesFase,
+            correoUsuario: user.correo,
+            idExperimento: idExperimento,
+            idFase: fasesExp[faseActiva]['_id'],
+            idGrupos: gruposActuales,
+            participantes: arregloParticipantesActuales
+        };
+        const estadoPeticion = await axios.post(routesBD.descargaTest, data);
+        if (estadoPeticion.data.mensaje === 'Ok') {
+            setEstadoModal(true);
+            setOpenModalDescargar(true);
+        } else {
+            setEstadoModal(false);
+            setOpenModalDescargar(true);
+        }
+    }
+
+    const closeModalDescargar = () => {
+        setOpenModalDescargar(false);
+    }
 
     return (
         <div>
@@ -391,7 +465,7 @@ export default function AnalisisExp() {
                     <div className="container-fluid">
                         <div>
                             <div className="card-body">
-                            <h4>Fase Activa: {faseActiva + 1}</h4>
+                                <h4>Fase Activa: {faseActiva + 1}</h4>
                                 <div className="card-header">
                                     <h4>Mediciones Registradas</h4>
                                     <div className={classes.tabsStyles}>
@@ -400,7 +474,7 @@ export default function AnalisisExp() {
                                                 <Tab label="Tabla General" />
                                                 {
                                                     nombreMediciones.map(nombre => (
-                                                        <Tab label={nombre[0]} />
+                                                        <Tab label={nombre[0]} onClick={() => traerArchivos(nombre[0])} />
                                                     ))
                                                 }
                                                 <Tab label={'Observaciones'} />
@@ -413,26 +487,29 @@ export default function AnalisisExp() {
                                                         <TableContainer component={Paper} style={{ maxHeight: 300, minHeight: 200 }}>
                                                             <Table size="small" stickyHeader aria-label="sticky table" height="300" >
                                                                 <TableHead>
-                                                                    <TableRow style={{ height: '50px' }}>
-                                                                        <TableCell>Nombre</TableCell>
-                                                                        <TableCell>Grupo</TableCell>
-                                                                        <TableCell>Participante</TableCell>
-                                                                        <TableCell>Dispositivo</TableCell>
-                                                                        <TableCell>Tiempo</TableCell>
-                                                                        <TableCell>Valor</TableCell>
+                                                                    < TableRow style={{ height: '50px' }}>
+                                                                        {
+                                                                            headerTablaGeneral.map(header => (
+                                                                                <TableCell>{header}</TableCell>
+                                                                            ))
+                                                                        }
                                                                     </TableRow>
                                                                 </TableHead>
                                                                 <TableBody>
-                                                                    {rows.map((row) => (
-                                                                        <TableRow key={row.name}>
-                                                                            <TableCell component="th" scope="row">{row.nombre}</TableCell>
-                                                                            <TableCell component="th" scope="row">{row.grupo}</TableCell>
-                                                                            <TableCell component="th" scope="row">{row.participante}</TableCell>
-                                                                            <TableCell component="th" scope="row">{row.dispositivo}</TableCell>
-                                                                            <TableCell component="th" scope="row">{row.tiempoMedicion}</TableCell>
-                                                                            <TableCell align="right">{row.valor}</TableCell>
-                                                                        </TableRow>
-                                                                    ))}
+                                                                    {
+                                                                        tablaGeneral.map((row) => (
+                                                                            <TableRow>
+                                                                                {/* {
+                                                                                    row.split(";").map((column) => ( */}
+                                                                                <TableCell component="th" scope="row">{row.Grupo}</TableCell>
+                                                                                <TableCell component="th" scope="row">{row.Participante}</TableCell>
+                                                                                <TableCell component="th" scope="row">{row.Dispositivo}</TableCell>
+                                                                                <TableCell component="th" scope="row">{row.Canal}</TableCell>
+                                                                                {/* )) */}
+                                                                                {/* } */}
+                                                                            </TableRow>
+                                                                        ))
+                                                                    }
                                                                 </TableBody>
                                                             </Table>
                                                         </TableContainer>
@@ -451,15 +528,34 @@ export default function AnalisisExp() {
                                                                     <Table size="small" stickyHeader aria-label="sticky table" height="300" >
                                                                         <TableHead>
                                                                             <TableRow style={{ height: '50px' }}>
-                                                                                <TableCell>Grupo</TableCell>
+                                                                                {
+                                                                                    headerTablaArchivo.map((header) => (
+                                                                                        <TableCell>{header}</TableCell>
+
+                                                                                    ))
+                                                                                }
+                                                                                {/* <TableCell>Grupo</TableCell>
                                                                                 <TableCell>Participante</TableCell>
                                                                                 <TableCell>Dispositivo</TableCell>
                                                                                 <TableCell>Tiempo</TableCell>
-                                                                                <TableCell>Valor</TableCell>
+                                                                                <TableCell>Valor</TableCell> */}
                                                                             </TableRow>
                                                                         </TableHead>
                                                                         <TableBody>
                                                                             {
+                                                                                tablaArchivo.map(row => (
+                                                                                    <TableRow>
+                                                                                        {
+                                                                                            row.split(";").map((column) => (
+                                                                                                <TableCell component="th" scope="row">{column}</TableCell>
+                                                                                            ))
+                                                                                        }
+                                                                                        {/* <TableCell component="th" scope="row">{row.tiempoMedicion}</TableCell>
+                                                                                        <TableCell component="th" scope="row">{row.valor}</TableCell> */}
+                                                                                    </TableRow>
+                                                                                ))
+                                                                            }
+                                                                            {/* {
                                                                                 nombre[2].map(row => (
                                                                                     <TableRow key={row.name}>
                                                                                         <TableCell component="th" scope="row">{row.grupo}</TableCell>
@@ -469,7 +565,7 @@ export default function AnalisisExp() {
                                                                                         <TableCell component="th" scope="row">{row.valor}</TableCell>
                                                                                     </TableRow>
                                                                                 ))
-                                                                            }
+                                                                            } */}
                                                                         </TableBody>
                                                                     </Table>
                                                                 </TableContainer>
@@ -510,141 +606,60 @@ export default function AnalisisExp() {
                                     </div>
                                 </div>
                             </div>
-                            {/* <div className="card-body">
-                                <div className="card-header">
-                                    <h4>Mediciones Registradas</h4>
-                                    <div className={classes.tabsStyles}>
-                                        <AppBar position="static">
-                                            <Tabs value={tab} onChange={handleChange} indicatorColor="primary" variant="scrollable" scrollButtons="auto" aria-label="simple tabs example">
-                                                <Tab label="Tabla General" />
-                                                {
-                                                    nombreMediciones.map(nombre => (
-                                                        <Tab label={nombre[0]} />
-                                                    ))
-
-                                                }
-                                                <Tab label={'Observaciones'} />
-
-                                            </Tabs>
-                                        </AppBar>
-                                        <TabPanel value={tab} index={0}>
-                                            <Grid container spacing={12}>
-                                                <Grid item xs={12}>
-                                                    <Grid item xs={12}>
-                                                        <TableContainer component={Paper} style={{ maxHeight: 300, minHeight: 200 }}>
-                                                            <Table size="small" stickyHeader aria-label="sticky table" height="300" >
-                                                                <TableHead>
-                                                                    <TableRow>
-                                                                        <TableCell>Nombre</TableCell>
-                                                                        <TableCell>Grupo</TableCell>
-                                                                        <TableCell>Participante</TableCell>
-                                                                        <TableCell>Dispositivo</TableCell>
-                                                                        <TableCell>Tiempo</TableCell>
-                                                                        <TableCell>Valor</TableCell>
-                                                                    </TableRow>
-                                                                </TableHead>
-                                                                <TableBody>
-                                                                    {rows.map((row) => (
-                                                                        <TableRow key={row.name}>
-                                                                            <TableCell component="th" scope="row">{row.nombre}</TableCell>
-                                                                            <TableCell component="th" scope="row">{row.grupo}</TableCell>
-                                                                            <TableCell component="th" scope="row">{row.participante}</TableCell>
-                                                                            <TableCell component="th" scope="row">{row.dispositivo}</TableCell>
-                                                                            <TableCell component="th" scope="row">{row.tiempoMedicion}</TableCell>
-                                                                            <TableCell align="right">{row.valor}</TableCell>
-                                                                        </TableRow>
-                                                                    ))}
-                                                                </TableBody>
-                                                            </Table>
-                                                        </TableContainer>
-                                                    </Grid>
-                                                </Grid>
-                                            </Grid>
-                                        </TabPanel>
-                                        {
-                                            nombreMediciones.map(nombre => (
-                                                <TabPanel value={tab} index={nombre[1] + 1}>
-                                                    {/* Item a {nombre[0]} 
-                                                    <Grid container spacing={12}>
-                                                        <Grid item xs={12}>
-                                                            <Grid item xs={12}>
-                                                                <TableContainer component={Paper} style={{ maxHeight: 300, minHeight: 200 }}>
-                                                                    <Table size="small" stickyHeader aria-label="sticky table" height="300" >
-                                                                        <TableHead>
-                                                                            <TableRow>
-                                                                                <TableCell>Grupo</TableCell>
-                                                                                <TableCell>Participante</TableCell>
-                                                                                <TableCell>Dispositivo</TableCell>
-                                                                                <TableCell>Tiempo</TableCell>
-                                                                                <TableCell>Valor</TableCell>
-                                                                            </TableRow>
-                                                                        </TableHead>
-                                                                        <TableBody>
-                                                                            {
-                                                                                nombre[2].map(row => (
-                                                                                    <TableRow key={row.name}>
-                                                                                        <TableCell component="th" scope="row">{row.grupo}</TableCell>
-                                                                                        <TableCell component="th" scope="row">{row.participante}</TableCell>
-                                                                                        <TableCell component="th" scope="row">{row.dispositivo}</TableCell>
-                                                                                        <TableCell component="th" scope="row">{row.tiempoMedicion}</TableCell>
-                                                                                        <TableCell component="th" scope="row">{row.valor}</TableCell>
-                                                                                    </TableRow>
-                                                                                ))
-                                                                            }
-                                                                        </TableBody>
-                                                                    </Table>
-                                                                </TableContainer>
-                                                            </Grid>
-                                                        </Grid>
-                                                    </Grid>
-                                                </TabPanel>
-                                            ))
-                                        }
-                                        {
-                                            <TabPanel value={tab} index={nombreMediciones.length + 1}>
-                                                <Grid container spacing={12}>
-                                                    <Grid item xs={12}>
-                                                        <Grid item xs={12}>
-                                                            <TableContainer component={Paper} style={{ maxHeight: 300, minHeight: 200 }}>
-                                                                <Table size="small" stickyHeader aria-label="sticky table" height="300" >
-                                                                    <TableHead>
-                                                                        <TableRow>
-                                                                            <TableCell>Tiempo</TableCell>
-                                                                            <TableCell align="center">Valor</TableCell>
-                                                                        </TableRow>
-                                                                    </TableHead>
-                                                                    <TableBody>
-                                                                        {observacionesTabla.map((row) => (
-                                                                            <TableRow key={row._id}>
-                                                                                <TableCell component="th" scope="row">{row.tiempo}</TableCell>
-                                                                                <TableCell align="center">{row.descripcion}</TableCell>
-                                                                            </TableRow>
-                                                                        ))}
-                                                                    </TableBody>
-                                                                </Table>
-                                                            </TableContainer>
-                                                        </Grid>
-                                                    </Grid>
-                                                </Grid>
-                                            </TabPanel>
-                                        }
-
-                                    </div>
-                                </div>
-                            </div> */}
                             <br />
                             <div style={{ float: "right" }}>
                                 <Button
-                                    variant="contained"
+                                    variant="outlined"
                                     // color="primary"
                                     size="small"
                                     style={{ margin: 3, textAlign: 'center', color: 'green' }}
-                                    onClick={() => { console.log(faseActiva) }}
-
+                                    // onClick={() => { console.log(faseActiva) }}
+                                    onClick={exportToCsv}
+                                >
+                                    Descargar Configuracion General
+                                </Button>
+                                <Button
+                                    variant="outlined"
+                                    // color="primary"
+                                    size="small"
+                                    style={{ margin: 3, textAlign: 'center', color: 'green' }}
+                                    // onClick={() => { console.log(faseActiva) }}
+                                    onClick={handleModalDescargar}
                                 >
                                     Descargar Mediciones
                                 </Button>
-
+                                <Modal
+                                    backdropColor="transparent"
+                                    open={openModalDescargar}
+                                    onClose={() => closeModalDescargar()}
+                                    closeAfterTransition
+                                    BackdropComponent={Backdrop}
+                                    BackdropProps={{
+                                        timeout: 500,
+                                    }}
+                                >
+                                    <Fade in={openModalDescargar} >
+                                        <div className="container-fluid" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                                            <Grid item xs={4} >
+                                                <div className="card" >
+                                                    <div className="card-header">
+                                                        <h4>¡Aviso!</h4>
+                                                    </div>
+                                                    <div className="card-body">
+                                                        <h5>Se notificará al siguiente correo: '{user.correo}', una vez se genere el Link de descarga de los Documentos del Experimento</h5>
+                                                    </div>
+                                                    <div className="card-footer">
+                                                        <div style={{ float: "right" }}>
+                                                            <Button variant="contained" type="submit" onClick={() => closeModalDescargar()} size="small" color="primary" style={{ margin: 3, textAlign: 'center' }}>
+                                                                Continuar
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </Grid>
+                                        </div>
+                                    </Fade>
+                                </Modal>
                             </div>
                         </div>
                     </div>
@@ -665,7 +680,7 @@ export default function AnalisisExp() {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 
 }

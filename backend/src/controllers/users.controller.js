@@ -7,8 +7,8 @@ userCtrl.getUsers = async (req, res) => {
 };
 
 userCtrl.createUser = async (req, res) => {
-    const {tipoUsuario,nombreUsuario, contraseña} = req.body;
-    const nuevoUsuario = new User({tipoUsuario,nombreUsuario,contraseña});
+    const {tipoUsuario,nombreUsuario, contraseña, correo} = req.body;
+    const nuevoUsuario = new User({tipoUsuario,nombreUsuario,contraseña, correo});
     await nuevoUsuario.save();
     res.json('Usuario Creado');
 };
@@ -33,11 +33,12 @@ userCtrl.loginUsuarios = async (req, res) => {
 };
 
 userCtrl.updateUser = async (req, res) => {
-    const { tipoUsuario, nombreUsuario, contraseña } = req.body;
+    const { tipoUsuario, nombreUsuario, contraseña, correo } = req.body;
     await User.findOneAndUpdate({_id: req.params.id}, {
         tipoUsuario,
         nombreUsuario,
-        contraseña
+        contraseña,
+        correo
     });
     res.json({mensaje: 'Usuario Actualizado'});
 };
