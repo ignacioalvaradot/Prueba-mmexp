@@ -13,21 +13,22 @@
 // };
 
 //deben quedar como localhost2
+let rutaBD = "http://localhost2/"
 const routesBD = {
-    dispositivos: "http://localhost2/api/dispositivos/",
-    experimentos: "http://localhost2/api/experimentos/",
-    fases: "http://localhost2/api/fases/",
-    grupos: "http://localhost2/api/grupos/",
-    mediciones: "http://localhost2/api/mediciones/",
-    observaciones: "http://localhost2/api/observaciones/",
-    participantes: "http://localhost2/api/participantes/",
-    reporteResultados: "http://localhost2/api/reporteResultados/",
-    tipoDispositivo: "http://localhost2/api/tipoDispositivo/",
-    tipoMediciones: "http://localhost2/api/tipoMediciones/",
-    users: "http://localhost2/api/users/",
-    rutaLocal: "http://localhost2/",
-    archivosPruebas: "http://localhost2/api/archivos/consultaMedicion/",
-    descargaTest: "http://localhost2/api/descargaTest/",
+    dispositivos: rutaBD + "api/dispositivos/",
+    experimentos: rutaBD + "api/experimentos/",
+    fases: rutaBD + "api/fases/",
+    grupos: rutaBD + "api/grupos/",
+    mediciones: rutaBD + "api/mediciones/",
+    observaciones: rutaBD + "api/observaciones/",
+    participantes: rutaBD + "api/participantes/",
+    reporteResultados: rutaBD + "api/reporteResultados/",
+    tipoDispositivo: rutaBD + "api/tipoDispositivo/",
+    tipoMediciones: rutaBD + "api/tipoMediciones/",
+    users: rutaBD + "api/users/",
+    rutaLocal: rutaBD,
+    archivosPruebas: rutaBD + "api/archivos/consultaMedicion/",
+    descargaTest: rutaBD + "api/descargaTest/",
     socket: "http://192.168.0.3:200/",
 }
 // const routesBD = {
