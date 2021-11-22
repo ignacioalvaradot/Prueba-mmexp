@@ -29,7 +29,7 @@ Además, para manejar técnicamente el sistema y realizar nuevas implementacione
  
 La estructura que presenta este proyecto se encuentra dividida en 2 contenedores, el primer contenedor es el referente al encargado de configurar los puertos de conexión, el cual es el contenedor de "nginx", el cual determinará los puertos de entrada y salida de cada servicio del proyecto y el ingreso al sistema por parte del cliente. El segundo contenedor abarca todo el proyecto en general, donde este se subdivide en 3 servicios, primero el servicio que funciona como servidor para conectar el servicio de base de datos y las interfaces de la plataforma, luego el servicio de base de datos, encargado de gestionar el manejo de información del sistema, y finalmente el servicio de interfaces de la plataforma que cumple la funcionalidad de mostrar una interfaz para el usuario a modo de plataforma online.
  
-#### Paso 1:
+### Paso 1:
  
 Primero abriremos una terminal de comandos, situada en la carpeta raíz del proyecto.
  
@@ -40,30 +40,30 @@ Cada contenedor se inicia de manera independiente, por lo que el primer paso es 
  
 Este comando permitirá que se levante el servicio, el cual utilizara la imagen del servicio de "nginx" que el DockerFile (Archivo de configuración Docker) específica, logrando que su funcionamiento se logre de manera paralela, permitiéndonos levantar la plataforma online de manera simultánea, dentro de la misma consola de comandos.
  
-#### Paso 2:
+### Paso 2:
 Luego, el segundo paso es levantar la plataforma online, por lo que regresaremos a la carpeta anterior, a lo que de forma consiguiente, realizaremos una construcción del proyecto, de forma que el contenedor de Docker se cree con los servicios definidos en cada DockerFile dentro de las carpetas de "frontend" y "backend". Construiremos el contenedor de la siguiente forma:
  
 #### `docker-compose build`
  
-#### Paso 3:
+### Paso 3:
 Este paso tomará un poco de tiempo, debido a que se deben crear las imágenes de los contenedores. Una vez completado su creación, se debe de levantar el servicio:
  
 #### `docker-compose up`
  
 Siendo este el paso final para instanciar y levantar todo lo referente a los contenedores de conexión y la plataforma online.
  
-#### A continuación:
+### A continuación:
 En la siguiente sección, se presentarán los archivos de configuración de cada servicio, donde es necesario que se configure dependiendo del lugar de conexión del usuario, es decir, deben ser configurables cada vez que se cambie la dirección IP del servicio de hosting donde se alojen.
  
 ## Configuración del sistema
 Para configurar el sistema se deben de tener en cuenta los 2 contenedores, si se quiere configurar algo respectivo a la conexión y los puertos del sistema, se debe verificar en el contenedor de "nginx", si se quiere configurar algo respectivo a la configuración de la plataforma o a su base de datos, se debe ingresar a las carpetas de "frontend" o "backend". En base a que se busca la configuración del sistema para su correcto funcionamiento, se realizará una breve introducción a la configuración de los parámetros de "backend" y "frontend".
  
-#### Servidor y Base de Datos:
+### Servidor y Base de Datos:
 Por el lado de backend, hay 2 archivos importantes que configurar, uno es dentro de la carpeta "backend/src/", el archivo "app.js", el cual obtendrá el puerto de acceso desde su archivo de variables de entorno ".env" o por defecto utilizará el puerto "80", el cual está documentado para utilizarlo de manera local, y que modificar en caso de necesitarlo, y por otro lado, se encuentra el archivo "database.js", el cual contiene la "url" de acceso para conectarse al servicio de base de datos, es decir, por este lado, el primer archivo funcionara para mantener la conexión del servidor hacia las consultas y peticiones que se hagan por el "frontend", y el segundo archivo conservará los parámetros de configuración del levantamiento de la base de datos para que el servidor también los conecte.
  
-#### Plataforma Online:
+### Plataforma Online:
  
-##### Package.json
+#### Package.json
 Por el lado del frontend, se encuentran 2 archivos importantes para la hora de configurar el funcionamiento del sistema, el primero es referente con el "package.json", el cual, dentro de las configuraciones, a la hora de ejecutar los correspondientes "scripts", concretamente :
  
 #### `"start": "PORT=80 react-scripts start",`
@@ -73,11 +73,11 @@ En caso de requerir utilizar el sistema de manera local, esta configuración deb
 #### `"start": "set PORT=80  && react-scripts start",`
  
  
-##### Rutas
+#### Rutas
 Por otro lado, tenemos el segundo archivo, el cual se encuentra en la ruta "frontend/src/helpers/", específicamente el archivo "routes.js", donde se pueden configurar las rutas de las consultas a la base de datos, ahí se encuentra la variable "rutaBD", la cual sirve para apuntar al dominio de la “api” a la cual realizar las debidas consultas.
  
  
-### Archivos Docker
+## Archivos Docker
  
 Dentro de los archivos de configuración, tenemos el archivo "docker-compose.yml", el cual se encuentra en la carpeta raíz del proyecto, donde su finalidad es lograr la construcción y levantamiento de cada contenedor y servicio Docker del proyecto. Además, dentro de este archivo, es donde se debe configurar el dominio de cada servicio, es decir, la dirección y los puertos por los cuales se conectarán entre sí. Por último, acá también, se debe de configurar la conexión de la red proxy y privadas que el sistema mantiene.
  
