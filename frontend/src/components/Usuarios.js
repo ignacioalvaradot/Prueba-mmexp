@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { loadCSS } from 'fg-loadcss';
 import axios from 'axios';
 import { Grid, Button } from '@material-ui/core';
-import routesBD from '../helpers/routes';
+import routesBD, {rutasFront} from '../helpers/routes';
 
 export default function Usuarios() {
 

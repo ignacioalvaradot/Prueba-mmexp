@@ -23,7 +23,7 @@ import DateFnsUtils from '@date-io/date-fns';
 import { TimePicker} from '@material-ui/pickers';
 import { es } from "date-fns/locale";
 import io from 'socket.io-client';
-import routesBD from '../helpers/routes';
+import routesBD, {rutasFront} from '../helpers/routes';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -490,7 +490,7 @@ export default function EjecucionExp() {
         //         guardarFaseActiva(faseActiva - 1);
         //         setTimeout(
         //             function () {
-        //                 window.location.href = "http://localhost/analisis/" + idUrl['id'];
+                        // window.location.href = rutasFront.AnalisisExp + idUrl['id'];
         //             },
         //             3000
         //         );
@@ -633,7 +633,7 @@ export default function EjecucionExp() {
         guardarFaseActiva(faseActiva);
         setTimeout(
             function () {
-                window.location.href = "http://localhost/inicio";
+                window.location.href = rutasFront.inicio;
             },
             3000
         );
@@ -665,7 +665,7 @@ export default function EjecucionExp() {
                 const resEtapa = await axios.put(routesBD.experimentos + idExperimento, Etapa);
                 setTimeout(
                     function () {
-                        window.location.href = "http://localhost/analisis/" + idUrl['id'];
+                        window.location.href = rutasFront.AnalisisExp + idUrl['id'];
                     },
                     3000
                 );
@@ -1124,7 +1124,7 @@ export default function EjecucionExp() {
                                 color="secondary"
                                 size="small"
                                 style={{ margin: 3, textAlign: 'center' }}
-                                onClick={() => window.location.href = "http://localhost/inicio"}
+                                onClick={() => window.location.href = rutasFront.inicio}
                             >
                                 Cancelar
                             </Button>

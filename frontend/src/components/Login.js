@@ -20,7 +20,7 @@ import InputLabel from "@material-ui/core/InputLabel";
 import { withStyles } from "@material-ui/core/styles";
 import axios from "axios";
 import useAuth from "./auth/useAuth";
-import routesBD from "../helpers/routes";
+import routesBD, {rutasFront} from "../helpers/routes";
 
 export default function Inscripcion() {
 
