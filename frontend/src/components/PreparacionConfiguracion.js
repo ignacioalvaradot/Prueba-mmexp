@@ -18,7 +18,7 @@ import Fade from '@material-ui/core/Fade';
 import { Stepper, Step, StepButton, LinearProgress } from '@material-ui/core/'
 import CancelIcon from '@material-ui/icons/Cancel';
 import VisibilityIcon from '@material-ui/icons/Visibility';
-import routesBD from '../helpers/routes';
+import routesBD, {rutasFront} from '../helpers/routes';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -618,7 +618,7 @@ export default function PreparacionExp() {
         } else {
             //usar replace para evitar retrocesos de pagina
             // window.location.replace("http://");
-            window.location.href = "http://localhost/preparacionVerific/" + idUrl['id'];
+            window.location.href = rutasFront.PreparacionVerific + idUrl['id'];
         }
     }
 
@@ -626,7 +626,7 @@ export default function PreparacionExp() {
     const botonCancelar = () => {
         setTimeout(
             function () {
-                window.location.href = "http://localhost/inicio";
+                window.location.href = rutasFront.inicio;
             },
             2000
         );
@@ -1083,7 +1083,7 @@ export default function PreparacionExp() {
                                         // color="secondary"
                                         size="small"
                                         style={{ margin: 3, textAlign: 'center' }}
-                                        onClick={() => (window.location.href = "http://localhost/planificacion/" + idUrl['id'])}
+                                        onClick={() => (window.location.href = rutasFront.PlanificacionExp + idUrl['id'])}
                                     >
                                         ← Volver Planificación
                                     </Button>

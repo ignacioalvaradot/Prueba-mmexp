@@ -22,7 +22,7 @@ import { MuiPickersUtilsProvider, KeyboardTimePicker, KeyboardDatePicker } from 
 import DateFnsUtils from '@date-io/date-fns';
 import { DatePicker, TimePicker, DateTimePicker } from '@material-ui/pickers';
 import { es } from "date-fns/locale";
-import routesBD from '../helpers/routes';
+import routesBD, {rutasFront} from '../helpers/routes';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -565,9 +565,9 @@ export default function PlanificacionExp() {
             // if (arregloEliminado.length > 0) {
             //     eliminarFaseBD(arregloEliminado);
             //     console.log('Debo esperar unos segundos antes de redirigir');
-            //     // window.location.href = "http://localhost/preparacion/60dfb8ba56b0354b1c20c77f";
+
             // } else {
-                window.location.href = "http://localhost/preparacionConfig/" + idUrl['id'];
+                window.location.href = rutasFront.PreparacionConfig + idUrl['id'];
 
             // }
         }
@@ -675,7 +675,7 @@ export default function PlanificacionExp() {
             const resEtapa = await axios.put(routesBD.experimentos + idExperimento, Etapa);
             setTimeout(
                 function () {
-                    window.location.href = "http://localhost/preparacionConfig/" + idExperimento;
+                    window.location.href = rutasFront.PreparacionConfig + idExperimento;
                 },
                 3000
             );
@@ -820,14 +820,14 @@ export default function PlanificacionExp() {
         if (estado === 'Continuar') {
             setTimeout(
                 function () {
-                    window.location.href = "http://localhost/preparacionConfig/" + idExperimento;
+                    window.location.href = rutasFront.PreparacionConfig + idExperimento;
                 },
                 4000
             );
         } else if (estado === 'Salir') {
             setTimeout(
                 function () {
-                    window.location.href = "http://localhost/inicio";
+                    window.location.href = rutasFront.inicio;
                 },
                 4000
             );
@@ -840,7 +840,7 @@ export default function PlanificacionExp() {
         // ========= este deberia eliminar todo lo creado hasta ahora
         setTimeout(
             function () {
-                window.location.href = "http://localhost/inicio";
+                window.location.href = rutasFront.inicio;
             },
             2000
         );
@@ -1206,7 +1206,7 @@ export default function PlanificacionExp() {
                                 fullWidth
                                 variant="contained"
                                 color="secondary"
-                                onClick={() => window.location.href = "http://localhost/inicio"}
+                                onClick={() => window.location.href = rutasFront.inicio}
                                 // size="small"
                                 style={{ margin: 3 }}
                             >

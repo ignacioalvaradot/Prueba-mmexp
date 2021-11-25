@@ -18,7 +18,7 @@ import { MuiPickersUtilsProvider, KeyboardTimePicker, KeyboardDatePicker } from 
 import DateFnsUtils from '@date-io/date-fns';
 import { DatePicker, TimePicker, DateTimePicker } from '@material-ui/pickers';
 import { es } from "date-fns/locale";
-import routesBD from '../helpers/routes';
+import routesBD, {rutasFront} from '../helpers/routes';
 
 
 function crearData(descripcion, fechaRealizacion, fechaModificacion) {
@@ -106,7 +106,7 @@ export default function AnalisisExp() {
     const [open, setOpen] = React.useState(false);
     const [urlconsulta, setUrlConsulta] = useState('');
     const [fases, setFases] = React.useState([]);
-    const [redireccion, setRedireccion] = useState("http://localhost/experimentos/");
+    const [redireccion, setRedireccion] = useState(rutasFront.Experimentos);
     const [tipoExperimento, setTipoExperimento] = React.useState('');
     const [getExperimentos, setGetExperimentos] = React.useState([]);
     const [tipoEdicion, setTipoEdicion] = useState('');
@@ -157,7 +157,7 @@ export default function AnalisisExp() {
     }, []);
 
     const reedireccionExperimentos = (idDireccion) => {
-        window.location.href = "http://localhost/" + tipoEdicion + "/" + idDireccion;
+        window.location.href = rutasFront.rutaLocal + tipoEdicion + "/" + idDireccion;
     }
 
     const openModalEliminarExperimentos = (idExpEliminar) => {

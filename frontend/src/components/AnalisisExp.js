@@ -12,7 +12,7 @@ import { useLocation, useParams } from "react-router-dom";
 
 import { Stepper, Step, StepButton } from '@material-ui/core/'
 import 'date-fns';
-import routesBD from '../helpers/routes';
+import routesBD, {rutasFront} from '../helpers/routes';
 import useAuth from './auth/useAuth';
 
 
@@ -149,7 +149,6 @@ export default function AnalisisExp() {
     useEffect(() => {
         const getObservaciones = async (obs, arrObs, i, termino) => {
             const res = await axios.get(routesBD.observaciones + obs);
-            // const res = await axios.get('http://localhost:81/api/observaciones/' + obs);
 
 
             if (res.data.observacion != null) {
@@ -671,7 +670,7 @@ export default function AnalisisExp() {
                                 color="primary"
                                 size="small"
                                 style={{ margin: 3, textAlign: 'center' }}
-                                onClick={() => window.location.href = "http://localhost/inicio"}
+                                onClick={() => window.location.href = rutasFront.inicio}
 
                             >
                                 Finalizar Experimento

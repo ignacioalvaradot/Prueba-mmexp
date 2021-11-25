@@ -18,7 +18,7 @@ import { MuiPickersUtilsProvider, KeyboardTimePicker, KeyboardDatePicker } from 
 import DateFnsUtils from '@date-io/date-fns';
 import { DatePicker, TimePicker, DateTimePicker } from '@material-ui/pickers';
 import { es } from "date-fns/locale";
-import routesBD from '../helpers/routes';
+import routesBD, {rutasFront} from '../helpers/routes';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -86,11 +86,15 @@ export default function AnalisisExp() {
     const [open, setOpen] = React.useState(false);
     const [urlconsulta, setUrlConsulta] = useState('');
     const [fases, setFases] = React.useState([]);
-    const [redireccion, setRedireccion] = useState("http://localhost/experimentos/");
+    const [redireccion, setRedireccion] = useState(rutasFront.rutaLocal + "experimentos/");
     const [openModalNuevoExperimento, setOpenModalNuevoExperimento] = useState(false);
     const [nombreNuevoExperimento, setNombreNuevoExperimento] = useState({
         nombreExp: '',
     })
+    const [countPlanificacion, setCountPlanificacion] = useState(0);
+    const [countPreparacion, setCountPreparacion] = useState(0);
+    const [countEjecucion, setCountEjecucion] = useState(0);
+    const [countFinalizados, setCountFinalizados] = useState(0);
 
 
     useEffect(() => {
@@ -102,11 +106,23 @@ export default function AnalisisExp() {
 
         const url = () => {
             const urlconsulta = location.pathname.split('/ejecucion/');
-
             setUrlConsulta(urlconsulta);
         };
 
+        const conteoExperimentos = async () => {
+            const cont1 = await axios.get(routesBD.experimentos + 'traerExp/' + 'Planificacion');
+            const cont2 = await axios.get(routesBD.experimentos + 'traerExp/' + 'Preparacion');
+            const cont3 = await axios.get(routesBD.experimentos + 'traerExp/' + 'Ejecucion');
+            const cont4 = await axios.get(routesBD.experimentos + 'traerExp/' + 'Analisis');
+
+            setCountPlanificacion((cont1.data.experimento).length);
+            setCountPreparacion((cont2.data.experimento).length);
+            setCountEjecucion((cont3.data.experimento).length);
+            setCountFinalizados((cont4.data.experimento).length);
+        }
+
         url();
+        conteoExperimentos();
         return () => {
             node.parentNode.removeChild(node);
         };
@@ -129,7 +145,7 @@ export default function AnalisisExp() {
         handleCloseModalNuevoExp();
         setTimeout(
             function () {
-                window.location.href = "http://localhost/planificacion/" + idNuevoExp;
+                window.location.href = rutasFront.rutaLocal + "planificacion/" + idNuevoExp;
             },
             2000
         );
@@ -253,6 +269,7 @@ export default function AnalisisExp() {
                                                                 <div style={{ textAlign: 'center' }} className="card">
                                                                     <div className="card-body">
                                                                         <h4 >En Planificación</h4>
+                                                                        <h3>{countPlanificacion}</h3>
                                                                     </div>
                                                                     <div style={{ textAlign: "center" }} className="card-footer">
                                                                         <Button
@@ -273,6 +290,7 @@ export default function AnalisisExp() {
                                                                 <div style={{ textAlign: "center" }} className="card">
                                                                     <div className="card-body">
                                                                         <h4>En Preparación</h4>
+                                                                        <h3>{countPreparacion}</h3>
                                                                     </div>
                                                                     <div className="card-footer">
                                                                         <Button
@@ -294,6 +312,7 @@ export default function AnalisisExp() {
                                                                     <div className="card" style={{ textAlign: 'center' }} >
                                                                         <div className="card-body">
                                                                             <h4>En Ejecución</h4>
+                                                                            <h3>{countEjecucion}</h3>
                                                                         </div>
                                                                         <div className="card-footer">
                                                                             <Button
@@ -318,6 +337,7 @@ export default function AnalisisExp() {
                                                                     <div style={{ textAlign: 'center' }} className="card">
                                                                         <div className="card-body">
                                                                             <h4>Finalizados</h4>
+                                                                            <h3>{countFinalizados}</h3>
                                                                         </div>
                                                                         <div className="card-footer">
                                                                             <Button

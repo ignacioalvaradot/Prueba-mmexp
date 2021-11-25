@@ -4,7 +4,7 @@ import { loadCSS } from 'fg-loadcss';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import { Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Icon, IconButton, Collapse } from '@material-ui/core/';
-import {  Box, Typography } from '@material-ui/core/';
+import { Box, Typography } from '@material-ui/core/';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import { useLocation, useParams } from "react-router-dom";
@@ -13,7 +13,7 @@ import { Stepper, Step, StepButton } from '@material-ui/core/'
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import io from 'socket.io-client';
-import routesBD from '../helpers/routes';
+import routesBD, { rutasFront } from '../helpers/routes';
 
 
 const useRowStyles = makeStyles({
@@ -80,16 +80,6 @@ export default function PreparacionExp() {
 
 
     const conectarSocket = () => {
-        // conectando al servidor
-        // socket = io.connect("http://localhost:5000/");
-        // //Para emitir eventos al servidor socket
-        // // socket.emit('request', /* */); 
-
-        // // escuchando los eventos
-        // socket.on('after connect', function(msg) {
-        //     console.log('After connect', msg);
-        //     // $('#log').append('<br>' + $('<div/>').text('Received: ' + msg.data).html());
-        // });
         let tablaEstadoMediciones = estadoMediciones;
         let dispositivosParticipantes = new Array();
         let dispositivosGrupo = new Array();
@@ -100,10 +90,7 @@ export default function PreparacionExp() {
         let medicion = '';
         let separador = ' ';
         let medicionFinal = '';
-        // console.log('tablaEstadoMediciones');
-        // console.log(tablaEstadoMediciones);
-        // console.log('medicionesFaseActual');
-        // console.log(medicionesFaseActual);
+
         for (let i = 0; i < medicionesFaseActual[0].length; i++) {
             medicion = medicionesFaseActual[0][i]['nombre'].toLowerCase();
             let medicionFiltro = medicion.split(separador);
@@ -144,7 +131,7 @@ export default function PreparacionExp() {
                             for (let j = 0; j < msg.data.devices.length; j++) {
                                 let dispositivoRecibido = msg.data.devices[j];
                                 if (dispositivoRecibido['name'] === tablaEstadoMediciones[i]['grupos'][k]['participantes'][l]['dispositivo']) {
-                                    if (dispositivoRecibido['channel'][tablaEstadoMediciones[i]['grupos'][k]['participantes'][l]['canal']]['channelId']) {
+                                    if (dispositivoRecibido['channel'][tablaEstadoMediciones[i]['grupos'][k]['participantes'][l]['canal']]['channelId'] || dispositivoRecibido['channel'][tablaEstadoMediciones[i]['grupos'][k]['participantes'][l]['canal']]['channelId'] === 0) {
                                         // banderaEncontrado = true;
                                         // contadorBandera = contadorBandera + 1;
                                         console.log('dispositivo Encontrado');
@@ -495,7 +482,7 @@ export default function PreparacionExp() {
         }
     }, [faseActiva, fasesExp]);
 
-    const cambiarFaseActiva = (fase) => {
+    const cambiarFaseActiva = async (fase) => {
 
         if (fase < fasesExp.length) {
             // console.log(fasesExp[fase]);
@@ -526,14 +513,24 @@ export default function PreparacionExp() {
             // ====== una vez este listo su verificacion, debo de cambiar su estado a ejecucion, para que sepan que ya no puede prepararse el experimento
             // Yo creo que mientras no pase a analisis, el experimento tiene que pasar por verificacion, debe tener estado verificaion y abrir esta vista, hasta que se finalize
             //    para corroborar que el sistema necesita verificar los dispositivos antes de ejecutarse, sea en la fase en que haya quedado su ejecucion
-            window.location.href = "http://localhost/ejecucion/" + idUrl['id'];
+            let Etapa = {
+                nombreExp: nombreExp,
+                estado: 'Ejecucion'
+            }
+            const resEtapa = await axios.put(routesBD.experimentos + idExperimento, Etapa);
+            setTimeout(
+                function () {
+                    window.location.href = rutasFront.EjecucionExp + idUrl['id'];
+                },
+                3000
+            );
         }
     }
 
     const botonCancelar = () => {
         setTimeout(
             function () {
-                window.location.href = "http://localhost/inicio";
+                window.location.href = rutasFront.inicio;
             },
             2000
         );
@@ -558,14 +555,6 @@ export default function PreparacionExp() {
     }
 
     const colapsarGrupos = (filagrupo, indexGrupo, indexFila, estadoAperturaGrupo) => {
-        // console.log('filagrupo');
-        // console.log(filagrupo);
-        // console.log('indexGrupo');
-        // console.log(indexGrupo);
-        // console.log('indexFila');
-        // console.log(indexFila);
-        // console.log('estadoAperturaGrupo');
-        // console.log(estadoAperturaGrupo);
         let estadoMedicionesColapsar = estadoMediciones;
         estadoMedicionesColapsar[indexFila]['grupos'][indexGrupo]['estadoOpen'] = estadoAperturaGrupo;
         setEstadoMediciones([...estadoMedicionesColapsar]);
@@ -585,7 +574,7 @@ export default function PreparacionExp() {
                                         // color="secondary"
                                         size="small"
                                         style={{ margin: 3, textAlign: 'center' }}
-                                        onClick={() => (window.location.href = "http://localhost/preparacionConfig/" + idUrl['id'])}
+                                        onClick={() => (window.location.href = rutasFront.PreparacionConfig + idUrl['id'])}
                                     >
                                         ← Volver Configuración
                                     </Button>
