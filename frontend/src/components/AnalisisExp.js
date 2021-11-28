@@ -46,24 +46,6 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-function createData(nombre, grupo, participante, dispositivo, tiempoMedicion, valor) {
-    return { nombre, grupo, participante, dispositivo, tiempoMedicion, valor };
-}
-
-// const rows = [
-//     createData('Speech Count', '01', '04', 'Mic.', '05:30', '02:00'),
-//     createData('Pos. Mic', '01', '04', 'Mic.', '05:32', 'Coord'),
-//     createData('Speech Count', '03', '01', 'Mic.', '05:35', '05:00'),
-//     createData('Pos. Hombros', '02', '03', 'Cam.', '05:38', 'Coord'),
-//     createData('Speech Count', '01', '02', 'Mic.', '05:45', '10:00'),
-//     createData('Pos. Manos', '01', '04', 'Cam.', '05:46', 'Coord'),
-//     createData('Gestos', '01', '05', 'Cam.', '05:49', 'Coord'),
-//     createData('Pos. Mic', '01', '02', 'Mic.', '05:49', 'Coord'),
-//     createData('Pos. Mic', '01', '02', 'Mic.', '05:50', 'Coord'),
-//     createData('Pos. Mic', '01', '03', 'Mic.', '05:51', 'Coord'),
-//     createData('Speech Count', '01', '04', 'Mic.', '05:52', '03:00'),
-// ];
-
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
 

@@ -1,4 +1,4 @@
-# Manual de Usuario Plataforma MMExP - FrontEnd
+# Manual de Usuario Plataforma MMExP - BackEnd
 Este proyecto ha sido desarrollado a través de un stack "MERN", basado en programación con javascript, herramientas de base de datos en MongoDB, servidor de ExpressJS, FrontEnd basado en ReactJS y gestión general de NodeJS.
 
 <p align="center">

@@ -21,26 +21,6 @@ import { es } from "date-fns/locale";
 import routesBD, {rutasFront} from '../helpers/routes';
 
 
-function crearData(descripcion, fechaRealizacion, fechaModificacion) {
-    return { descripcion, fechaRealizacion, fechaModificacion };
-}
-
-const rows = [
-    crearData('Experimento 1', '21 mayo, 2021', '21 mayo, 2021'),
-    crearData('Experimento 2', '21 mayo, 2021', '21 mayo, 2021'),
-    crearData('Experimento 3', '21 mayo, 2021', '21 mayo, 2021'),
-    crearData('Experimento 4', '21 mayo, 2021', '21 mayo, 2021'),
-    crearData('Experimento 5', '21 mayo, 2021', '21 mayo, 2021'),
-    crearData('Experimento 6', '21 mayo, 2021', '21 mayo, 2021'),
-    crearData('Experimento 7', '21 mayo, 2021', '21 mayo, 2021'),
-    crearData('Experimento 8', '21 mayo, 2021', '21 mayo, 2021'),
-    crearData('Experimento 9', '21 mayo, 2021', '21 mayo, 2021'),
-    crearData('Experimento 10', '21 mayo, 2021', '21 mayo, 2021'),
-    crearData('Experimento 11', '21 mayo, 2021', '21 mayo, 2021'),
-    crearData('Experimento 12', '21 mayo, 2021', '21 mayo, 2021'),
-    crearData('Experimento 13', '21 mayo, 2021', '21 mayo, 2021'),
-    crearData('Experimento 14', '21 mayo, 2021', '21 mayo, 2021'),
-];
 const useStyles = makeStyles((theme) => ({
     root: {
         '& .MuiTextField-root': {

@@ -152,16 +152,6 @@ export default function PreparacionExp() {
                             } else {
                                 tablaEstadoMediciones[i]['grupos'][k]['estadoMedicion'] = false;
                             }
-                            // if ((tablaEstadoMediciones[i]['grupos'][k]['participantes'].length) === 0) {
-                            //     tablaEstadoMediciones[i]['grupos'][k]['estadoMedicion'] = true;
-                            //     contadorGrupos = contadorGrupos + 1;
-                            // } 
-                            // else {
-                            //     tablaEstadoMediciones[i]['grupos'][k]['estadoMedicion'] = false;
-                            // }
-                            // else {
-                            //     tablaEstadoMediciones[i]['grupos'][k]['participantes'][l]['estadoMedicion'] = false;
-                            // }
                         }
                     } else if (tablaEstadoMediciones[i]['grupos'][k]['participantes'].length === 0) {
                         tablaEstadoMediciones[i]['grupos'][k]['estadoMedicion'] = true;
@@ -250,17 +240,8 @@ export default function PreparacionExp() {
                 }
             }
         }
-        // console.log('gruposActuales');
-        // console.log(gruposActuales);
-        // console.log('medicionesActuales');
-        // console.log(medicionesActuales);
-        // console.log('arregloDispositivosXGrupos');
-        // console.log(arregloDispositivosXGrupos);
+
         setTablaMedicionesRegistrar([...arregloDispositivosXGrupos]);
-
-        // setDataGrupos([...arrFasesGrupos[0]]);
-
-        // traerParticipantes(arrFasesGrupos[0], 'inicio');
 
     }
 
@@ -292,19 +273,13 @@ export default function PreparacionExp() {
         let medicionesActuales = medicionesFase;
         let arregloMedicionesGruposParticipantes = new Array();
         let indiceIDFila = 0;
-        // console.log('gruposActuales');
-        // console.log(gruposActuales);
-        // console.log('participantes');
-        // console.log(participantes);
-        // console.log('medicionesActuales');
-        // console.log(medicionesActuales);
+
         for (let i = 0; i < medicionesActuales.length; i++) {
             let gruposArr = new Array();
             for (let j = 0; j < gruposActuales.length; j++) {
                 let participantesArr = new Array();
                 for (let k = 0; k < participantes[j].length; k++) {
-                    // console.log('participante del grupo');
-                    // console.log(participantes[j][k]);
+
                     for (let h = 0; h < participantes[j][k]['dispositivos'].length; h++) {
                         // console.log('tipo dispositivo del participante del grupo');
                         // console.log(participantes[j][k]['dispositivos'][h]['tipoDispositivo']);
@@ -340,33 +315,6 @@ export default function PreparacionExp() {
         console.log('arregloMedicionesGruposParticipantes');
         console.log(arregloMedicionesGruposParticipantes);
         setEstadoMediciones([...arregloMedicionesGruposParticipantes]);
-        // // for (let i = 0; i < gruposActuales.length; i++) {
-        // //     let dispositivosGrupo = gruposActuales[i]['dispositivos'];
-        // //     for (let j = 0; j < medicionesActuales.length; j++) {
-        // //         for (let k = 0; k < medicionesActuales[j]['dispositivosAsociados'].length; k++) {
-        // //             for (let h = 0; h < dispositivosGrupo.length; h++) {
-        // //                 if (medicionesActuales[j]['dispositivosAsociados'][k] === dispositivosGrupo[h]['tipoDispositivo']) {
-        // //                     let dispositivoMedicion = {
-        // //                         id: indiceIDFila,
-        // //                         nombreMedicion: medicionesActuales[j]['nombre'],
-        // //                         grupoDispositivos: dispositivosGrupo[h],
-        // //                         nombreGrupo: gruposActuales[i]['descripcion'],
-        // //                         estado: false
-        // //                     }
-        // //                     indiceIDFila = indiceIDFila + 1;
-        // //                     arregloDispositivosXGrupos.push(dispositivoMedicion);
-        // //                 }
-        // //             }
-        // //         }
-        // //     }
-        // // }
-        // // console.log('gruposActuales');
-        // // console.log(gruposActuales);
-        // // console.log('medicionesActuales');
-        // // console.log(medicionesActuales);
-        // console.log('arregloDispositivosXGrupos');
-        // console.log(arregloDispositivosXGrupos);
-        // setTablaMedicionesRegistrar([...arregloDispositivosXGrupos]);
     }
 
     const traerGruposIniciales = async (fasesExpe) => {
@@ -485,32 +433,12 @@ export default function PreparacionExp() {
     const cambiarFaseActiva = async (fase) => {
 
         if (fase < fasesExp.length) {
-            // console.log(fasesExp[fase]);
             traerMedicionesRegistrar(fasesExp[fase]);
-            // setGrupoComparacion(arregloFasesGrupos[fase]);
-            // traerParticipantesIniciales(arrFasesxGrupo[fase])
             setFaseActiva(fase);
 
-
-            // setDataGrupos([...arrFasesxGrupo[fase]]);
-            // traerParticipantes(arrFasesxGrupo[fase], 'inicio');
-
-            // setDataParticipantes([]);
-            // setNombreGrupoHeader('');
-            // setHiddenParticipantes(true);
-            // setConteoSelectedG(0);
-            // let arregloGruposSeleccionados = arregloGruposSelect[0];
-            // let tamañoObjetos = Object.keys(arregloGruposSeleccionados)
-            // for (let i = 0; i < tamañoObjetos.length; i++) {
-            //     let grupo = tamañoObjetos[i]
-            //     if (arregloGruposSeleccionados[grupo] === true) {
-            //         arregloGruposSeleccionados[grupo] = false;
-            //     }
-            // }
         } else {
             //usar replace para evitar retrocesos de pagina
             // window.location.replace("http://");
-            // ====== una vez este listo su verificacion, debo de cambiar su estado a ejecucion, para que sepan que ya no puede prepararse el experimento
             // Yo creo que mientras no pase a analisis, el experimento tiene que pasar por verificacion, debe tener estado verificaion y abrir esta vista, hasta que se finalize
             //    para corroborar que el sistema necesita verificar los dispositivos antes de ejecutarse, sea en la fase en que haya quedado su ejecucion
             let Etapa = {
@@ -537,20 +465,8 @@ export default function PreparacionExp() {
     }
 
     const colapsarTabla = (fila, indexFila, estadoApertura) => {
-        // console.log('fila');
-        // console.log(fila);
         let estadoMedicionesColapsar = estadoMediciones;
         estadoMedicionesColapsar[indexFila]['estadoOpen'] = estadoApertura;
-        // let tablaMediciones = tablaMedicionesRegistrar;
-        // console.log('tablaMediciones');
-        // console.log(tablaMediciones);
-        // fila['estado'] = estadoApertura;
-        // console.log('indexFila');
-        // console.log(indexFila);
-        // console.log('estadoApertura');
-        // console.log(estadoApertura);
-        // console.log('estadoMedicionesColapsar');
-        // console.log(estadoMedicionesColapsar);
         setEstadoMediciones([...estadoMedicionesColapsar]);
     }
 
@@ -623,73 +539,6 @@ export default function PreparacionExp() {
                                                     </Button>
                                                 </Grid>
                                             </Grid>
-                                            {/* <Grid container spacing={12}>
-                                                <Grid item xs={12}>
-                                                    <Grid item xs={12}>
-                                                        <TableContainer component={Paper} style={{ maxHeight: 300, minHeight: 200 }}>
-                                                            <Table size="small" stickyHeader aria-label="sticky table" height="300" >
-                                                                <TableHead >
-                                                                    <TableRow style={{ height: 50, }}>
-                                                                        <TableCell>Medicion</TableCell>
-                                                                        <TableCell>Grupo</TableCell>
-                                                                        <TableCell>Dispositivo Grupo</TableCell>
-                                                                        <TableCell>Tipo Dispositivo</TableCell>
-                                                                        <TableCell>Estado</TableCell>
-                                                                    </TableRow>
-                                                                </TableHead>
-                                                                {
-                                                                    banderaTabla ?
-                                                                        <TableBody>
-                                                                            {tablaMedicionesRegistrar.map((row) => {
-                                                                                return (
-                                                                                    <TableRow key={row.indiceIDFila}>
-                                                                                        <TableCell component="th" scope="row">{row.nombreMedicion}</TableCell>
-                                                                                        <TableCell component="th" scope="row">{row.nombreGrupo}</TableCell>
-                                                                                        <TableCell component="th" style={{ textAlign: "center" }} scope="row">{row.grupoDispositivos.nombreDispositivo}</TableCell>
-                                                                                        <TableCell component="th" scope="row">{row.grupoDispositivos.tipoDispositivo}</TableCell>
-                                                                                        {
-                                                                                            // al usar socket.io, se debe alterar esta variable
-                                                                                            row.estado ?
-                                                                                                <TableCell onClick={() => console.log(row)} component="th" scope="row"><Icon style={{ color: 'green' }} className="fa fa-circle"></Icon> </TableCell>
-                                                                                                :
-                                                                                                <TableCell onClick={() => console.log(row)} component="th" scope="row"><Icon style={{ color: 'red' }} className="fa fa-circle"></Icon></TableCell>
-                                                                                        }
-                                                                                    </TableRow>
-                                                                                )
-                                                                            })}
-                                                                        </TableBody>
-                                                                        // <TableBody>
-                                                                        //     {medicionesSelected.map((row) => {
-                                                                        //         return (
-                                                                        //             <TableRow key={row._id}>
-                                                                        //                 <TableCell component="th" scope="row">{row.nombre}</TableCell>
-                                                                        //                 <TableCell component="th" scope="row">{row.nombre}</TableCell>
-                                                                        //                 <TableCell component="th" style={{ textAlign: "center" }} scope="row">{row.idTipoMedicion}</TableCell>
-                                                                        //                 <TableCell component="th" scope="row">Tipo Dispositivo</TableCell>
-                                                                        //                 {
-                                                                        //                     // al usar socket.io, se debe alterar esta variable
-                                                                        //                     row.estado ?
-                                                                        //                         <TableCell onClick={() => console.log(row)} component="th" scope="row"><Icon style={{ color: 'green' }} className="fa fa-circle"></Icon> </TableCell>
-                                                                        //                         :
-                                                                        //                         <TableCell onClick={() => console.log(row)} component="th" scope="row"><Icon style={{ color: 'red' }} className="fa fa-circle"></Icon></TableCell>
-                                                                        //                 }
-                                                                        //             </TableRow>
-                                                                        //         )
-                                                                        //     })}
-                                                                        // </TableBody>
-                                                                        : <TableRow>
-                                                                            <TableCell align="center" colSpan={5}>
-                                                                                <Box sx={{ width: "auto", padding: 10 }}>
-                                                                                    <CircularProgress color="inherit" />
-                                                                                </Box>
-                                                                            </TableCell>
-                                                                        </TableRow>
-                                                                }
-                                                            </Table>
-                                                        </TableContainer>
-                                                    </Grid>
-                                                </Grid>
-                                            </Grid> */}
                                         </Grid>
                                         <Grid item xs={12} style={{ float: 'none', margin: 'auto', }}>
                                             <TableContainer component={Paper} style={{ maxHeight: 500, minHeight: 200 }}>
@@ -815,7 +664,7 @@ export default function PreparacionExp() {
                                 color="secondary"
                                 size="small"
                                 style={{ margin: 3, textAlign: 'center' }}
-                            // onClick={() => botonCancelar()}
+                                onClick={() => botonCancelar()}
                             >
                                 Cancelar
                             </Button>
