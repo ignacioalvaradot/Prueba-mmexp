@@ -1,4 +1,6 @@
-// let rutaBD = "http://localhost2/"
+// let rutaBD = "http://localhost:81/"
+// let rutaFront = "http://localhost/"
+
 const rutaBD = "http://api.mmexp.informatica.uv.cl/";
 const rutaFront = "http://mmexp.informatica.uv.cl/";
 

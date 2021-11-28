@@ -368,21 +368,6 @@ export default function AnalisisExp() {
                         </div>
 
                     </div>
-
-                    {/* <div className="card-footer">
-                        <div style={{ float: "right" }}>
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                size="small"
-                                style={{ margin: 3, textAlign: 'center' }}
-                                onClick={() => { console.log('a') }}
-
-                            >
-                                Finalizar Experimento
-                            </Button>
-                        </div>
-                    </div> */}
                 </div>
             </div>
         </div>

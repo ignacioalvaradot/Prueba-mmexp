@@ -1,6 +1,6 @@
 # Manual Instalación Plataforma MMExP
 
-Este proyecto ha sido desarrollado a través de un stack "MERN", basado en programación con javascript, se utilizaron herramientas de base de datos en MongoDB, servidor de ExpressJS, FrontEnd basado en ReactJS y gestión de NodeJS.
+Este proyecto ha sido desarrollado a través de un stack "MERN", basado en programación con javascript, herramientas de base de datos en MongoDB, servidor de ExpressJS, FrontEnd basado en ReactJS y gestión general de NodeJS.
 
 <p align="center">
 <img src="https://miro.medium.com/max/1400/1*k0SazfSJ-tPSBbt2WDYIyw.png" width="300">

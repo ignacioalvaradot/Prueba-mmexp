@@ -12,7 +12,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import { useLocation, useParams } from "react-router-dom";
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
-
 import { Stepper, Step, StepButton, LinearProgress } from '@material-ui/core/'
 import CancelIcon from '@material-ui/icons/Cancel';
 import VisibilityIcon from '@material-ui/icons/Visibility';
@@ -55,63 +54,6 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-function createData(nombre, descripcion, tipoMedicion, dispositivo) {
-    return { nombre, descripcion, tipoMedicion, dispositivo };
-}
-function crearData(id, nombre, seleccionado) {
-    return { id, nombre, seleccionado };
-}
-
-const rows = [
-    createData('Tono Voces', 'Tonalidad', 'Verbal', 'Microfono'),
-    createData('Speech Count', 'Confirmar Habla', 'Verbal', 'Microfono'),
-    createData('Pos. Mic', 'Posicion del Microfono', 'Verbal', 'Microfono'),
-    createData('Pos. Hombros', 'Posicion de los Hombros', 'No-Verbal', 'Camara'),
-    createData('Gestos', 'Gestos corporales', 'No-Verbal', 'Camara'),
-    createData('Pos. Manos', 'Gestos de Manos', 'No-Verbal', 'Camara'),
-
-];
-const fila = [
-    crearData('1', 'Speech Count', false),
-    crearData('2', 'Pos. Mic', false),
-    crearData('3', 'Speech Count', false),
-    crearData('4', 'Pos. Hombros', false),
-    crearData('5', 'Speech Count', false),
-    crearData('6', 'Pos. Manos', false),
-    crearData('7', 'Gestos', false),
-    crearData('8', 'Pos. Mic', false),
-    crearData('9', 'Pos. Mic', false),
-    crearData('10', 'Pos. Mic', false),
-    crearData('11', 'Speech Count', false),
-];
-const Intensidad = [
-    createData('Speech Count', '01', '04', 'Mic.', '05:30', '02:00'),
-    createData('Pos. Mic', '01', '04', 'Mic.', '05:32', '02:00'),
-    createData('Speech Count', '03', '01', 'Mic.', '05:35', '05:00'),
-    createData('Pos. Hombros', '02', '03', 'Mic.', '05:38', '05:00'),
-    createData('Speech Count', '01', '02', 'Mic.', '05:45', '10:00'),
-    createData('Pos. Manos', '01', '04', 'Mic.', '05:46', '02:00'),
-    createData('Gestos', '01', '05', 'Mic.', '05:49', '05:00'),
-    createData('Pos. Mic', '01', '02', 'Mic.', '05:49', '05:00'),
-    createData('Pos. Mic', '01', '02', 'Mic.', '05:50', '10:00'),
-    createData('Pos. Mic', '01', '03', 'Mic.', '05:51', '10:00'),
-    createData('Speech Count', '01', '04', 'Mic.', '05:52', '03:00'),
-];
-const Postura = [
-    createData('Speech Count', '01', '04', 'Cam.', '05:30', 'Coord'),
-    createData('Pos. Mic', '01', '04', 'Cam.', '05:32', 'Coord'),
-    createData('Speech Count', '03', '01', 'Cam.', '05:35', 'Coord'),
-    createData('Pos. Hombros', '02', '03', 'Cam.', '05:38', 'Coord'),
-    createData('Speech Count', '01', '02', 'Cam.', '05:45', 'Coord'),
-    createData('Pos. Manos', '01', '04', 'Cam.', '05:46', 'Coord'),
-    createData('Gestos', '01', '05', 'Cam.', '05:49', 'Coord'),
-    createData('Pos. Mic', '01', '02', 'Cam.', '05:49', 'Coord'),
-    createData('Pos. Mic', '01', '02', 'Cam.', '05:50', 'Coord'),
-    createData('Pos. Mic', '01', '03', 'Cam.', '05:51', 'Coord'),
-    createData('Speech Count', '01', '04', 'Cam.', '05:52', 'Coord'),
-];
-
-
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
 
@@ -139,79 +81,27 @@ TabPanel.propTypes = {
 };
 let FaseActivaGlobal = 0;
 export default function PlanificacionExp() {
-
     const [idExperimento, setIdExperimento] = React.useState('');
     const location = useLocation();
     const idUrl = useParams();
     const classes = useStyles();
-    const [datosGrupos, setDatosGrupos] = useState({
-        grupo: '',
-        numeroSerie: '',
-    })
-    const [datosParticipantes, setDatosParticipantes] = useState({
-        participante: '',
-        numeroSerie: '',
-    })
-
-    const [open, setOpen] = React.useState(false);
     const [urlconsulta, setUrlConsulta] = useState('');
     const [tab, setTab] = React.useState(0);
     const [fasesComparacion, setFasesComparacion] = React.useState([]);
-    const [idmediciones, setIdmediciones] = React.useState('');
-    const [nombreMediciones, setNombresMediciones] = React.useState([]);
-    const [idObserv, setIdObserv] = React.useState([]);
     const [faseActiva, setFaseActiva] = React.useState(0);
     const [nombreExp, setNombreExp] = React.useState('');
     const [idExp, setIdExp] = React.useState('');
     const [fasesExp, setFasesExp] = React.useState([]);
-    const [actualizarTabla, setActualizarTabla] = React.useState(false);
-    const [selected, setSelected] = React.useState(false);
-    const [grupoSeleccionado, setGrupoSeleccionado] = React.useState(false);
-    const [banderaGrupo, setBanderaGrupo] = React.useState(false);
-    const [banderaParticipantes, setBanderaParticipantes] = React.useState(false);
-    const [conteoSelectedG, setConteoSelectedG] = React.useState(0);
-    const [conteoSelectedPart, setConteoSelectedPart] = React.useState(0);
-    const [dataGrupos, setDataGrupos] = React.useState([]);
-    const [dataParticipantes, setDataParticipantes] = React.useState([]);
-    const [participanteActivo, setParticipanteActivo] = React.useState('');
-    const [grupoEditar, setGrupoEditar] = React.useState('');
-    const [arrarrParticipantes, setArrArrParticipantes] = React.useState([]);
-    const [arrFasesxGrupo, setArrFasesxGrupo] = React.useState([]);
-    const [arrFasesxParticipantesxGrupo, setArrFasesxParticipantesxGrupo] = React.useState([]);
-    const [nombreGrupoHeader, setNombreGrupoHeader] = React.useState('');
-    const [hiddenParticipantes, setHiddenParticipantes] = React.useState(true);
-    const [grupoComparacion, setGrupoComparacion] = React.useState([]);
-    const [particiComparacion, setParticiComparacion] = React.useState([]);
-    const [banderaComparacion, setBanderaComparacion] = React.useState(0);
-
-    const [openModalGrupo, setOpenModalGrupo] = React.useState(false);
-    const [openModalParticipante, setOpenModalParticipante] = React.useState(false);
-    const [openModalNuevoGrupo, setOpenModalNuevoGrupo] = React.useState(false);
-    const [openModalNuevoParticipante, setOpenModalNuevoParticipante] = React.useState(false);
     const [openModalGuardarDatos, setOpenModalGuardarDatos] = React.useState(false);
     const [openModalGuardarExp, setOpenModalGuardarExp] = React.useState(false);
-
     const [descripcionFase, setDescripcionFase] = useState({ descripcion: '' });
     const [documentosFase, setDocumentosFase] = useState({ links: '' });
     const [idObservaciones, setIdObservaciones] = React.useState([]);
     const [idGrupos, setIdGrupos] = React.useState([]);
 
-    const [arregloMedicionesSelect, setArregloMedicionesSelect] = React.useState(
-        {
-            "Grupo 1": false,
-            "Grupo 2": false,
-            "Grupo 3": false,
-            "Grupo 4": false
-        }
-    );
-
-
-    //eliminar
-    const [selectedDate, setSelectedDate] = React.useState(new Date('2014-08-18T21:11:54'));
     const [fechaFase, setFechaFase] = React.useState(new Date());
     const [horaInicio, setHoraInicio] = React.useState(new Date());
     const [horaTermino, setHoraTermino] = React.useState(new Date());
-    const [locale, setLocale] = React.useState('esES');
     const [medicionesSelected, setMedicioneSelected] = React.useState([]);
     const [numeroFasesSelected, setNumeroFasesSelected] = React.useState([]);
 
@@ -222,12 +112,6 @@ export default function PlanificacionExp() {
     const [direccionFaseActiva, setDireccionFaseActiva] = React.useState(0);
     const [idFasesEliminadas, setIdFasesEliminadas] = React.useState([]);
     const [cambiarBoton, setCambiarBoton] = React.useState(true);
-
-    // eliminar
-    const handleDateChange = (date) => {
-        setSelectedDate(date);
-    };
-    // 
 
     const handleFechaFase = (fecha) => {
         setFechaFase(fecha);
@@ -311,7 +195,6 @@ export default function PlanificacionExp() {
         // console.log(rellenar);
 
         if (rellenar.hasOwnProperty('_id')) {
-            //debo hacer muchas condicionales en caso de que no existan algunos datos guardados respectivos a ellos
             let separador = " ";
             let fechaFaseR = rellenar['fechaFase'].split(separador);
             let tiempoInicioR = rellenar['tiempoInicio'].toString();
@@ -574,8 +457,6 @@ export default function PlanificacionExp() {
     }
 
     const eliminarFaseBD = async (arregloEliminado, boton) => {
-
-        // fasesExp['_id'] === fasesComp[i][_id] - numeroSerie===numeroSerie; reemplazar por put en backend con el nuevo numero 
         if (arregloEliminado.length > 0) {
             let idGrupos = new Array();
             let idParticipantes = new Array();
@@ -603,11 +484,6 @@ export default function PlanificacionExp() {
                 const resFasesDel = await axios.delete(routesBD.fases + arregloEliminado[i]);
             }
             setFasesComparacion(fasesComp);
-            // console.log('fasesComp');
-            // console.log(fasesComp);
-
-            // console.log('fasesExper');
-            // console.log(fasesExper);
             for (let i = 0; i < fasesComp.length; i++) {
                 for (let j = 0; j < fasesExper.length; j++) {
                     if (fasesExper[j].hasOwnProperty('_id')) {
@@ -650,10 +526,7 @@ export default function PlanificacionExp() {
                 },
                 3000
             );
-
         }
-
-
     }
     const handleOpenModalGuardarExperimento = () => {
         setOpenModalGuardarExp(true);
@@ -680,11 +553,8 @@ export default function PlanificacionExp() {
                 3000
             );
         }
-
         setOpenModalGuardarExp(false);
-
     }
-
 
     const handleOpenModalGuardarDatos = (estado) => {
         let dirFaseActiva = direccionFaseActiva;
@@ -692,7 +562,6 @@ export default function PlanificacionExp() {
         dirFaseActiva = estado;
         setDireccionFaseActiva(dirFaseActiva);
     }
-
 
     const closeModalGuardarDatos = (estado) => {
         cambiarFaseActiva(estado)
@@ -703,7 +572,6 @@ export default function PlanificacionExp() {
         // cambiar el estado del experimento
         // ========================== debo actualizar fasesComparacion a la hora de realizar un POST, por si se borra algo despues considerar que existe en bd ==============================
         // ============== Si creo un POST debo actualizar el arreglo de fases del experimento =================
-
 
         let separador = " ";
         let separador2 = ":";

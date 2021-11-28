@@ -85,19 +85,14 @@ export default function EjecucionExp() {
         minutos: ''
     })
     const [open, setOpen] = React.useState(false);
-    // const [urlconsulta, setUrlConsulta] = useState('');
     const [tab, setTab] = React.useState(0);
-    // const [idmediciones, setIdmediciones] = React.useState('');
     const [nombreMediciones, setNombresMediciones] = React.useState([]);
-    // const [minutosActual, setMinutos] = React.useState(hoy.getMinutes());
     const [idObserv, setIdObserv] = React.useState([]);
     const [faseActiva, setFaseActiva] = React.useState(0);
     const [nombreExp, setNombreExp] = React.useState('');
     const [idExp, setIdExp] = React.useState('');
     const [fasesExp, setFasesExp] = React.useState([]);
     const [progress, setProgress] = React.useState(0);
-    // const [tiempoInicio, setTiempoInicio] = React.useState('');
-    // const [tiempoFin, setTiempoFin] = React.useState('');
     const [tiempoDuracionSec, setTiempoDurSec] = React.useState(0);
     const [progreso, setProgreso] = React.useState(0);
     const [progresoTiempo, setProgresoTiempo] = React.useState(0);
@@ -110,8 +105,6 @@ export default function EjecucionExp() {
     const [horaInicio, setHoraInicio] = React.useState(new Date());
     const [tiempoInicioActual, setTiempoInicioActual] = useState('');
     const [tiempoFinActual, setTiempoFinActual] = useState('');
-    // const [horasObs, setHorasObs] = useState('');
-    // const [minutosObs, setMinutosObs] = useState('');
     const [arrMedicionesRecibidas, setArrMedicionesRecibidas] = useState([]);
     const [direccionFaseActiva, setDireccionFaseActiva] = useState(0);
     const [openModalContinuar, setOpenModalContinuar] = React.useState(false);
@@ -119,17 +112,10 @@ export default function EjecucionExp() {
     const [idExperimento, setIdExperimento] = React.useState('');
     const [banderaOvertime, setBanderaOvertime] = useState(true);
     const [banderaDetenido, setBanderaDetenido] = useState(true);
-    // const [intervalId, setIntervalId] = useState(0);
-    // const [intervalo, setIntervalo] = useState(1000);
-    // const [estadoIntervaloActivo, setEstadoIntervaloActivo] = useState(true);
-    // const [estadoDetenido, setEstadoDetenido] = useState(true);
-    // const [estadoMediciones, setEstadoMediciones] = useState([]);
     const [medicionesGeneral, setMedicionesGeneral] = useState([]);
-    // const [medicionesTabs, setMedicionesTabs] = useState([]);
     const [nombresMedicionesSocket, setNombresMedicionesSocket] = useState([]);
     const [conexionSockets, setConexionSockets] = useState([]);
     const [nombreMedicionActual, setNombreMedicionActual] = useState('Tabla General');
-    // const [banderaTabla, setBanderaTabla] = useState(true);
 
     let progresoraro = progress;
 
@@ -483,20 +469,6 @@ export default function EjecucionExp() {
                 }
             }
         }
-        // if (fasesExp.length > 0) {
-        //     console.log('fasesExp.length');
-        //     console.log(fasesExp.length);
-        //     if (faseActiva === fasesExp.length) {
-        //         guardarFaseActiva(faseActiva - 1);
-        //         setTimeout(
-        //             function () {
-                        // window.location.href = rutasFront.AnalisisExp + idUrl['id'];
-        //             },
-        //             3000
-        //         );
-        //     }
-        // }
-
         return () => {
         }
     }, [faseActiva, fasesExp]);
@@ -518,7 +490,6 @@ export default function EjecucionExp() {
                     }
                 }
             }
-
         }
         let arrObs = new Array();
         const obs = idObserv;
