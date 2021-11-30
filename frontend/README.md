@@ -13,6 +13,8 @@ Este proyecto ha sido desarrollado a través de un stack "MERN", basado en progr
 - [Manejo del Sistema](#manejo-del-sistema).
 - [Cambios al Sistema](#cambios-al-sistema).
 - [Configuraciones Avanzadas](#configuraciones-avanzadas).
+- [Comentarios Finales](#comentarios-finales).
+
 
 ## Introducción
 Este proyecto se encuentra basado en la utilización de contenedores Docker, para el levantamiento de cada servicio, como se mencionó en el manual de instalación.
@@ -210,7 +212,9 @@ Al igual que en componentes previos, este módulo también presenta las funcione
 Por otro lado, las funciones "enviarDatos" y "guardarObservacion", se encuentran relacionados con el ingreso y actualización de la información de las tablas de observaciones relacionadas con la fase actual, para tener en consideración a la hora de realizar implementaciones en esta área.
  
 ### Análisis
-El componente de la ruta "./src/components/AnalisisExp.js", contiene las funciones respectivas para cargar información desde archivos enviados por parte del sistema de mediciones externos. La función "traerArchivos", permite cargar la tabla de la viñeta actual de mediciones, dependiendo del archivo "Excel" que envié este, ajustándose a la disponibilidad de filas y columnas que esté presente, siendo idealmente un componente que cargue información de muestra con baja cantidad de registros, para así no mostrar toda la cantidad de información que se registró en un experimento debido a las grandes cantidades de datos que estos pueden significar.
+El componente de la ruta "./src/components/AnalisisExp.js", contiene las funciones respectivas para cargar información desde archivos enviados por parte del sistema de mediciones externos. La función "traerArchivos", permite cargar la tabla de la viñeta actual de mediciones, dependiendo del archivo "Excel" que envié este, ajustándose a la disponibilidad de filas y columnas que esté presente, siendo idealmente un componente que cargue información de muestra con baja cantidad de registros, para así no mostrar toda la cantidad de información que se registró en un experimento debido a las grandes cantidades de datos que estos pueden significar. 
+
+Es necesario que el equipo de desarrollo, en caso de necesitarlo, revise las funciones de carga de cada viñeta de la tabla, acorde a las mediciones del sistema de mediciones externo, debido a que este apartado de momento funciona con datos de pruebas, subidos en la plataforma de base de datos, pero una vez que el sistema de mediciones externo genere datos de prueba, estos deben ser rellenados en cada viñeta de la tabla de mediciones correctamente a como los envía el servicio externo.
  
 También "parametrosGenerales", "exportToCsv" y "handleModalDescargar" permiten generar y descargar la información de la fase, las primeras funciones traen y generan un archivo de descarga en formato "Excel", para descargar las configuraciones de un experimento, referente a sus parámetros de grupos, participantes y dispositivos que están configurados en la etapa de preparación. También la última función, está enfocada en que se realice la conexión con el sistema de mediciones externo, avisando de que debe generarse un enlace de descarga de los datos de mediciones MMLA, recabados de la fase actual del experimento.
  
@@ -228,6 +232,12 @@ Las rutas son un aspecto importante para la plataforma, debido a que primero es 
  
 ### App.js
 Finalmente el componente que instancia principalmente los componentes globales para los demás archivos viene desde la carpeta raíz del apartado del “frontend” de la plataforma, refiriéndonos al archivo "./App.js", este componente instancia el componente que enruta las distintas vistas del sistema, instancia al proveedor de autenticación de usuarios, y llama al enrutador "AppRouter" de la plataforma. 
+
+## Comentarios Finales
+ 
+Esperando que esta guía sea de ayuda para el usuario y permita mejorar el sistema a futuro, además de que cada punto haya sido abordado y desarrollado satisfactoriamente para el lector, se espera que pueda levantarlo y manejarlo de manera satisfactoria, deseando lo mejor del camino de desarrollo para el usuario.
+ 
+***Hasta la Próxima y Suerte!***
 
 
 **Nota: Este Manual de usuario, contempla que el usuario tenga cierto manejo previo sobre Docker, JavaScript y ReactJS, de forma que se comprenda por parte del usuario y esté abierto a nuevas mejoras o implementaciones para el uso de este sistema a futuro**
