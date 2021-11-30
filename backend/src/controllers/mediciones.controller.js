@@ -9,13 +9,13 @@ MedicionCtrl.getMediciones = async (req, res) => {
 }
 
 MedicionCtrl.createMedicion = async (req, res) => {
-    const { idTipoMedicion, nombre } = req.body;
-    let nuevosDispositivos = new Array();
+    const { idTipoMedicion, nombre, dispositivosAsociados } = req.body;
+    // let nuevosDispositivos = new Array();
     const newMedicion = new Medicion({
         idTipoMedicion: idTipoMedicion,
         // idParticipante: idParticipante,
         nombre: nombre,
-        dispositivosAsociados: nuevosDispositivos
+        dispositivosAsociados: dispositivosAsociados
         // tiempo: tiempo
     });
     await newMedicion.save();

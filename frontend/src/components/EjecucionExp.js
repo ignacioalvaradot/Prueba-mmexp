@@ -228,9 +228,19 @@ export default function EjecucionExp() {
     }
 
     const calcularTiempoFases = (tInicio, tFin) => {
+        console.log('tInicio');
+        console.log(tInicio);
+        console.log('tFin');
+        console.log(tFin);
+
         let Inicio = tInicio.toString();
         let Fin = tFin.toString();
-
+        if(tInicio<100){
+            Inicio = '00' + Inicio;
+        }
+        if(tFin<100){
+            Fin = '00'+ Fin;
+        }
         let primeroI = Inicio.slice(0, -2);
         let HoraI = parseInt(primeroI * 3600);
         let segundoI = '';
