@@ -141,7 +141,7 @@ export default function Inscripcion() {
                             label="Contraseña"
                             fullWidth
                             autoComplete="formulario contraseña"
-                            value={contraseña}
+                            value={'*'.repeat(contraseña.length)}
                             onChange={(e) => setContraseña(e.target.value)}
                         />
                     </Grid>
