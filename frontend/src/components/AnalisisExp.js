@@ -382,17 +382,35 @@ export default function AnalisisExp() {
     }
 
     const handleModalDescargar = async () => {
+        // Permite enviar la informacion correspondiente para que se genere un link de descarga en el servidor de metricas externo
         // medicion, correoUsuario, archivo, idExperimento, idFase, idGrupos, Participantes tiene -> Dispositivos y canales
         let medicionesFase = [];
+        let separador = ' ';
+        let medicionFinal = '';
+        let arrNombresSocket = [];
         for (let i = 0; i < nombreMediciones.length; i++) {
             medicionesFase.push(nombreMediciones[i][0]);
+            let medicion = nombreMediciones[i][0].toLowerCase();
+            let medicionFiltro = medicion.split(separador);
+            console.log('medicionFiltro');
+            console.log(medicionFiltro);
+            if (medicionFiltro.length > 1) {
+                medicionFinal = medicionFiltro[0] + medicionFiltro[1];
+            } else {
+                medicionFinal = medicionFiltro[0];
+            }
+            arrNombresSocket.push(nombreMediciones[i][0] + ',' + routesBD.socket + medicionFinal);
+            console.log('medicionFinal');
+            console.log(medicionFinal);
+            // este arrNombresSocket, contiene un arreglo de los nombres de cada medicion en el sistema, y ademas, contiene las rutas de los socket para Diego
         }
+
         let data = {
-            medicion: medicionesFase,
+            medicion: arrNombresSocket,
             correoUsuario: user.correo,
             idExperimento: idExperimento,
             idFase: fasesExp[faseActiva]['_id'],
-            idGrupos: gruposActuales,
+            Grupos: gruposActuales,
             participantes: arregloParticipantesActuales
         };
         const estadoPeticion = await axios.post(routesBD.descargaTest, data);
