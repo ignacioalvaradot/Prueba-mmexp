@@ -1,9 +1,9 @@
-// let rutaBD = "http://localhost:81/"
-// let rutaFront = "http://localhost/"
+ let rutaBD = "http://localhost:81/"
+ let rutaFront = "http://localhost/"
 
-const rutaBD = "http://api.mmexp.informatica.uv.cl/";
+/* const rutaBD = "http://api.mmexp.informatica.uv.cl/";
 const rutaFront = "http://mmexp.informatica.uv.cl/";
-
+ */
 export const rutasFront = {
     login: rutaFront + "login/",
     inicio: rutaFront + "inicio/", 
@@ -21,6 +21,7 @@ export const rutasFront = {
 const routesBD = {
     dispositivos: rutaBD + "api/dispositivos/",
     experimentos: rutaBD + "api/experimentos/",
+    experimentosVis: rutaBD + "api/experimentosVis/",
     fases: rutaBD + "api/fases/",
     grupos: rutaBD + "api/grupos/",
     mediciones: rutaBD + "api/mediciones/",

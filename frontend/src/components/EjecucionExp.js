@@ -118,6 +118,7 @@ export default function EjecucionExp() {
     const [nombreMedicionActual, setNombreMedicionActual] = useState('Tabla General');
 
     let progresoraro = progress;
+    
 
     useEffect(() => {
         dataFase();
@@ -129,7 +130,9 @@ export default function EjecucionExp() {
         //     setUrlConsulta(urlconsulta);
         // };
         // url();
+        console.log("hola",fasesExp)
         return () => clearInterval(barraProgreso);
+        
     }, []);
 
     const intervaloProgreso = () => {
@@ -572,7 +575,100 @@ export default function EjecucionExp() {
             [e.target.name]: e.target.value
         })
     };
+    const sendData = async () => {
+        //const dataVis =  routesBD.experimentosVis + idUrl['id'] + '/' + fasesExp[faseActiva]._id
+        window.visualizacion.postMessage(json, 'http://localhost:3000')
+        console.log("send data se ejecuta",fasesExp[faseActiva],fasesExp,faseActiva)
+    }
 
+    const OpenPopup = () =>{
+        window.visualizacion = window.open(
+            'http://localhost:3000'
+        )
+
+        //window.opener.postMessage('mensaje desde mmexp', 'http://localhost:3000')
+    }
+const wrapperFunction = () => {
+    OpenPopup();
+    
+}
+
+
+
+  useEffect(() => {
+    window.addEventListener('message', function(e) {
+      if (e.origin == 'http://localhost:3000'){
+        sendData ();
+    }
+  }, false);
+  }, []);
+
+var json= {
+    "Experimento": "idExperimento0001",
+    "FaseId": "idFase000001",
+    "medicionesFase": [
+        {"idMedicion": "idMedicion0001"},
+        {"idMedicion": "idMedicion0003"},
+        {"idMedicion": "idMedicion0004"}
+    ],
+    "GruposFase": [
+        {"idGrupo": "idGrupo00001", "Participantes": [
+            {"idParticipante": "participante001", "dispositivos": [
+                {"dispositivo": "Cam01", "canal": "1"},
+                {"dispositivo": "Mic01", "canal": "1"}
+                ]
+            },
+            {"idParticipante": "participante003", "dispositivos": [
+                {"dispositivo": "Cam01", "canal": "2"},
+                {"dispositivo": "Mic01", "canal": "2"}
+                ]
+            },
+            {"idParticipante": "participante004", "dispositivos": [
+                {"dispositivo": "Cam02", "canal": "3"},
+                {"dispositivo": "Mic01", "canal": "3"}
+                ]
+            }
+            ] 
+        },
+        {"idGrupo": "idGrupo00002", "Participantes": [
+            {"idParticipante": "participante001", "dispositivos": [
+                {"dispositivo": "Cam01", "canal": "1"},
+                {"dispositivo": "Mic01", "canal": "1"}
+                ]
+            },
+            {"idParticipante": "participante003", "dispositivos": [
+                {"dispositivo": "Cam01", "canal": "2"},
+                {"dispositivo": "Mic01", "canal": "2"}
+                ]
+            },
+            {"idParticipante": "participante004", "dispositivos": [
+                {"dispositivo": "Cam02", "canal": "3"},
+                {"dispositivo": "Mic01", "canal": "3"}
+                ]
+            }
+            ] 
+        },
+        {"idGrupo": "idGrupo00003", "Participantes": [
+            {"idParticipante": "participante002", "dispositivos": [
+                {"dispositivo": "Cam01", "canal": "1"},
+                {"dispositivo": "Mic01", "canal": "1"}
+                ]
+            },
+            {"idParticipante": "participante005", "dispositivos": [
+                {"dispositivo": "Cam01", "canal": "2"},
+                {"dispositivo": "Mic01", "canal": "2"}
+                ]
+            },
+            {"idParticipante": "participante006", "dispositivos": [
+                {"dispositivo": "Cam02", "canal": "3"},
+                {"dispositivo": "Mic01", "canal": "3"}
+                ]
+            }
+            ] 
+        }
+    ]
+}
+    
     const enviarDatos = async () => {
         // e.preventDefault();
         let separador = " ";
@@ -911,9 +1007,16 @@ export default function EjecucionExp() {
                         </div>
                         <br />
                         <div>
+                        
                             <Button variant="outlined" color="primary" onClick={handleClickOpen} style={{ margin: 'auto', display: "flex" }}>
                                 Agregar Observacion
                             </Button>
+                            <Button variant="outlined" color="primary" onClick={wrapperFunction} style={{ margin: 'auto', display: "flex" }}>
+                                Ir a visualización
+                            </Button>
+                            
+                            
+                            
                             <Dialog fullWidth maxWidth={'xs'} open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
                                 <DialogTitle id="form-dialog-title">Observacion</DialogTitle>
                                 <DialogContent >
