@@ -117,7 +117,9 @@ export default function EjecucionExp() {
     const [conexionSockets, setConexionSockets] = useState([]);
     const [nombreMedicionActual, setNombreMedicionActual] = useState('Tabla General');
 
+
     let progresoraro = progress;
+    var dataFasesVis = [];
     
 
     useEffect(() => {
@@ -130,7 +132,7 @@ export default function EjecucionExp() {
         //     setUrlConsulta(urlconsulta);
         // };
         // url();
-        console.log("hola",fasesExp)
+        console.log("datos fase: ",fasesExp)
         return () => clearInterval(barraProgreso);
         
     }, []);
@@ -163,6 +165,7 @@ export default function EjecucionExp() {
             arregloNFase.push(resF.data.fase);
         }
         setFasesExp(arregloNFase);
+        dataFasesVis.push(arregloNFase)
     }
 
     const traerMedicionesRegistrar = async (arregloNFase) => {
@@ -576,9 +579,10 @@ export default function EjecucionExp() {
         })
     };
     const sendData = async () => {
-        //const dataVis =  routesBD.experimentosVis + idUrl['id'] + '/' + fasesExp[faseActiva]._id
-        window.visualizacion.postMessage(json, 'http://localhost:3000')
-        console.log("send data se ejecuta",fasesExp[faseActiva],fasesExp,faseActiva)
+        const dataVis =  await axios.get(routesBD.experimentosVis + idUrl['id'] + '/' + dataFasesVis[faseActiva][0]._id);
+        window.visualizacion.postMessage(dataVis.data, 'http://localhost:3000')
+        console.log("datos de la fase activa: ",dataFasesVis[faseActiva][0]._id)
+        console.log("datos de la api: ",dataVis.data)
     }
 
     const OpenPopup = () =>{
