@@ -88,37 +88,17 @@ export default function PreparacionExp() {
         let tablaDispositivos = tablaMedicionesRegistrar;
         let medicionesFaseActual = medicionesFases;
         let medicion = '';
-        let separador = ' ';
-        let medicionFinal = '';
+        let url = '';
 
         for (let i = 0; i < medicionesFaseActual[0].length; i++) {
-            medicion = medicionesFaseActual[0][i]['nombre'].toLowerCase();
-            let medicionFiltro = medicion.split(separador);
-            if (medicionFiltro.length > 1) {
-                medicionFinal = medicionFiltro[0] + medicionFiltro[1];
-            } else {
-                medicionFinal = medicionFiltro[0];
-            }
-            // console.log('medicionFinal');
-            // console.log(medicionFinal);
-            let json = {
-                idExp: 1,
-                idFase: 1
-            }
+            medicion = medicionesFaseActual[0][i]['nombre']; //.toLowerCase()
+            url =  medicionesFaseActual[0][i]['url'];
 
-            // console.log(tablaEstadoMediciones[i]);
+            window[socket + (i).toString()] = io.connect(url);
 
-            window[socket + (i).toString()] = io.connect(routesBD.socket + medicionFinal);
-            // console.log(window[socket + (i).toString()])
-            // window[socket + (i).toString()].emit("my_event", { query: "foo=bar" })
-            // console.log(window[socket + (i).toString()]);
-            setTimeout(
-                function () {
-                    desconectarSocket(window[socket + (i).toString()]);
-                },
-                1000
-            );
-            window[socket + (i).toString()].on('SendMetrics', function (msg) {
+            setTimeout( function () { desconectarSocket(window[socket + (i).toString()]); },3000);
+
+            window[socket + (i).toString()].on('report_metric', function (msg) {
                 console.log(msg.data);
                 //debe quedar en pos de los canales que recibe, primero, si encuentra el disp, luego si encuentra el canal, y eso
                 let contadorGrupos = 0;
@@ -173,10 +153,9 @@ export default function PreparacionExp() {
         }
 
     }
+
     const desconectarSocket = (sockete) => {
-        // desconectar el socket del servidor
-        // conectar['disabled'] = false;
-        // desconectar['disabled'] = true;
+        console.log("Timeout")
         sockete.disconnect();
     }
 
