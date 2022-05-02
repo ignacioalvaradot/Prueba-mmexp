@@ -828,6 +828,7 @@ var json= {
             let arregloMedicion = {
                 id: medicionesActuales[i]['_id'],
                 nombre: medicionesActuales[i]['nombre'],
+                url: medicionesActuales[i]['url'],
                 estadoOpen: false,
                 estadoMedicion: false,
                 grupos: gruposArr
@@ -855,12 +856,13 @@ var json= {
         let arregloMensajesGenerales = new Array();
 
         let medicion = '';
+        let url = '';
         let separador = ' ';
         let medicionFinal = '';
-        // console.log('medicionesFaseActual');
-        // console.log(medicionesFaseActual);
-        // console.log('nombresMediciones');
-        // console.log(nombresMediciones);
+        console.log('medicionesFaseActual');
+        console.log(medicionesFaseActual);
+        console.log('nombresMediciones');
+        console.log(nombresMediciones);
 
         let arregloMedicionesTablas = new Array();
         let nuevoObject = new Object();
@@ -869,49 +871,51 @@ var json= {
         let tiempoInicioSocket = (fechaInicio.toString()).split(separador);
         tiempoInicioSocket = tiempoInicioSocket[4];
 
+        let mensajeInicio = {
+            idExp: idExperimento,
+            idFase: fasesExp[faseActiva]['_id'],
+            tiempoInicio: tiempoInicioSocket
+        }
+
+        window[socket + "ExperimentControl"] = io.connect("http://192.168.1.128:84/Experiment");
+        window[socket + "ExperimentControl"].emit("start", mensajeInicio);
+        arrConexiones.push(window[socket + "ExperimentControl"])
+
         for (let i = 0; i < medicionesFaseActual.length; i++) {
             arregloMedicionesTablas.push(nuevoObject);
         }
         for (let i = 0; i < medicionesFaseActual.length; i++) {
             let arregloMedicionMensajes = new Array();
             medicion = medicionesFaseActual[i]['nombre'].toLowerCase();
+            url  = medicionesFaseActual[i]['url'];
             let medicionFiltro = medicion.split(separador);
             if (medicionFiltro.length > 1) {
                 medicionFinal = medicionFiltro[0] + medicionFiltro[1];
             } else {
                 medicionFinal = medicionFiltro[0];
             }
-            let mensajeInicio = {
-                idExp: idExperimento,
-                idFase: fasesExp[faseActiva]['_id'],
-                tiempoInicio: tiempoInicioSocket
-            }
-            console.log(medicionFinal);
 
-            window[socket + medicionFinal] = io.connect(routesBD.socket + medicionFinal);
+            window[socket + medicionFinal] = io.connect(url);
             arrConexiones.push(window[socket + medicionFinal])
 
-            window[socket + medicionFinal].emit("iniciar", mensajeInicio);
-
-
-            window[socket + medicionFinal].on('SendMetrics', function (msg) {
-
+            window[socket + medicionFinal].on('report_metric', function (msg) {
+                //console.log(msg.data);
                 if (nombreMedicionVariable === 'Tabla General' || nombreMedicionVariable === medicionesFaseActual[i]['nombre']) {
-                    console.log(nombreMedicionVariable);
+                    //console.log(nombreMedicionVariable);
                     for (let k = 0; k < medicionesFaseActual[i]['grupos'].length; k++) {
                         if (medicionesFaseActual[i]['grupos'][k]['participantes'].length > 0) {
                             for (let l = 0; l < medicionesFaseActual[i]['grupos'][k]['participantes'].length; l++) {
                                 for (let j = 0; j < msg.data.devices.length; j++) {
                                     let dispositivoRecibido = msg.data.devices[j];
                                     if (dispositivoRecibido['name'] === medicionesFaseActual[i]['grupos'][k]['participantes'][l]['dispositivo']) {
-
+                                        let channel = dispositivoRecibido['channel'].filter(channel => channel.channelId == (1 + medicionesFaseActual[i]['grupos'][k]['participantes'][l]['canal']))[0]
                                         let datoMedicionGeneral = {
                                             Medicion: medicionesFaseActual[i]['nombre'],
                                             Grupo: medicionesFaseActual[i]['grupos'][k]['nombre'],
                                             Participante: medicionesFaseActual[i]['grupos'][k]['participantes'][l]['nombre'],
                                             Dispositivo: medicionesFaseActual[i]['grupos'][k]['participantes'][l]['dispositivo'],
-                                            Canal: dispositivoRecibido['channel'][medicionesFaseActual[i]['grupos'][k]['participantes'][l]['canal']]['channelId'],
-                                            Valor: dispositivoRecibido['channel'][medicionesFaseActual[i]['grupos'][k]['participantes'][l]['canal']]['valor']
+                                            Canal: channel['channelId'],
+                                            Valor: channel['valor']
                                         }
                                         if (arregloMensajesGenerales.length > 20) {
 
@@ -958,7 +962,7 @@ var json= {
 
         let datosDetener = {tiempo: tiempoFinalizacion}
         for (let i = 0; i < conexionesSocketsCerrar.length; i++) {
-            conexionesSocketsCerrar[i].emit("detener", datosDetener);
+            conexionesSocketsCerrar[i].emit("stop", datosDetener);
 
             clearInterval(window[intervaloActualizacion + (i).toString()]);
             conexionesSocketsCerrar[i].disconnect();

@@ -90,7 +90,7 @@ export default function PreparacionExp() {
         let medicion = '';
         let url = '';
 
-        for (let i = 0; i < medicionesFaseActual[0].length; i++) {
+        for (let i = 0; i < medicionesFaseActual[0].length; i++) { // i itera en mediciones
             medicion = medicionesFaseActual[0][i]['nombre']; //.toLowerCase()
             url =  medicionesFaseActual[0][i]['url'];
 
@@ -98,22 +98,21 @@ export default function PreparacionExp() {
 
             setTimeout( function () { desconectarSocket(window[socket + (i).toString()]); },3000);
 
-            window[socket + (i).toString()].on('report_metric', function (msg) {
+            window[socket + (i).toString()].once('report_metric', function (msg) {
                 console.log(msg.data);
                 //debe quedar en pos de los canales que recibe, primero, si encuentra el disp, luego si encuentra el canal, y eso
                 let contadorGrupos = 0;
-                for (let k = 0; k < tablaEstadoMediciones[i]['grupos'].length; k++) {
+                for (let k = 0; k < tablaEstadoMediciones[i]['grupos'].length; k++) { // k itera en los grupos 
                     let contadorParticipantes = 0;
                     if (tablaEstadoMediciones[i]['grupos'][k]['participantes'].length > 0) {
-                        for (let l = 0; l < tablaEstadoMediciones[i]['grupos'][k]['participantes'].length; l++) {
+                        for (let l = 0; l < tablaEstadoMediciones[i]['grupos'][k]['participantes'].length; l++) { // l itera en los participantes
                             let banderaEncontrado = false;
                             // let contadorBandera = 0;
                             for (let j = 0; j < msg.data.devices.length; j++) {
                                 let dispositivoRecibido = msg.data.devices[j];
                                 if (dispositivoRecibido['name'] === tablaEstadoMediciones[i]['grupos'][k]['participantes'][l]['dispositivo']) {
-                                    if (dispositivoRecibido['channel'][tablaEstadoMediciones[i]['grupos'][k]['participantes'][l]['canal']]['channelId'] || dispositivoRecibido['channel'][tablaEstadoMediciones[i]['grupos'][k]['participantes'][l]['canal']]['channelId'] === 0) {
-                                        // banderaEncontrado = true;
-                                        // contadorBandera = contadorBandera + 1;
+                                    console.log(dispositivoRecibido['channel'].filter(channel => channel.channelId == (1 + tablaEstadoMediciones[i]['grupos'][k]['participantes'][l]['canal'])))
+                                    if (dispositivoRecibido['channel'].filter(channel => channel.channelId == (1 + tablaEstadoMediciones[i]['grupos'][k]['participantes'][l]['canal'])).length > 0){
                                         console.log('dispositivo Encontrado');
                                         banderaEncontrado = true;
                                     }

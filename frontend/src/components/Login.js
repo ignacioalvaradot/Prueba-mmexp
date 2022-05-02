@@ -83,7 +83,7 @@ export default function Inscripcion() {
             };
 
             const res = await axios.post(routesBD.users + 'login', data);
-            // console.log(res.data[0]);
+            console.log(res.data[0]);
 
             if (res.data.length > 0) {
                 let credenciales = {
@@ -92,7 +92,7 @@ export default function Inscripcion() {
                     role: res.data[0].tipoUsuario,
                     correo: res.data[0].correo
                 };
-                // console.log(res.data[0].correo);
+                console.log(res.data[0].correo);
                 // userCredentials = credenciales;
                 login(credenciales);
                 setBandera(true);
