@@ -88,52 +88,31 @@ export default function PreparacionExp() {
         let tablaDispositivos = tablaMedicionesRegistrar;
         let medicionesFaseActual = medicionesFases;
         let medicion = '';
-        let separador = ' ';
-        let medicionFinal = '';
+        let url = '';
 
-        for (let i = 0; i < medicionesFaseActual[0].length; i++) {
-            medicion = medicionesFaseActual[0][i]['nombre'].toLowerCase();
-            let medicionFiltro = medicion.split(separador);
-            if (medicionFiltro.length > 1) {
-                medicionFinal = medicionFiltro[0] + medicionFiltro[1];
-            } else {
-                medicionFinal = medicionFiltro[0];
-            }
-            // console.log('medicionFinal');
-            // console.log(medicionFinal);
-            let json = {
-                idExp: 1,
-                idFase: 1
-            }
+        for (let i = 0; i < medicionesFaseActual[0].length; i++) { // i itera en mediciones
+            medicion = medicionesFaseActual[0][i]['nombre']; //.toLowerCase()
+            url =  medicionesFaseActual[0][i]['url'];
 
-            // console.log(tablaEstadoMediciones[i]);
+            window[socket + (i).toString()] = io.connect(url);
 
-            window[socket + (i).toString()] = io.connect(routesBD.socket + medicionFinal);
-            // console.log(window[socket + (i).toString()])
-            // window[socket + (i).toString()].emit("my_event", { query: "foo=bar" })
-            // console.log(window[socket + (i).toString()]);
-            setTimeout(
-                function () {
-                    desconectarSocket(window[socket + (i).toString()]);
-                },
-                1000
-            );
-            window[socket + (i).toString()].on('SendMetrics', function (msg) {
+            setTimeout( function () { desconectarSocket(window[socket + (i).toString()]); },3000);
+
+            window[socket + (i).toString()].once('report_metric', function (msg) {
                 console.log(msg.data);
                 //debe quedar en pos de los canales que recibe, primero, si encuentra el disp, luego si encuentra el canal, y eso
                 let contadorGrupos = 0;
-                for (let k = 0; k < tablaEstadoMediciones[i]['grupos'].length; k++) {
+                for (let k = 0; k < tablaEstadoMediciones[i]['grupos'].length; k++) { // k itera en los grupos 
                     let contadorParticipantes = 0;
                     if (tablaEstadoMediciones[i]['grupos'][k]['participantes'].length > 0) {
-                        for (let l = 0; l < tablaEstadoMediciones[i]['grupos'][k]['participantes'].length; l++) {
+                        for (let l = 0; l < tablaEstadoMediciones[i]['grupos'][k]['participantes'].length; l++) { // l itera en los participantes
                             let banderaEncontrado = false;
                             // let contadorBandera = 0;
                             for (let j = 0; j < msg.data.devices.length; j++) {
                                 let dispositivoRecibido = msg.data.devices[j];
                                 if (dispositivoRecibido['name'] === tablaEstadoMediciones[i]['grupos'][k]['participantes'][l]['dispositivo']) {
-                                    if (dispositivoRecibido['channel'][tablaEstadoMediciones[i]['grupos'][k]['participantes'][l]['canal']]['channelId'] || dispositivoRecibido['channel'][tablaEstadoMediciones[i]['grupos'][k]['participantes'][l]['canal']]['channelId'] === 0) {
-                                        // banderaEncontrado = true;
-                                        // contadorBandera = contadorBandera + 1;
+                                    console.log(dispositivoRecibido['channel'].filter(channel => channel.channelId == (1 + tablaEstadoMediciones[i]['grupos'][k]['participantes'][l]['canal'])))
+                                    if (dispositivoRecibido['channel'].filter(channel => channel.channelId == (1 + tablaEstadoMediciones[i]['grupos'][k]['participantes'][l]['canal'])).length > 0){
                                         console.log('dispositivo Encontrado');
                                         banderaEncontrado = true;
                                     }
@@ -173,10 +152,9 @@ export default function PreparacionExp() {
         }
 
     }
+
     const desconectarSocket = (sockete) => {
-        // desconectar el socket del servidor
-        // conectar['disabled'] = false;
-        // desconectar['disabled'] = true;
+        console.log("Timeout")
         sockete.disconnect();
     }
 

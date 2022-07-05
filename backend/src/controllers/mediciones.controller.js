@@ -9,12 +9,13 @@ MedicionCtrl.getMediciones = async (req, res) => {
 }
 
 MedicionCtrl.createMedicion = async (req, res) => {
-    const { idTipoMedicion, nombre, dispositivosAsociados } = req.body;
+    const { idTipoMedicion, nombre, url, dispositivosAsociados } = req.body;
     // let nuevosDispositivos = new Array();
     const newMedicion = new Medicion({
         idTipoMedicion: idTipoMedicion,
         // idParticipante: idParticipante,
         nombre: nombre,
+        url: url,
         dispositivosAsociados: dispositivosAsociados
         // tiempo: tiempo
     });

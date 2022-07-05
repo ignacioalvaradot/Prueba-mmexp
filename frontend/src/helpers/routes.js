@@ -37,7 +37,7 @@ const routesBD = {
   rutaLocal: rutaBD,
   archivosPruebas: rutaBD + "api/archivos/consultaMedicion/",
   descargaTest: rutaBD + "api/descargaTest/",
-  socket: "http://192.168.0.3:200/",
+  socket: "http://192.168.1.128:82/",
 };
 
 export default routesBD;
